@@ -216,8 +216,8 @@ function Landing() {
           <div className="relative min-w-[340px] flex-1 basis-[420px]">
             <div className="relative animate-floaty overflow-hidden rounded-[22px] border border-[rgba(20,18,12,0.10)] bg-white shadow-[0_30px_70px_-30px_rgba(63,122,46,0.30),0_6px_18px_-8px_rgba(20,18,12,0.14)]">
               <img
-                src="/assets/mobench-bench.svg"
-                alt="A retro phone reading MOBENCH propped on a park bench"
+                src="/assets/mobench-bench.png"
+                alt="A giant Nokia 3310 reading MOBENCH propped on a park bench"
                 className="block h-auto w-full"
               />
               <div className="absolute bottom-4 left-4 inline-flex items-center gap-2 rounded-[30px] border border-[rgba(20,18,12,0.1)] bg-[rgba(255,255,255,0.86)] px-[11px] py-1.5 font-mono text-[11px] tracking-[0.04em] text-ink backdrop-blur-[6px]">
