@@ -1,0 +1,104 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Geist', system-ui, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, monospace;
+
+  /* mobench brand palette */
+  --color-cream: #f4efdd;
+  --color-ink: #33271a;
+  --color-ink-soft: #46402f;
+  --color-muted: #6e6453;
+  --color-faint: #998c6f;
+  --color-faintest: #a89a7c;
+  --color-green: #3f7a2e;
+  --color-green-dark: #356b26;
+  --color-green-mid: #5e9c36;
+  --color-leaf: #e6f1d5;
+  --color-bench: #eaf0dd;
+  --color-code: #243016;
+  --color-footer: #2c352a;
+  --color-amber: #c2521d;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    margin: 0;
+    background: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* custom scrollbars used in docs */
+.mb-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.mb-scroll::-webkit-scrollbar-thumb {
+  background: rgba(20, 18, 12, 0.14);
+  border-radius: 8px;
+}
+
+@keyframes blink {
+  0%,
+  60% {
+    opacity: 1;
+  }
+  80%,
+  100% {
+    opacity: 0.15;
+  }
+}
+@keyframes floaty {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-14px);
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
+.animate-blink {
+  animation: blink 1.6s steps(1) infinite;
+}
+.animate-floaty {
+  animation: floaty 5s ease-in-out infinite alternate;
+}
+.animate-accordion-down {
+  animation: accordion-down 0.22s ease-out;
+}
+.animate-accordion-up {
+  animation: accordion-up 0.22s ease-out;
+}
