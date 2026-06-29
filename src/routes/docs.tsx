@@ -3,7 +3,6 @@ import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import {
   Activity,
   AlertTriangle,
-  Apple,
   BarChart3,
   BookOpen,
   Boxes,
@@ -36,6 +35,7 @@ import {
 } from 'lucide-react'
 import { SyntaxHighlightedCode } from '@/components/code-highlight'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { MOBENCH_VERSION } from '@/components/icons'
 import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/docs')({
@@ -128,6 +128,15 @@ const EXTERNAL_DOCS = {
 } as const
 
 type BrandLogoName = 'rust' | 'browserstack' | 'androidStudio' | 'android' | 'xcode' | 'ios'
+
+const BRAND_LOGOS: Record<BrandLogoName, { src: string; alt: string }> = {
+  rust: { src: '/assets/logo-rust.svg', alt: 'Rust' },
+  browserstack: { src: '/assets/logo-browserstack.svg', alt: 'BrowserStack' },
+  androidStudio: { src: '/assets/logo-android-studio.svg', alt: 'Android Studio' },
+  android: { src: '/assets/logo-android.svg', alt: 'Android' },
+  xcode: { src: '/assets/logo-xcode.svg', alt: 'Xcode' },
+  ios: { src: '/assets/logo-apple.svg', alt: 'Apple' },
+}
 
 const INSTALL_COMMANDS = [
  {
@@ -482,7 +491,7 @@ const CONTENT: Record<PageId, Section[]> = {
         <>
           <a href={DEEPWIKI_URL} target="_blank" rel="noreferrer" className="font-medium text-green underline decoration-green/30 underline-offset-4">DeepWiki index</a> exposes the topic map for system architecture, CLI, SDK, macros, BrowserStack, templates, profiling, CI, examples, dependencies, and glossary pages.
         </>,
-        <>The “Use page” action copies this authored page or sends it to an assistant; pair that with DeepWiki when you want an AI to answer from both local docs and source-indexed context.</>,
+        <>The “Copy page” action copies this authored page or sends it to an assistant; pair that with DeepWiki when you want an AI to answer from both local docs and source-indexed context.</>,
       ],
     },
   ],
@@ -2789,8 +2798,8 @@ async function copyText(text: string) {
 export function DocsActions({
  active,
  getMarkdown,
- label = 'Use page',
- mobileLabel = 'Use',
+ label = 'Copy page',
+ mobileLabel = 'Copy',
 }: {
  active?: PageDef
  getMarkdown?: () => string
@@ -2862,7 +2871,14 @@ export function DocsActions({
         </div>
         <div className="border-t border-[rgba(20,18,12,0.10)] px-3 pb-2 pt-3">
           <div className="mb-2 flex items-center gap-3">
-            <ExternalLink size={17} className="text-green" />
+            <span className="flex h-8 w-[112px] flex-none items-center rounded-lg border border-[rgba(20,18,12,0.10)] bg-white px-2">
+              <img
+                src="/assets/logo-cognition.svg"
+                alt="Cognition"
+                className="h-4 w-full object-contain"
+                loading="lazy"
+              />
+            </span>
             <div>
               <div className="text-[14px] font-medium text-ink">External docs</div>
               <div className="mt-0.5 text-[12.5px] text-muted">Open source-indexed DeepWiki / Devin context.</div>
@@ -3087,7 +3103,7 @@ function Code({ children, language }: { children: string; language: string }) {
       <div className="border-b border-[rgba(20,18,12,0.08)] px-4 py-2 font-mono text-[11px] uppercase tracking-[0.08em] text-muted">
         {language}
       </div>
-      <SyntaxHighlightedCode className="max-w-full overflow-x-auto px-4 py-4 font-mono text-[12.5px] leading-[1.8] text-code sm:px-5 sm:text-[13.5px]">
+      <SyntaxHighlightedCode className={cn(`language-${language}`, 'max-w-full overflow-x-auto px-4 py-4 font-mono text-[12.5px] leading-[1.8] text-code sm:px-5 sm:text-[13.5px]')}>
         {children.trimEnd()}
       </SyntaxHighlightedCode>
     </div>
@@ -3223,72 +3239,12 @@ function BrandLink({
 }
 
 function BrandLogo({ logo }: { logo: BrandLogoName }) {
-  if (logo === 'browserstack') {
-    return (
-      <span className="relative inline-flex h-4 w-4 flex-none items-center justify-center" aria-hidden="true">
-        <span className="absolute h-4 w-4 rounded-full bg-[#f47f20]" />
-        <span className="absolute h-3 w-3 rounded-full bg-[#02a95c]" />
-        <span className="absolute h-2 w-2 rounded-full bg-[#1f6feb]" />
-        <span className="absolute h-1 w-1 rounded-full bg-white" />
-      </span>
-    )
-  }
-
-  if (logo === 'rust') {
-    return (
-      <svg viewBox="0 0 24 24" className="h-4 w-4 flex-none text-[#33271a]" aria-hidden="true">
-        <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" strokeWidth="2.2" />
-        <path d="M8 16V8h4.6c1.9 0 3.1.9 3.1 2.5 0 1.2-.7 2-1.9 2.3l2.5 3.2h-2.6l-2.2-3H10v3H8Zm2-4.8h2.3c.8 0 1.3-.3 1.3-.9s-.5-.9-1.3-.9H10v1.8Z" fill="currentColor" />
-      </svg>
-    )
-  }
-
-  if (logo === 'androidStudio') {
-    return (
-      <span className="inline-flex h-4 w-4 flex-none items-center justify-center rounded-[4px] bg-[#3ddc84]" aria-hidden="true">
-        <span className="h-1.5 w-1.5 rotate-45 border-l-2 border-t-2 border-white" />
-      </span>
-    )
-  }
-
-  if (logo === 'android') {
-    return (
-      <svg viewBox="0 0 24 24" className="h-4 w-4 flex-none text-[#2cbf6d]" aria-hidden="true">
-        <path d="M8 9h8a3 3 0 0 1 3 3v5a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-5a3 3 0 0 1 3-3Z" fill="currentColor" />
-        <path d="m8 6 1.3 2.2M16 6l-1.3 2.2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <circle cx="9.5" cy="13" r="1" fill="white" />
-        <circle cx="14.5" cy="13" r="1" fill="white" />
-      </svg>
-    )
-  }
-
-  if (logo === 'xcode') {
-    return (
-      <svg viewBox="0 0 32 32" className="h-4 w-4 flex-none" aria-hidden="true">
-        <defs>
-          <linearGradient id="xcode-tile" x1="6" y1="2" x2="26" y2="30" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#2d2d2d" />
-            <stop offset="1" stopColor="#111" />
-          </linearGradient>
-          <linearGradient id="xcode-handle" x1="8" y1="24" x2="20" y2="12" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#3a8dff" />
-            <stop offset="1" stopColor="#8fd5ff" />
-          </linearGradient>
-          <linearGradient id="xcode-head" x1="17" y1="7" x2="27" y2="16" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#f0f3f6" />
-            <stop offset="1" stopColor="#717984" />
-          </linearGradient>
-        </defs>
-        <rect x="2" y="2" width="28" height="28" rx="6.5" fill="url(#xcode-tile)" stroke="#4a4a4a" strokeWidth="0.8" />
-        <path d="M8 2v28M16 2v28M24 2v28M2 8h28M2 16h28M2 24h28" stroke="#0f75a8" strokeWidth="0.65" opacity="0.65" />
-        <path d="M7.3 23.6 18.9 12l2.6 2.6L9.9 26.2a1.7 1.7 0 0 1-2.4 0l-.2-.2a1.7 1.7 0 0 1 0-2.4Z" fill="url(#xcode-handle)" stroke="#0b5fb6" strokeWidth="0.7" />
-        <path d="M18.4 10.1c3.9.1 6.6 2 8.2 5.4l-2.3 2.3c-1.1-1.7-2.7-2.7-5-2.9l-1.9-1.9Z" fill="url(#xcode-head)" stroke="#5d6470" strokeWidth="0.7" />
-        <path d="m24.8 16.8 2.7 2.7-2 2-2.9-2.8Z" fill="#757d86" stroke="#4f5760" strokeWidth="0.6" />
-      </svg>
-    )
-  }
-
-  return <Apple size={16} strokeWidth={2.35} className="h-4 w-4 flex-none text-neutral-950" aria-hidden="true" />
+  const asset = BRAND_LOGOS[logo]
+  return (
+    <span className="inline-flex h-4 w-4 flex-none items-center justify-center rounded-[4px] bg-white p-[1px]" aria-hidden="true">
+      <img src={asset.src} alt="" className="h-full w-full object-contain" />
+    </span>
+  )
 }
 
 function DocsSearchDialog({
@@ -3491,6 +3447,7 @@ export function Docs({ initialPage = 'overview' }: { initialPage?: PageId }) {
           <Link to="/" className="group flex items-center gap-2.5 text-ink no-underline">
             <span className="text-[18px] font-semibold tracking-[-0.035em] text-ink transition-colors group-hover:text-green">mobench</span>
             <span className="rounded-md border border-[rgba(20,18,12,0.14)] bg-white px-2 py-1 font-mono text-[10.5px] uppercase tracking-[0.08em] text-muted transition-colors group-hover:border-green/35 group-hover:text-green">docs</span>
+            <span className="rounded-md border border-[rgba(20,18,12,0.14)] bg-white px-2 py-1 font-mono text-[10.5px] tracking-[0.02em] text-muted transition-colors group-hover:border-green/35 group-hover:text-green">{MOBENCH_VERSION}</span>
           </Link>
 
           <button

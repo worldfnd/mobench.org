@@ -17,6 +17,7 @@ import {
   GITHUB_URL,
   WORLD_URL,
   BROWSERSTACK_URL,
+  MOBENCH_VERSION,
 } from '@/components/icons'
 
 export const Route = createFileRoute('/')({
@@ -191,7 +192,7 @@ function Landing() {
       <header className="sticky top-0 z-50 border-b border-[rgba(20,18,12,0.09)] bg-[var(--mb-header-bg)] backdrop-blur-[14px]">
         <div className="mx-auto flex h-[60px] max-w-[1280px] items-center justify-between gap-4 px-5 sm:h-[68px] sm:px-7 lg:px-10">
           <a href="#top" className="no-underline">
-            <Wordmark tag="0.1.41" />
+            <Wordmark tag={MOBENCH_VERSION} />
           </a>
           <nav className="hidden items-center gap-[30px] text-sm text-muted lg:flex">
             <a href="#why" className="no-underline text-inherit hover:text-ink">
@@ -237,10 +238,6 @@ function Landing() {
         <div className="pointer-events-none absolute right-[120px] top-10 h-[320px] w-[320px] rounded-full border border-green/10" />
         <div className="flex flex-col items-stretch gap-10 lg:flex-row lg:items-center lg:gap-16">
           <div className="relative min-w-0 flex-1 basis-[480px]">
-            <div className="mb-[26px] inline-flex items-center gap-[9px] rounded-[30px] border border-green/30 bg-green/5 px-[11px] py-1.5 font-mono text-[11.5px] uppercase tracking-[0.1em] text-green">
-              <span className="h-1.5 w-1.5 animate-blink rounded-full bg-green" />
-              CLI + SDK + macros
-            </div>
             <h1 className="m-0 mb-6 text-[clamp(32px,9vw,70px)] font-semibold leading-[1.03] tracking-[-0.045em] sm:leading-[0.98]">
               Benchmark{' '}
               <span className="inline-flex items-baseline gap-[0.16em] whitespace-nowrap">
@@ -632,7 +629,7 @@ function Landing() {
           </div>
           <div className="mt-12 flex flex-wrap justify-between gap-3 border-t border-white/10 pt-[22px] font-mono text-[11.5px] text-[#8A9163]">
             <span>2026 World · MIT License</span>
-            <span>mobile-bench-rs · latest docs.rs 0.1.41</span>
+            <span>mobile-bench-rs · latest docs.rs {MOBENCH_VERSION}</span>
           </div>
         </div>
       </footer>

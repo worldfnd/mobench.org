@@ -162,7 +162,99 @@ function splitRustSegments(line: string) {
   return segments
 }
 
-function highlightLine(line: string) {
+function highlightShellText(value: string) {
+  const tokenPattern = /\$[A-Za-z_][A-Za-z0-9_]*|\$\{[^}]+}|%[A-Za-z_][A-Za-z0-9_]*%|--?[A-Za-z0-9][A-Za-z0-9_-]*|[A-Za-z0-9_.+/@:-]+|\d[\d_]*(?:\.\d+)?|[|&;()=<>]+|\s+|./g
+  let html = ''
+  let sawCommand = false
+
+  for (const match of value.matchAll(tokenPattern)) {
+    const token = match[0]
+    const previous = value.slice(0, match.index ?? 0)
+    const commandPosition = !sawCommand && !/^\s*$/.test(token) && /(^|\|\s*|&&\s*|;\s*)$/.test(previous)
+
+    if (/^\s+$/.test(token)) {
+      html += token
+    } else if (/^(\$[A-Za-z_][A-Za-z0-9_]*|\$\{[^}]+}|%[A-Za-z_][A-Za-z0-9_]*%)$/.test(token)) {
+      html += span('code-key', token)
+    } else if (/^--?[A-Za-z0-9][A-Za-z0-9_-]*$/.test(token)) {
+      html += span('code-flag', token)
+    } else if (/^\d/.test(token)) {
+      html += span('code-number', token)
+    } else if (commandPosition && /^[A-Za-z0-9_.+/@:-]+$/.test(token)) {
+      sawCommand = true
+      html += span('code-command', token)
+    } else if (/^[|&;()=<>]+$/.test(token)) {
+      html += span('code-operator', token)
+      if (/^(\||&&|;)$/.test(token)) sawCommand = false
+    } else {
+      html += escapeHtml(token)
+    }
+  }
+
+  return html
+}
+
+function splitShellSegments(line: string) {
+  const segments: { kind: 'text' | 'string' | 'comment'; value: string }[] = []
+  let cursor = 0
+
+  while (cursor < line.length) {
+    if (line[cursor] === '#') {
+      segments.push({ kind: 'comment', value: line.slice(cursor) })
+      break
+    }
+
+    if (line[cursor] === '"' || line[cursor] === "'") {
+      const quote = line[cursor]
+      let end = cursor + 1
+      while (end < line.length) {
+        if (line[end] === '\\') {
+          end += 2
+          continue
+        }
+        if (line[end] === quote) {
+          end += 1
+          break
+        }
+        end += 1
+      }
+      segments.push({ kind: 'string', value: line.slice(cursor, end) })
+      cursor = end
+      continue
+    }
+
+    let next = cursor + 1
+    while (next < line.length && line[next] !== '#' && line[next] !== '"' && line[next] !== "'") {
+      next += 1
+    }
+    segments.push({ kind: 'text', value: line.slice(cursor, next) })
+    cursor = next
+  }
+
+  return segments
+}
+
+function highlightShellSegments(line: string) {
+  return splitShellSegments(line)
+    .map((segment) => {
+      if (segment.kind === 'string') return span('code-string', segment.value)
+      if (segment.kind === 'comment') return span('code-comment', segment.value)
+      return highlightShellText(segment.value)
+    })
+    .join('')
+}
+
+function highlightLine(line: string, language = '') {
+  const shellLike = /^(bash|zsh|sh|shell|powershell)$/i.test(language)
+  if (shellLike) {
+    if (/^\s*\$/.test(line)) {
+      const [, indent = '', rest = ''] = line.match(/^(\s*)\$\s?(.*)$/) ?? []
+      return `${escapeHtml(indent)}${span('code-prompt', '$')}${rest ? ` ${highlightShellSegments(rest)}` : ''}`
+    }
+
+    return highlightShellSegments(line)
+  }
+
   if (/^\s*\$/.test(line)) {
     const [, indent = '', rest = ''] = line.match(/^(\s*)\$\s?(.*)$/) ?? []
     return `${escapeHtml(indent)}${span('code-prompt', '$')}${rest ? ` ${highlightText(rest)}` : ''}`
@@ -209,8 +301,11 @@ export function SyntaxHighlightedCode({
     if (!element) return
 
     const lines = getCodeLines(element)
-    element.innerHTML = lines.map((line) => `<div>${highlightLine(line)}</div>`).join('')
-  }, [children])
+    const language = Array.from(element.classList)
+      .find((className) => className.startsWith('language-'))
+      ?.replace('language-', '') ?? ''
+    element.innerHTML = lines.map((line) => `<div>${highlightLine(line, language)}</div>`).join('')
+  }, [children, className])
 
   return (
     <div ref={ref} className={cn('syntax-codebox', className)}>
