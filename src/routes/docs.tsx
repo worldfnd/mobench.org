@@ -2786,11 +2786,21 @@ async function copyText(text: string) {
   textarea.remove()
 }
 
-function DocsActions({ active }: { active: PageDef }) {
-  const [open, setOpen] = useState(false)
-  const [copied, setCopied] = useState(false)
+export function DocsActions({
+ active,
+ getMarkdown,
+ label = 'Use page',
+ mobileLabel = 'Use',
+}: {
+ active?: PageDef
+ getMarkdown?: () => string
+ label?: string
+ mobileLabel?: string
+}) {
+ const [open, setOpen] = useState(false)
+ const [copied, setCopied] = useState(false)
 
-  const currentMarkdown = () => docsPageMarkdown(active)
+ const currentMarkdown = () => getMarkdown?.() ?? (active ? docsPageMarkdown(active) : '# mobench\n\n' + document.body.innerText.trim())
 
   const copyPage = async () => {
     await copyText(currentMarkdown())
@@ -2810,8 +2820,8 @@ function DocsActions({ active }: { active: PageDef }) {
         className="inline-flex h-9 cursor-pointer items-center gap-2 rounded-lg border border-[rgba(20,18,12,0.16)] bg-white px-3 font-sans text-[13px] font-medium text-ink shadow-[0_8px_24px_-22px_rgba(20,18,12,0.5)] transition-colors hover:border-green/45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green/30"
       >
         {copied ? <Check size={15} /> : <MessageCircle size={15} />}
-        <span className="hidden sm:inline">{copied ? 'Copied' : 'Use page'}</span>
-        <span className="sm:hidden">{copied ? 'Done' : 'Use'}</span>
+ <span className="hidden sm:inline">{copied ? 'Copied' : label}</span>
+ <span className="sm:hidden">{copied ? 'Done' : mobileLabel}</span>
         <ChevronDown size={15} className={cn('transition-transform', open && 'rotate-180')} />
       </button>
 

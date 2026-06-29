@@ -3,7 +3,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
 import { SyntaxHighlightedCode } from '@/components/code-highlight'
 import { ThemeToggle } from '@/components/theme-toggle'
-import { Docs } from './docs'
+import { Docs, DocsActions } from './docs'
 import {
   Accordion,
   AccordionContent,
@@ -152,13 +152,22 @@ function ToolLogo({ logo }: { logo: ToolLogoName }) {
 }
 
 function ToolItem({ logo, children }: { logo: ToolLogoName; children: ReactNode }) {
-  return (
-    <span className="inline-flex items-center gap-2 whitespace-nowrap">
-      <ToolLogo logo={logo} />
-      <span>{children}</span>
-    </span>
-  )
+ return (
+ <span className="inline-flex items-center gap-2 whitespace-nowrap">
+ <ToolLogo logo={logo} />
+ <span>{children}</span>
+ </span>
+ )
 }
+
+function landingPageMarkdown() {
+ const page = document.querySelector('[data-landing-page]')
+ const clone = page?.cloneNode(true) as HTMLElement | undefined
+ clone?.querySelectorAll('[data-docs-actions]').forEach((element) => element.remove())
+ const pageText = clone?.textContent?.replace(/\n{3,}/g, '\n\n').trim() ?? 'mobench'
+ return `# mobench\n\n${pageText}`
+}
+
 function Root() {
   const isDocsHost = typeof window !== 'undefined' && window.location.hostname === 'docs.mobench.org'
   return isDocsHost ? <Docs /> : <Landing />
@@ -178,7 +187,7 @@ function Landing() {
   }
 
   return (
-    <div className="overflow-hidden bg-cream text-ink">
+    <div className="overflow-hidden bg-cream text-ink" data-landing-page>
       <header className="sticky top-0 z-50 border-b border-[rgba(20,18,12,0.09)] bg-[var(--mb-header-bg)] backdrop-blur-[14px]">
         <div className="mx-auto flex h-[60px] max-w-[1280px] items-center justify-between gap-4 px-5 sm:h-[68px] sm:px-7 lg:px-10">
           <a href="#top" className="no-underline">
@@ -205,6 +214,7 @@ function Landing() {
             </a>
         </nav>
         <div className="flex items-center gap-3">
+          <DocsActions getMarkdown={landingPageMarkdown} />
           <ThemeToggle />
           <a
             href={GITHUB_URL}
