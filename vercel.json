@@ -3,5 +3,20 @@
   "framework": "vite",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "rewrites": [{ "source": "/((?!assets/|og/|llms\\.txt).*)", "destination": "/index.html" }]
+  "rewrites": [
+    {
+      "source": "/((?!assets/|og/|llms\\.txt).*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "docs.mobench.org"
+        }
+      ],
+      "destination": "/index.html"
+    },
+    {
+      "source": "/((?!assets/|og/|llms\\.txt).*)",
+      "destination": "/index.html"
+    }
+  ]
 }
