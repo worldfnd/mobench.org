@@ -195,10 +195,6 @@ def draw_card(filename: str, title: str, eyebrow: str, description: str, page_pa
 
     draw_chips(draw, chip_items, accent)
     draw.text((70, 570), page_path, font=FONT_PATH, fill=PALETTE["faint"])
-    name = filename.replace("-", " ")
-    name_w = text_width(draw, name, FONT_PATH)
-    draw.text((1104 - name_w, 570), name, font=FONT_PATH, fill=accent)
-
     canvas.convert("RGB").save(OUT_DIR / f"{filename}.jpg", quality=92, optimize=True, progressive=True)
 
 

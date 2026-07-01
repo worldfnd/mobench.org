@@ -628,7 +628,7 @@ function Landing() {
             </div>
           </div>
           <div className="mt-12 flex flex-wrap justify-between gap-3 border-t border-white/10 pt-[22px] font-mono text-[11.5px] text-[#8A9163]">
-            <span>2026 World · MIT License</span>
+            <span>2026 World Foundation · MIT License</span>
             <span>mobile-bench-rs · latest docs.rs {MOBENCH_VERSION}</span>
           </div>
         </div>
