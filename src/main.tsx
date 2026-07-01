@@ -4,8 +4,11 @@ import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { routeTree } from './routeTree.gen'
 import './styles.css'
 
+const isDocsSubdomain = typeof window !== 'undefined' && window.location.hostname === 'docs.mobench.org'
+
 const router = createRouter({
   routeTree,
+  basepath: isDocsSubdomain ? '/docs' : '/',
   defaultPreload: 'intent',
   scrollRestoration: true,
 })
