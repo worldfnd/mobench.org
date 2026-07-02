@@ -19,11 +19,11 @@ export function WorldMark(props: SVGProps<SVGSVGElement>) {
 export function Wordmark({ tag }: { tag?: string }) {
   return (
     <span className="flex items-center gap-2.5">
-      <span className="text-[20px] font-semibold tracking-[-0.045em] text-ink">
+      <span className="text-[20px] font-semibold tracking-[-0.045em] text-ink xl:text-[26px]">
         mobench
       </span>
       {tag ? (
-        <span className="font-mono text-[10.5px] text-faint border border-[rgba(20,18,12,0.16)] px-1.5 py-0.5 rounded-[5px] tracking-[0.02em]">
+        <span className="font-mono text-[10.5px] text-faint border border-[rgba(20,18,12,0.16)] px-1.5 py-0.5 rounded-[5px] tracking-[0.02em] xl:text-[12.5px] xl:px-2 xl:py-1">
           {tag}
         </span>
       ) : null}
