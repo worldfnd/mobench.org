@@ -2827,12 +2827,12 @@ export function DocsActions({
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
-        className="inline-flex h-9 cursor-pointer items-center gap-2 rounded-lg border border-[rgba(20,18,12,0.16)] bg-white px-3 font-sans text-[13px] font-medium text-ink shadow-[0_8px_24px_-22px_rgba(20,18,12,0.5)] transition-colors hover:border-green/45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green/30"
+        className="inline-flex h-9 cursor-pointer items-center gap-2 rounded-lg border border-[rgba(20,18,12,0.16)] bg-white px-3 font-sans text-[13px] font-medium text-ink shadow-[0_8px_24px_-22px_rgba(20,18,12,0.5)] transition-colors hover:border-green/45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green/30 xl:h-12 xl:gap-3 xl:rounded-xl xl:px-5 xl:text-[17px]"
       >
-        {copied ? <Check size={15} /> : <MessageCircle size={15} />}
+        {copied ? <Check className="h-[15px] w-[15px] xl:h-5 xl:w-5" /> : <MessageCircle className="h-[15px] w-[15px] xl:h-5 xl:w-5" />}
  <span className="hidden sm:inline">{copied ? 'Copied' : label}</span>
  <span className="sm:hidden">{copied ? 'Done' : mobileLabel}</span>
-        <ChevronDown size={15} className={cn('transition-transform', open && 'rotate-180')} />
+      <ChevronDown className={cn('h-[15px] w-[15px] transition-transform xl:h-5 xl:w-5', open && 'rotate-180')} />
       </button>
 
       {open && (

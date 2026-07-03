@@ -149,7 +149,7 @@ const TOOL_LOGOS: Record<ToolLogoName, { src: string; alt: string }> = {
 
 function ToolLogo({ logo }: { logo: ToolLogoName }) {
   const asset = TOOL_LOGOS[logo]
-  return <img src={asset.src} alt="" aria-hidden="true" className="h-[18px] w-[18px] flex-none object-contain" />
+  return <img src={asset.src} alt="" aria-hidden="true" className="h-[18px] w-[18px] flex-none object-contain xl:h-6 xl:w-6" />
 }
 
 function ToolItem({ logo, children }: { logo: ToolLogoName; children: ReactNode }) {
@@ -177,24 +177,24 @@ function Root() {
 function Landing() {
   const [copied, setCopied] = useState(false)
 
-  const copyCmd = () => {
+const copyCmd = () => {
     try {
       navigator.clipboard?.writeText('cargo install mobench')
     } catch {
       /* noop */
     }
     setCopied(true)
-    window.setTimeout(() => setCopied(false), 1600)
-  }
+  window.setTimeout(() => setCopied(false), 1600)
+}
 
   return (
     <div className="overflow-hidden bg-cream text-ink" data-landing-page>
       <header className="sticky top-0 z-50 border-b border-[rgba(20,18,12,0.09)] bg-[var(--mb-header-bg)] backdrop-blur-[14px]">
-        <div className="mx-auto flex h-[60px] max-w-[1280px] items-center justify-between gap-4 px-5 sm:h-[68px] sm:px-7 lg:px-10">
+        <div className="mx-auto flex h-[60px] max-w-[1280px] items-center justify-between gap-4 px-5 sm:h-[68px] sm:px-7 lg:px-10 xl:h-[84px] xl:max-w-[min(1680px,calc(100vw-96px))]">
           <a href="#top" className="no-underline">
             <Wordmark tag={MOBENCH_VERSION} />
           </a>
-          <nav className="hidden items-center gap-[30px] text-sm text-muted lg:flex">
+        <nav className="hidden items-center gap-[30px] text-sm text-muted lg:flex xl:gap-10 xl:text-[17px]">
             <a href="#why" className="no-underline text-inherit hover:text-ink">
               Why
             </a>
@@ -214,31 +214,30 @@ function Landing() {
               Docs
             </a>
         </nav>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 xl:gap-4">
           <DocsActions getMarkdown={landingPageMarkdown} />
           <ThemeToggle />
           <a
             href={GITHUB_URL}
               target="_blank"
               rel="noreferrer"
-              className="hidden items-center gap-2 rounded-lg border border-[rgba(20,18,12,0.16)] px-[13px] py-2 text-[13px] text-ink no-underline sm:flex hover:border-green/50"
+          className="hidden items-center gap-2 rounded-lg border border-[rgba(20,18,12,0.16)] px-[13px] py-2 text-[13px] text-ink no-underline sm:flex hover:border-green/50 xl:h-12 xl:gap-3 xl:rounded-xl xl:px-5 xl:text-[17px]"
             >
-              <GithubIcon />
+          <GithubIcon className="h-[15px] w-[15px] xl:h-5 xl:w-5" />
               <span>GitHub</span>
             </a>
-            <Button asChild size="sm" className="px-4 py-[9px] text-[13px]">
+        <Button asChild size="sm" className="hidden px-4 py-[9px] text-[13px] sm:inline-flex xl:h-12 xl:rounded-xl xl:px-6 xl:text-[17px]">
               <a href={DOCS_URL}>Read docs</a>
             </Button>
           </div>
         </div>
       </header>
 
-      <section id="top" className="relative mx-auto max-w-[1280px] px-5 pb-16 pt-16 sm:px-7 sm:pb-[88px] sm:pt-24 lg:px-10">
-        <div className="pointer-events-none absolute -right-[160px] -top-[120px] h-[620px] w-[620px] rounded-full border border-green/15" />
-        <div className="pointer-events-none absolute right-[120px] top-10 h-[320px] w-[320px] rounded-full border border-green/10" />
-        <div className="flex flex-col items-stretch gap-10 lg:flex-row lg:items-center lg:gap-16">
-          <div className="relative min-w-0 flex-1 basis-[480px]">
-            <h1 className="m-0 mb-6 text-[clamp(32px,9vw,70px)] font-semibold leading-[1.03] tracking-[-0.045em] sm:leading-[0.98]">
+      <div className="flex flex-col lg:min-h-[calc(100svh-152px)]">
+        <section id="top" className="relative mx-auto flex w-full max-w-[1280px] flex-1 items-center px-5 py-14 sm:px-7 sm:py-20 lg:px-10 lg:py-14 xl:max-w-[min(1680px,calc(100vw-96px))] xl:gap-20 xl:py-14 2xl:py-14">
+          <div className="flex w-full flex-col items-stretch gap-10 lg:flex-row lg:items-center lg:gap-16 xl:gap-[clamp(72px,6vw,124px)]">
+          <div className="relative min-w-0 flex-1 basis-[480px] xl:basis-[min(44vw,720px)]">
+            <h1 className="m-0 mb-6 text-[clamp(32px,9vw,70px)] font-semibold leading-[1.03] tracking-[-0.045em] sm:leading-[0.98] xl:text-[clamp(70px,4.9vw,96px)]">
               Benchmark{' '}
               <span className="inline-flex items-baseline gap-[0.16em] whitespace-nowrap">
                 Rust
@@ -248,21 +247,21 @@ function Landing() {
               <br className="hidden sm:block" />{' '}
               actually <br className="sm:hidden" />runs, on <span className="text-green">mobile devices</span>.
             </h1>
-            <p className="m-0 mb-[34px] max-w-[570px] text-[16px] leading-[1.58] text-muted sm:text-[19px] sm:leading-[1.5]">
+            <p className="m-0 mb-[34px] max-w-[570px] text-[16px] leading-[1.58] text-muted sm:text-[19px] sm:leading-[1.5] xl:max-w-[720px] xl:text-[clamp(19px,1.15vw,24px)]">
               mobench builds Android and iOS benchmark runners, executes Rust benchmarks locally or on
               BrowserStack devices, and writes CI-friendly reports from the same crate code you already ship.
             </p>
-            <div className="flex flex-wrap items-center gap-[13px]">
-              <Button asChild variant="ink" className="text-[15px]">
+          <div className="flex flex-wrap items-center gap-[13px] xl:gap-5">
+            <Button asChild variant="ink" className="text-[15px] xl:h-[64px] xl:rounded-[14px] xl:px-8 xl:text-[20px]">
                 <a href={DOCS_URL}>Start with the docs</a>
               </Button>
-              <Button asChild variant="outline" className="text-[15px]">
+            <Button asChild variant="outline" className="text-[15px] xl:h-[64px] xl:rounded-[14px] xl:px-8 xl:text-[20px]">
                 <a href={DOCSRS.mobench} target="_blank" rel="noreferrer">
                   API reference
                 </a>
               </Button>
             </div>
-            <div className="mt-9 flex flex-wrap gap-x-[18px] gap-y-2 font-mono text-[11.5px] tracking-[0.02em] text-faint sm:mt-11 sm:gap-[26px] sm:text-xs">
+          <div className="mt-9 flex flex-wrap gap-x-[18px] gap-y-2 font-mono text-[11.5px] tracking-[0.02em] text-faint sm:mt-11 sm:gap-[26px] sm:text-xs xl:mt-14 xl:gap-x-11 xl:text-[17px]">
               <span>mobench CLI</span>
               <span className="text-[rgba(20,18,12,0.2)]">/</span>
               <span>mobench-sdk</span>
@@ -271,7 +270,7 @@ function Landing() {
             </div>
           </div>
 
-          <div className="relative min-w-0 flex-1 basis-[420px]">
+          <div className="relative min-w-0 flex-1 basis-[420px] xl:basis-[min(42vw,720px)]">
             <div className="relative animate-floaty overflow-hidden rounded-[22px] border border-[rgba(20,18,12,0.10)] bg-white shadow-[0_40px_80px_-48px_rgba(20,18,12,0.55)]">
               <img
                 src="/assets/mobench-bench.png"
@@ -288,11 +287,11 @@ function Landing() {
       </section>
 
       <section className="border-y border-[rgba(20,18,12,0.08)] bg-white">
-      <div className="mx-auto flex max-w-[1280px] flex-wrap items-center justify-between gap-[18px] px-5 py-[18px] sm:gap-[30px] sm:px-7 sm:py-[22px] lg:px-10">
-          <span className="font-mono text-[11.5px] uppercase tracking-[0.08em] text-faint">
+        <div className="mx-auto flex max-w-[1280px] flex-wrap items-center justify-between gap-[18px] px-5 py-[18px] sm:gap-[30px] sm:px-7 sm:py-[22px] lg:px-10 xl:min-h-[92px] xl:max-w-[min(1680px,calc(100vw-96px))] xl:py-0">
+          <span className="font-mono text-[11.5px] uppercase tracking-[0.08em] leading-none text-faint xl:text-[15px]">
             Drop-in with tools you already use
           </span>
-          <div className="flex flex-wrap items-center gap-9 text-[15px] font-medium text-muted">
+          <div className="flex flex-wrap items-center gap-9 font-mono text-[11.5px] uppercase tracking-[0.08em] leading-none text-muted xl:gap-12 xl:text-[15px]">
             <span>inventory</span>
             <ToolItem logo="android">Android NDK</ToolItem>
             <ToolItem logo="apple">Xcode</ToolItem>
@@ -301,9 +300,10 @@ function Landing() {
           </div>
         </div>
       </section>
+      </div>
 
       <section id="why" className="border-b border-[rgba(20,18,12,0.08)] bg-cream">
-        <div className={`${SECTION} grid gap-9 py-16 md:grid-cols-[0.85fr_1.15fr] md:py-[96px]`}>
+        <div className={`${SECTION} grid gap-9 pt-10 pb-16 md:grid-cols-[0.85fr_1.15fr] md:pt-12 md:pb-[96px]`}>
           <div>
             <div className={EYEBROW}>Why mobench exists</div>
             <h2 className={`${H2} max-w-[560px]`}>
