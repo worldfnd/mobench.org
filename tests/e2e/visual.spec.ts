@@ -5,6 +5,9 @@ const docs = 'http://127.0.0.1:3001'
 const marketingDesktopSnapshot = process.platform === 'linux'
   ? 'marketing-light-desktop-linux.png'
   : 'marketing-light-desktop.png'
+const marketingMobileSnapshot = process.platform === 'linux'
+  ? 'marketing-dark-mobile-linux.png'
+  : 'marketing-dark-mobile.png'
 
 test('key marketing states match reviewed visuals', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 })
@@ -14,7 +17,7 @@ test('key marketing states match reviewed visuals', async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 })
   await page.goto(marketing, { waitUntil: 'networkidle' })
   await page.locator('[data-theme-toggle]').click()
-  await expect(page).toHaveScreenshot('marketing-dark-mobile.png', { fullPage: true, animations: 'disabled' })
+  await expect(page).toHaveScreenshot(marketingMobileSnapshot, { fullPage: true, animations: 'disabled' })
 })
 
 test('key documentation states match reviewed visuals', async ({ page }) => {
