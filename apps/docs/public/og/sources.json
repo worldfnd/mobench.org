@@ -1,0 +1,22 @@
+{
+  "outputs.png": "73b81c839510f0431e5af2ae8909e71911d75c6122b3ebddcec598f4f178677a",
+  "profiling.png": "e74c3260aaca4326841f3bd991c8e9e480f8bf12429498fd9549549230eae59e",
+  "regressions.png": "965b5321e6b7c533ec5db5286602f2fba9a071de42eb2a23feff42f29481e39e",
+  "basic-example.png": "35f993c9163d6ea78d329bb9fed28f15bd930e9026d670cfc5a0238178ad51a1",
+  "ffi-example.png": "623605bae13c8a15c12770405205aa0a4bb289c5405f81f0a76459f7e80f1ee4",
+  "installation.png": "cb3666f44b7bfec5c68d066395dbabce575b7c07491bbabe5ab0ab468a2ccaa4",
+  "quickstart.png": "5db0d4816a68b79621a86cdd2b3bce84d973bac1cfb392152629eb5b390fdfd4",
+  "troubleshooting.png": "e71cc7ee9a207cc81ff4fecf4285f468faee5d217961420602b32ae029b065ae",
+  "index.png": "ad18990ca3ca52108cf766b65900cf05a9a2266acd8b207f007923f0a192cb63",
+  "cli.png": "024145b6b257f65425d4f01e02b4e6ac5e8d68e541ea3f92f5f549d803c36e2d",
+  "compatibility.png": "9851565dc082b36bb607903b21ac733a7e2a6ff769be2a5b2602d6cb739f21c3",
+  "configuration.png": "92e642d19cb8bbadaccd4d5c7f60d673d3717a5379fdb4b4985b5fd74adac094",
+  "device-matrices.png": "742e681a7b826deb6087413706b42b1d32c5ca42f060830d68ec96ed24e30f13",
+  "schemas.png": "e41a1020e0218ee161d85d850382bdef5b606caeda8d80f904f84259fa786486",
+  "browserstack.png": "c4002efad904f6efba71d83520f30d267ae3b11e81f889743c6892761a34646a",
+  "ci.png": "a93c3bc4fac01dc8949d026a1967e75fc8a5445177d038036de7fd3382afe932",
+  "host-preflight.png": "f5709a7b8078a0c8d801e15a71cf101ac397fcb121c823267fa57db7ea9c04a9",
+  "benchmark-functions.png": "f5855a3134d1d065bc7cf0277a32b82576060852054180ec769c395e81bf4e3f",
+  "benchmark-quality.png": "4a129d7bdd4656f3b359dd5766642d26d993e0c44c3d3ed8bbab8a52f8dbee6a",
+  "setup-teardown.png": "ba8e17c52b8f4ddeacdc7d277a093513bd36bd320a0dd8fe9afc3a1028a7d0ca"
+}

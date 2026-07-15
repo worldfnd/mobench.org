@@ -1,5 +1,6 @@
 import sharp from 'sharp'
 import { parse as parseYaml } from 'yaml'
+import { createHash } from 'node:crypto'
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises'
 import { dirname, join, relative, resolve } from 'node:path'
 import pin from '@mobench/truth/pin'
@@ -73,6 +74,27 @@ async function emit(path: string, output: Buffer) {
   }
 }
 
+async function emitPng(path: string, svg: string) {
+  if (checkOnly) {
+    let existing: Buffer
+    try {
+      existing = await readFile(path)
+    } catch {
+      throw new Error(`${relative(root, path)} is missing; run bun run generate`)
+    }
+    const metadata = await sharp(existing).metadata()
+    if (metadata.format !== 'png' || metadata.width !== 1200 || metadata.height !== 630) {
+      throw new Error(`${relative(root, path)} must be a 1200x630 PNG; run bun run generate`)
+    }
+    return
+  }
+  await emit(path, await sharp(Buffer.from(svg)).png({ compressionLevel: 9, palette: true }).toBuffer())
+}
+
+function sourceHash(svg: string) {
+  return createHash('sha256').update(svg).digest('hex')
+}
+
 const pages: Page[] = []
 for (const file of (await filesUnder(docsRoot)).filter((path) => /\.mdx?$/.test(path))) {
   const source = await readFile(file, 'utf8')
@@ -81,10 +103,21 @@ for (const file of (await filesUnder(docsRoot)).filter((path) => /\.mdx?$/.test(
   const page = parseYaml(frontmatter[1]) as Page
   if (!page.draft) pages.push(page)
 }
+const docsSources: Record<string, string> = {}
 for (const page of pages) {
-  const png = await sharp(Buffer.from(artwork(page))).png({ compressionLevel: 9, palette: true }).toBuffer()
-  await emit(join(root, 'apps/docs/public/og', `${page.slug}.png`), png)
+  const svg = artwork(page)
+  docsSources[`${page.slug}.png`] = sourceHash(svg)
+  await emitPng(join(root, 'apps/docs/public/og', `${page.slug}.png`), svg)
 }
 const landing: Page = { title: 'Rust benchmarks, measured on mobile.', description: '', section: 'mobench', slug: 'landing', release: pin.version }
-await emit(join(root, 'apps/marketing/public/og/landing.png'), await sharp(Buffer.from(artwork(landing))).png({ compressionLevel: 9, palette: true }).toBuffer())
+const landingSvg = artwork(landing)
+await emitPng(join(root, 'apps/marketing/public/og/landing.png'), landingSvg)
+await emit(
+  join(root, 'apps/docs/public/og/sources.json'),
+  Buffer.from(`${JSON.stringify(docsSources, null, 2)}\n`),
+)
+await emit(
+  join(root, 'apps/marketing/public/og/sources.json'),
+  Buffer.from(`${JSON.stringify({ 'landing.png': sourceHash(landingSvg) }, null, 2)}\n`),
+)
 console.log(`${checkOnly ? 'Checked' : 'Generated'} ${pages.length + 1} responsive social images.`)
