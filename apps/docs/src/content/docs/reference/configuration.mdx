@@ -1,0 +1,147 @@
+---
+title: Configuration
+slug: configuration
+aliases: [/concepts]
+description: Configure project builds separately from benchmark run and provider settings.
+sidebar:
+  order: 2
+audience: [benchmark-author, ci-engineer]
+release: 0.1.43
+lastVerified: 2026-07-15
+section: Reference
+order: 2
+sourceRefs:
+  - label: Current configuration specification
+    url: https://github.com/worldcoin/mobile-bench-rs/blob/d1a3176f9144f35e777e83fd07045116144da257/docs/specs/mobench-current-spec.md
+    evidence: Project config, run config, resolution order, and examples.
+---
+
+mobench uses two TOML files for different concerns:
+
+- `mobench.toml` describes the benchmark crate and generated mobile projects.
+- `bench-config.toml` describes a run, device selection, and BrowserStack settings.
+
+Keeping them separate lets one project support several CI matrices without duplicating build identity.
+
+{/* BEGIN GENERATED CONFIG REFERENCE */}
+{/* Generated from @mobench/truth. Do not edit this section by hand. */}
+
+## Published configuration keys
+
+These are the complete configuration keys in the pinned release contract. Example files below may use only a task-specific subset.
+
+### `mobench.toml`
+
+| Key | Value | Required | Default | Evidence |
+| --- | --- | --- | --- | --- |
+| `project.crate` | `string|null` | no | — | `source-mobench-config` |
+| `project.library_name` | `string|null` | no | — | `source-mobench-config` |
+| `project.output_dir` | `path|null` | no | — | `source-mobench-config` |
+| `android.package` | `string` | no | dev.world.bench | `source-mobench-config` |
+| `android.min_sdk` | `integer` | no | 24 | `source-mobench-config` |
+| `android.target_sdk` | `integer` | no | 34 | `source-mobench-config` |
+| `android.abis` | `string[]|null` | no | — | `source-mobench-config` |
+| `ios.bundle_id` | `string` | no | dev.world.bench | `source-mobench-config` |
+| `ios.deployment_target` | `string` | no | 15.0 | `source-mobench-config` |
+| `ios.team_id` | `string|null` | no | — | `source-mobench-config` |
+| `benchmarks.default_function` | `string|null` | no | — | `source-mobench-config` |
+| `benchmarks.default_iterations` | `integer` | no | 100 | `source-mobench-config` |
+| `benchmarks.default_warmup` | `integer` | no | 10 | `source-mobench-config` |
+| `browserstack.ios_completion_timeout_secs` | `integer|null` | no | — | `source-mobench-config` |
+
+### `bench-config.toml`
+
+| Key | Value | Required | Default | Evidence |
+| --- | --- | --- | --- | --- |
+| `target` | `android|ios` | yes | — | `source-bench-config` |
+| `function` | `string` | yes | — | `source-bench-config` |
+| `iterations` | `integer` | yes | — | `source-bench-config` |
+| `warmup` | `integer` | yes | — | `source-bench-config` |
+| `device_matrix` | `path` | yes | — | `source-bench-config` |
+| `device_tags` | `string[]|null` | no | — | `source-bench-config` |
+| `browserstack.app_automate_username` | `string` | yes | — | `source-bench-config` |
+| `browserstack.app_automate_access_key` | `string` | yes | — | `source-bench-config` |
+| `browserstack.project` | `string|null` | no | — | `source-bench-config` |
+| `browserstack.ios_completion_timeout_secs` | `integer|null` | no | — | `source-bench-config` |
+| `browserstack.android_benchmark_timeout_secs` | `integer|null` | no | — | `source-bench-config` |
+| `browserstack.android_heartbeat_interval_secs` | `integer|null` | no | — | `source-bench-config` |
+| `ios_xcuitest.app` | `path` | no | — | `source-bench-config` |
+| `ios_xcuitest.test_suite` | `path` | no | — | `source-bench-config` |
+
+{/* END GENERATED CONFIG REFERENCE */}
+
+## Project configuration
+
+Place `mobench.toml` at the project or workspace root:
+
+```toml test=config:mobench.toml
+[project]
+crate = "bench-mobile"
+library_name = "bench_mobile"
+output_dir = "target/mobench"
+
+[android]
+package = "com.example.bench"
+min_sdk = 24
+target_sdk = 34
+abis = ["arm64-v8a"]
+
+[ios]
+bundle_id = "com.example.bench"
+deployment_target = "15.0"
+team_id = "ABCDE12345"
+
+[benchmarks]
+default_function = "bench_mobile::checksum"
+default_iterations = 100
+default_warmup = 10
+```
+
+The pinned release contract defines only the keys shown above for generated project identity and build defaults. Runner-backend selection is not a published `mobench.toml` key in 0.1.43.
+
+## Run configuration
+
+Use `bench-config.toml` for a repeatable run:
+
+```toml test=config:bench-config.toml
+target = "android"
+function = "bench_mobile::checksum"
+iterations = 100
+warmup = 10
+device_matrix = "device-matrix.yaml"
+device_tags = ["default"]
+
+[browserstack]
+app_automate_username = "${BROWSERSTACK_USERNAME}"
+app_automate_access_key = "${BROWSERSTACK_ACCESS_KEY}"
+project = "mobile-benchmarks"
+
+[ios_xcuitest]
+app = "target/mobench/ios/BenchRunner.ipa"
+test_suite = "target/mobench/ios/BenchRunnerUITests.zip"
+```
+
+Validate it before a run:
+
+```bash
+mobench config validate --config bench-config.toml
+```
+
+## Resolution and overrides
+
+Explicit CLI values take precedence over config values. Project discovery considers explicit `--project-root` and `--crate-path`, explicit config, a discovered `mobench.toml`, Cargo workspace metadata, the Git root, and the legacy `bench-mobile/` layout.
+
+Use explicit paths in CI when a workspace contains several plausible benchmark crates:
+
+```bash
+mobench build \
+  --target android \
+  --project-root . \
+  --crate-path crates/bench-mobile
+```
+
+`--device-matrix` overrides the matrix path from `--config`. Do not combine `--devices` and `--device-matrix`; choose one source of device selection.
+
+## Next step
+
+Generate a [device matrix](/device-matrices/) and validate the combined setup with `mobench doctor`.

@@ -1,0 +1,115 @@
+---
+import '../styles/global.css'
+
+interface Props {
+  title: string
+  description: string
+  canonicalPath?: string
+  image?: string
+  imageAlt?: string
+  noindex?: boolean
+}
+
+const {
+  title,
+  description,
+  canonicalPath = Astro.url.pathname,
+  image = '/og/landing.png',
+  imageAlt = 'mobench — Rust benchmarks built for mobile',
+  noindex = false,
+} = Astro.props
+const canonical = new URL(canonicalPath, 'https://mobench.org')
+const socialImage = new URL(image, 'https://mobench.org')
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareSourceCode',
+  name: 'mobench',
+  description,
+  url: canonical.href,
+  codeRepository: 'https://github.com/worldcoin/mobile-bench-rs',
+  programmingLanguage: 'Rust',
+  runtimePlatform: ['Android', 'iOS'],
+  license: 'https://opensource.org/license/mit',
+}
+---
+
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#f4efdd" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#11160f" media="(prefers-color-scheme: dark)" />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="mobench" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={socialImage} />
+    <meta property="og:image:alt" content={imageAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={socialImage} />
+    <title>{title}</title>
+    <script is:inline>
+      (() => {
+        try {
+          const saved = localStorage.getItem('mobench-theme')
+          const theme = saved === 'dark' || saved === 'light'
+            ? saved
+            : matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+          document.documentElement.dataset.theme = theme
+        } catch {}
+      })()
+    </script>
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <slot />
+    <script>
+      const themeButtons = document.querySelectorAll('[data-theme-toggle]')
+      const syncThemeLabels = () => {
+        const isDark = document.documentElement.dataset.theme === 'dark'
+        themeButtons.forEach((button) => {
+          button.setAttribute('aria-label', isDark ? 'Use light theme' : 'Use dark theme')
+          button.setAttribute('aria-pressed', String(isDark))
+        })
+      }
+      themeButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'
+          document.documentElement.dataset.theme = theme
+          localStorage.setItem('mobench-theme', theme)
+          syncThemeLabels()
+        })
+      })
+      syncThemeLabels()
+
+      document.querySelectorAll('[data-copy]').forEach((button) => {
+        button.addEventListener('click', async () => {
+          const value = button.getAttribute('data-copy') ?? ''
+          const label = button.querySelector('[data-copy-label]')
+          try {
+            await navigator.clipboard.writeText(value)
+            if (label) label.textContent = 'Copied'
+            document.dispatchEvent(new CustomEvent('mobench:analytics', {
+              detail: { name: 'install_copied' },
+            }))
+          } catch {
+            if (label) label.textContent = 'Copy failed'
+          }
+          window.setTimeout(() => {
+            if (label) label.textContent = 'Copy'
+          }, 1600)
+        })
+      })
+    </script>
+    <script src="../scripts/analytics.ts"></script>
+  </body>
+</html>

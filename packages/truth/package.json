@@ -1,0 +1,12 @@
+{
+  "name": "@mobench/truth",
+  "version": "0.1.43",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./manifest": "./mobench-site-manifest-v1.json",
+    "./pin": "./pin.json",
+    "./fixtures/basic": "./fixtures/summary-basic.json",
+    "./fixtures/ffi": "./fixtures/summary-ffi.json"
+  }
+}

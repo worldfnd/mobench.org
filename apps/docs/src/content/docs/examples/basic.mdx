@@ -1,0 +1,86 @@
+---
+title: Basic benchmark crate
+slug: basic-example
+aliases: [/examples]
+description: Follow the minimal SDK example from registration to host and mobile execution.
+sidebar:
+  order: 1
+audience: [new-user, benchmark-author]
+release: 0.1.43
+lastVerified: 2026-07-15
+section: Examples
+order: 1
+sourceRefs:
+  - label: Basic benchmark example
+    url: https://github.com/worldcoin/mobile-bench-rs/blob/d1a3176f9144f35e777e83fd07045116144da257/examples/basic-benchmark/README.md
+    evidence: Minimal crate setup, registered functions, tests, and run commands.
+---
+
+The upstream `examples/basic-benchmark` crate is the smallest complete integration. It registers two realistic workloads, exposes mobile entrypoints, and keeps deterministic fixture output for tests.
+
+## Cargo setup
+
+```toml
+[lib]
+name = "basic_benchmark"
+crate-type = ["lib", "cdylib", "staticlib"]
+
+[dependencies]
+mobench-sdk = { version = "0.1.43", default-features = false, features = ["registry"] }
+inventory = "0.3"
+serde = { version = "1", features = ["derive"] }
+thiserror = "1"
+uniffi = { version = "0.28", features = ["cli"] }
+```
+
+Use dependency versions compatible with your lockfile; the key mobench requirement is matching the `0.1.43` SDK line.
+
+## Benchmark functions
+
+```rust
+use mobench_sdk::benchmark;
+
+#[benchmark]
+pub fn bench_checksum() {
+    let bytes = std::hint::black_box(&INPUT);
+    let result = checksum_sweep(bytes, 8 * 1024, 2_048);
+    std::hint::black_box(result);
+}
+```
+
+The upstream example uses deterministic, nontrivial input and enough repeated work to avoid a benchmark dominated by timer noise.
+
+## Test and discover
+
+From a checkout of `mobile-bench-rs`:
+
+```bash
+cargo test -p basic-benchmark
+mobench list --crate-path examples/basic-benchmark
+```
+
+Host-side preflight:
+
+```bash
+mobench run \
+  --crate-path examples/basic-benchmark \
+  --target android \
+  --function basic_benchmark::bench_fibonacci \
+  --local-only
+```
+
+This validates the host harness only. For a mobile result, add an exact BrowserStack device and `--release`:
+
+```bash
+mobench run \
+  --crate-path examples/basic-benchmark \
+  --target android \
+  --function basic_benchmark::bench_fibonacci \
+  --devices "Google Pixel 7-13.0" \
+  --release \
+  --output target/mobench/results.json
+```
+
+## Next step
+
+Copy the crate structure, replace one benchmark at a time, and confirm each new name with `mobench list`.

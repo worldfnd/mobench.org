@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "repository": "https://github.com/worldcoin/mobile-bench-rs",
+  "release": "v0.1.43",
+  "version": "0.1.43",
+  "commitSha": "d1a3176f9144f35e777e83fd07045116144da257",
+  "manifestSha256": "b2de1cc240f21e7bde6f6386ac8d7aaee1ef2710b2bbf26c5e2d7fde95e561f5",
+  "syncedAt": "2026-07-15",
+  "buildPolicy": "offline-pinned"
+}

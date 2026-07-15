@@ -1,0 +1,55 @@
+---
+title: mobench documentation
+slug: index
+aliases: [/docs, /overview]
+description: Build, run, and analyze Rust benchmarks on Android and iOS.
+audience: [new-user, benchmark-author, ci-engineer]
+release: 0.1.43
+lastVerified: 2026-07-15
+section: Overview
+order: 0
+sourceRefs:
+  - label: Upstream README
+    url: https://github.com/worldcoin/mobile-bench-rs/blob/d1a3176f9144f35e777e83fd07045116144da257/README.md
+    evidence: Product scope, workflow, release, and supported backends.
+---
+
+mobench takes a Rust benchmark from a function in your crate to repeatable results on Android and iOS. It builds native libraries, generates mobile runners, executes them on selected BrowserStack devices, and writes artifacts that people and CI can compare.
+
+The current documentation describes mobench **0.1.43** and requires Rust **1.85 or newer**.
+
+## Choose a starting point
+
+| Goal | Start here |
+| --- | --- |
+| Install the CLI and SDK | [Installation](/installation/) |
+| Get one benchmark running | [Quickstart](/quickstart/) |
+| Write trustworthy benchmark functions | [Benchmark functions](/benchmark-functions/) |
+| Validate a project without using a device farm | [Host-side preflight](/host-preflight/) |
+| Run on Android or iOS devices | [BrowserStack](/browserstack/) |
+| Add a stable CI contract | [CI runs](/ci/) |
+| Interpret artifacts and compare revisions | [Outputs](/outputs/) |
+| Capture native stacks locally | [Profiling](/profiling/) |
+
+## What mobench measures
+
+Normal benchmark runs record measured iteration durations. CPU time and memory fields may also be present when the runner or provider can collect them. Missing resource values mean **unavailable**, not zero.
+
+Native stack profiling is a separate, local-first workflow. Android uses `simpleperf`; iOS uses simulator-host `sample`. BrowserStack native profiling is not supported in 0.1.43.
+
+## The execution boundary
+
+Selecting devices makes `mobench run` build and schedule a real mobile benchmark through BrowserStack. `--local-only` skips mobile builds and writes host-side preflight/spec output without executing the requested benchmark. Use it to validate discovery, configuration, and report shape—not as evidence of mobile performance.
+
+## Stable outputs
+
+`mobench ci run` writes a reusable contract:
+
+- `summary.json` for machines and comparisons
+- `summary.md` for people and CI job summaries
+- `results.csv` for analysis tools
+- `plots/*.svg` when plotting is available
+
+## Next step
+
+[Install mobench](/installation/), then complete the quickstart before adding a device matrix or CI workflow.

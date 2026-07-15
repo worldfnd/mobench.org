@@ -1,0 +1,96 @@
+---
+title: Quickstart
+slug: quickstart
+description: Register a Rust benchmark, validate it on the host, and run it on a mobile device.
+sidebar:
+  order: 2
+audience: [new-user, benchmark-author]
+release: 0.1.43
+lastVerified: 2026-07-15
+section: Get started
+order: 2
+sourceRefs:
+  - label: Basic benchmark example
+    url: https://github.com/worldcoin/mobile-bench-rs/blob/d1a3176f9144f35e777e83fd07045116144da257/examples/basic-benchmark/README.md
+    evidence: Minimal SDK registration and CLI flow.
+---
+
+This path first proves that mobench can discover and report your function on the host. It then moves the same function to a BrowserStack device for the actual mobile measurement.
+
+## 1. Register a benchmark
+
+Add a public function to your library crate:
+
+```rust
+use mobench_sdk::benchmark;
+
+#[benchmark]
+pub fn checksum() {
+    let bytes = std::hint::black_box(vec![42_u8; 64 * 1024]);
+    let sum: u64 = bytes.iter().map(|byte| u64::from(*byte)).sum();
+    std::hint::black_box(sum);
+}
+```
+
+Use enough work to rise above timer noise, and pass results through `black_box` so the optimizer cannot erase the operation.
+
+## 2. Confirm discovery
+
+From the project root, replace `bench-mobile` if your benchmark crate lives elsewhere:
+
+```bash
+mobench list --crate-path bench-mobile
+```
+
+The output should include the fully qualified function name, such as `bench_mobile::checksum`.
+
+## 3. Run the host preflight
+
+```bash
+mobench run \
+  --target android \
+  --crate-path bench-mobile \
+  --function bench_mobile::checksum \
+  --local-only \
+  --iterations 20 \
+  --warmup 5 \
+  --output target/mobench/preflight.json
+```
+
+`--local-only` checks the host harness, discovery, and report path. It does not run Android code and must not be treated as a mobile result.
+
+Inspect the report:
+
+```bash
+mobench summary target/mobench/preflight.json
+```
+
+## 4. Run on a mobile device
+
+Set your BrowserStack App Automate credentials:
+
+```bash
+export BROWSERSTACK_USERNAME="your_username"
+export BROWSERSTACK_ACCESS_KEY="your_access_key"
+```
+
+Choose a device that appears in `mobench devices --platform android`, then run:
+
+```bash
+mobench run \
+  --target android \
+  --crate-path bench-mobile \
+  --function bench_mobile::checksum \
+  --devices "Google Pixel 7-13.0" \
+  --iterations 20 \
+  --warmup 5 \
+  --release \
+  --fetch \
+  --output target/mobench/results.json
+```
+
+Using `--release` keeps the measured code optimized and reduces Android upload size.
+
+## Next step
+
+Read [benchmark quality](/benchmark-quality/) before using the result as a baseline.
