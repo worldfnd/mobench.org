@@ -10,7 +10,9 @@ export default defineConfig({
   snapshotPathTemplate: '{testDir}/__screenshots__/{testFilePath}/{arg}{ext}',
   expect: {
     timeout: 8_000,
-    toHaveScreenshot: { maxDiffPixelRatio: 0.01 },
+    // Chromium text rasterization differs between macOS review captures and Linux CI.
+    // Keep the budget below the size of a meaningful component or layout regression.
+    toHaveScreenshot: { maxDiffPixelRatio: 0.06 },
   },
   use: {
     browserName: 'chromium',
