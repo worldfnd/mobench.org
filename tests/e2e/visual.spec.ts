@@ -2,11 +2,14 @@ import { expect, test } from '@playwright/test'
 
 const marketing = 'http://127.0.0.1:3000'
 const docs = 'http://127.0.0.1:3001'
+const marketingDesktopSnapshot = process.platform === 'linux'
+  ? 'marketing-light-desktop-linux.png'
+  : 'marketing-light-desktop.png'
 
 test('key marketing states match reviewed visuals', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 })
   await page.goto(marketing, { waitUntil: 'networkidle' })
-  await expect(page).toHaveScreenshot('marketing-light-desktop.png', { fullPage: true, animations: 'disabled' })
+  await expect(page).toHaveScreenshot(marketingDesktopSnapshot, { fullPage: true, animations: 'disabled' })
 
   await page.setViewportSize({ width: 375, height: 812 })
   await page.goto(marketing, { waitUntil: 'networkidle' })
