@@ -40,13 +40,13 @@ mobench was built to benchmark intense Rust workloads in mobile environments tha
 - Local devices: https://docs.mobench.org/local-devices
   Connected Android devices, Android Studio emulators, ADB, Xcode simulators, and connected iOS devices.
 - BrowserStack CI: https://docs.mobench.org/browserstack
-  Hosted real-device runs, matrix resolution, PR reporting, artifacts, resource metrics, and CI contracts.
+  Hosted real-device runs, matrix resolution, split-sample merging, PR reporting, artifacts, resource metrics, and CI contracts.
 - App Automate setup: https://docs.mobench.org/app-automate
   BrowserStack App Automate API uploads, Android Espresso, iOS XCUITest, build execution, devices, pricing, and trial limits.
 - Profiling: https://docs.mobench.org/profiling
   Native profiling, trace events, semantic phases, flamegraphs, profile diffs, and flamegraph viewer usage.
 - Outputs and reports: https://docs.mobench.org/reports
-  Summary JSON, Markdown reports, CSV rows, plots, BrowserStack artifacts, PR comments, and profiling bundles.
+  Summary JSON, Markdown reports, CSV rows, split-run outputs, BrowserStack artifacts, PR comments, and profiling bundles.
 - CLI man pages: https://docs.mobench.org/cli-reference
   Exhaustive command reference, global options, subcommands, flags, expected inputs, outputs, and examples.
 - Schemas: https://docs.mobench.org/schemas
@@ -56,7 +56,7 @@ mobench was built to benchmark intense Rust workloads in mobile environments tha
 - Diagrams: https://docs.mobench.org/diagrams
   Crate architecture, lifecycle, provider flow, BrowserStack CI, profiling artifacts, and SDK versus CLI responsibility.
 - Current behavior: https://docs.mobench.org/current-spec
-  Current behavior and API contract for release 0.1.42.
+  Current behavior and API contract for release 0.1.43.
 - Codebase architecture: https://docs.mobench.org/codebase
   Workspace layout, runtime layers, generated templates, integrations, stack, and ownership boundaries.
 - Testing strategy: https://docs.mobench.org/testing
@@ -91,6 +91,7 @@ cargo mobench check --target android
 cargo mobench build --target android --release
 cargo mobench run --local --function fibonacci_30 --iterations 100 --warmup 10
 cargo mobench ci run --target android --browserstack --output target/mobench/ci
+cargo mobench ci merge-split-runs --samples-dir target/mobench/ci/split --output-dir target/mobench/ci/merged --function sample_fns::fibonacci --device "Google Pixel 7-13.0" --iterations 5
 cargo mobench profile run --target android --function fibonacci_30 --output target/mobench/profile
 ```
 

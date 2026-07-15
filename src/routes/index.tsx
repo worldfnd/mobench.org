@@ -38,7 +38,7 @@ const PROVEKIT_URL = 'https://provekit.org/'
 const FAQS = [
   {
     q: 'What exactly is mobench?',
-    a: 'mobench is the Rust CLI and SDK ecosystem for building, running, reporting, and profiling mobile benchmarks. The CLI orchestrates Android and iOS builds, local runs, BrowserStack runs, CI summaries, and report output.',
+    a: 'mobench is the Rust CLI and SDK ecosystem for building, running, reporting, and profiling mobile benchmarks. The CLI orchestrates Android and iOS builds, local runs, BrowserStack runs, CI summaries, split-run merging, and report output.',
   },
   {
     q: 'Which crates make up the ecosystem?',
@@ -62,7 +62,7 @@ const FEATURES = [
   {
     n: '01',
     title: 'CLI orchestration',
-    body: 'Initialize a run config, build Android or iOS artifacts, execute locally or on BrowserStack, validate CI contracts, fetch results, and render reports from one Cargo-native command surface.',
+    body: 'Initialize a run config, build Android or iOS artifacts, execute locally or on BrowserStack, merge split CI runs, fetch results, and render reports from one Cargo-native command surface.',
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3F7A2E" strokeWidth="1.6">
         <path d="M4 7h16M7 12h7M7 17h10" />
@@ -107,7 +107,7 @@ const CLI_COMMANDS = [
   ['build', 'Build Android APKs or iOS artifacts'],
   ['run', 'Execute locally or on BrowserStack devices'],
   ['ci run', 'Write summary.json, summary.md, and results.csv'],
-  ['doctor', 'Validate local and CI prerequisites'],
+  ['ci merge-split-runs', 'Merge one-sample jobs into standard CI outputs'],
   ['report', 'Render markdown and sticky PR comments'],
 ]
 
@@ -479,7 +479,7 @@ const copyCmd = () => {
             </h2>
             <p className="m-0 mb-[26px] max-w-[520px] text-[17px] leading-[1.55] text-muted">
               Set BrowserStack credentials, select devices by name, and use --release for smaller APK uploads.
-              mobench can resolve deterministic device sets from a matrix or profile for CI.
+              Long or fragile lanes can run one measured sample per job, then merge them into the standard CI outputs.
             </p>
             <a
               href={BROWSERSTACK_URL}

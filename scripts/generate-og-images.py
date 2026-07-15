@@ -53,7 +53,7 @@ SHORT_DESCRIPTIONS = {
     "schemas": "Contracts for CI, summaries, traces, and fixtures.",
     "examples": "Walk through benchmark and FFI examples.",
     "diagrams": "Architecture, lifecycle, CI, profiling, and responsibility maps.",
-    "current-spec": "Current behavior and API contracts for release 0.1.42.",
+    "current-spec": f"Current behavior and API contracts for release {DATA['site']['version']}.",
     "codebase": "Workspace layout, runtime layers, templates, and integrations.",
     "testing": "Host tests, smoke checks, fixtures, CI, and profiling validation.",
     "public-api": "Crates, feature flags, contracts, semver, MSRV, and releases.",
@@ -230,7 +230,7 @@ def main():
             SHORT_DESCRIPTIONS.get(page["id"], page["description"]),
             "/docs" if page["id"] == "overview" else f'/{page["id"]}',
             GROUP_ACCENTS.get(page["group"], PALETTE["green"]),
-            [page["group"], "mobench", "0.1.42"],
+            [page["group"], "mobench", DATA["site"]["version"]],
         )
 
     print(f"Generated {2 + len(DATA['docsPages'])} OG JPGs in public/og")

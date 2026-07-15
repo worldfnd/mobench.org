@@ -299,9 +299,9 @@ const PAGES: PageDef[] = [
     id: 'browserstack',
     label: 'BrowserStack CI',
     group: 'Guides',
-    description: 'Use hosted real devices, matrix resolution, PR reporting, artifact fetching, and normalized resource metrics.',
+    description: 'Use hosted real devices, matrix resolution, split-sample merging, PR reporting, artifact fetching, and normalized resource metrics.',
     icon: Cloud,
-    toc: ['Credentials', 'Device resolution', 'CI contract'],
+    toc: ['Credentials', 'Device resolution', 'CI contract', 'Split-sample merge'],
   },
   {
     id: 'app-automate',
@@ -324,9 +324,9 @@ const PAGES: PageDef[] = [
     id: 'reports',
     label: 'Outputs & reports',
     group: 'Reference',
-    description: 'Understand summary JSON, Markdown summaries, CSV rows, plots, BrowserStack artifacts, PR comments, and profiling bundles.',
+    description: 'Understand summary JSON, Markdown summaries, CSV rows, split-run outputs, BrowserStack artifacts, PR comments, and profiling bundles.',
     icon: BarChart3,
-    toc: ['Output layout', 'Report helpers', 'Fixtures'],
+    toc: ['Output layout', 'Split-run outputs', 'Report helpers', 'Fixtures'],
   },
   {
     id: 'cli-reference',
@@ -364,7 +364,7 @@ const PAGES: PageDef[] = [
     id: 'current-spec',
     label: 'Current behavior',
     group: 'Specs',
-    description: 'Current behavior and API contract for release 0.1.42: CLI, config, runners, public APIs, schemas, and compatibility boundaries.',
+    description: 'Current behavior and API contract for release 0.1.43: CLI, config, runners, public APIs, schemas, and compatibility boundaries.',
     icon: ListChecks,
     toc: ['Scope', 'Contracts', 'Compatibility'],
   },
@@ -380,7 +380,7 @@ const PAGES: PageDef[] = [
     id: 'testing',
     label: 'Testing strategy',
     group: 'Codebase',
-    description: 'Host tests, CLI smoke checks, fixture validation, CI contract checks, BrowserStack smoke tests, and profiling checks.',
+    description: 'Host tests, CLI smoke checks, split-run merge validation, CI contract checks, BrowserStack smoke tests, and profiling checks.',
     icon: TestTube2,
     toc: ['Test taxonomy', 'CI checks', 'Profiling checks'],
   },
@@ -553,14 +553,14 @@ pub fn checksum(data: &Vec<u8>) {
     {
       title: 'Rust and CLI',
       bullets: [
- <>Install <BrandLink href={EXTERNAL_DOCS.rust} logo="rust">Rust</BrandLink> with <code>rustup</code>. Use Rust 2024-compatible toolchains; current workspace release line is <code>0.1.42</code> and documented MSRV is Rust 1.85.</>,
+ <>Install <BrandLink href={EXTERNAL_DOCS.rust} logo="rust">Rust</BrandLink> with <code>rustup</code>. Use Rust 2024-compatible toolchains; current workspace release line is <code>0.1.43</code> and documented MSRV is Rust 1.85.</>,
  <>Install CLI <code>cargo install mobench</code> or build from repository when developing mobench itself.</>,
  <>Add <code>mobench-sdk</code>, <code>inventory</code>, and required crate types to benchmark crates.</>,
  ],
  code: {
  language: 'toml',
  value: `[dependencies]
-mobench-sdk = "0.1.42"
+mobench-sdk = "0.1.43"
 inventory = "0.3"
 
 [lib]
@@ -705,11 +705,11 @@ pub fn parse_file(input: &TempFile) {
       code: {
         language: 'toml',
         value: `[dependencies]
-mobench-sdk = "0.1.42"
+mobench-sdk = "0.1.43"
 inventory = "0.3"
 
 # Narrow registry-only form:
-mobench-sdk = { version = "0.1.42", default-features = false, features = ["registry"] }`,
+mobench-sdk = { version = "0.1.43", default-features = false, features = ["registry"] }`,
       },
     },
     {
@@ -852,6 +852,27 @@ cargo mobench ci run --target android --device-matrix .github/mobench-devices.ym
       <>Fetch commands retrieve raw BrowserStack artifacts after hosted runs.</>,
       <>Use <BrandLink href={EXTERNAL_DOCS.appAutomateApi} logo="browserstack">App Automate REST API docs</BrandLink> when wiring custom artifact fetchers or provider debugging.</>,
     ],
+  },
+  {
+    title: 'Split-sample merge',
+    body: [
+      <>For long or fragile BrowserStack lanes, run each measured sample as a separate <code>ci run</code> job, store the outputs as <code>sample-*/summary.json</code>, then merge them back into the standard CI contract.</>,
+    ],
+    bullets: [
+      <>Every input must contain exactly one device, one benchmark, and one measured sample.</>,
+      <>The command validates the requested function, device, target consistency, and exact measured sample count.</>,
+      <>Merged timing statistics, raw <code>samples_ns</code>, and resource columns are recomputed for downstream reports, plots, comparisons, and PR comments.</>,
+    ],
+    code: {
+      language: 'bash',
+      value: `cargo mobench ci merge-split-runs \\
+  --samples-dir target/mobench/ci/android/sample_fns__fibonacci/device/split \\
+  --output-dir target/mobench/ci/android/sample_fns__fibonacci/device \\
+  --function sample_fns::fibonacci \\
+  --device "Google Pixel 7-13.0" \\
+  --iterations 5 \\
+  --warmup 1`,
+    },
   },
 ],
 'app-automate': [
@@ -1069,6 +1090,14 @@ pub fn prove_and_verify() {
         <><code>summary.md</code>: human-readable run summary for CI and PR comments.</>,
         <><code>results.csv</code>: rows for spreadsheet and dashboard ingestion.</>,
         <>Optional plot SVGs and profiling bundles live beside run outputs when requested.</>,
+      ],
+    },
+    {
+      title: 'Split-run outputs',
+      bullets: [
+        <>Release 0.1.43 can merge <code>sample-*/summary.json</code> inputs from one-sample CI jobs into the same <code>summary.json</code>, <code>summary.md</code>, and <code>results.csv</code> contract.</>,
+        <>The merged JSON preserves raw samples, recomputes min, max, mean, median, and p95 timing statistics, and combines available resource measurements.</>,
+        <>Existing report, plot, comparison, and PR-comment tooling can consume merged output without a separate format adapter.</>,
       ],
     },
     {
@@ -1339,6 +1368,20 @@ Inputs:
   --build-id enriches with BrowserStack device metrics when paired with --results-dir.
 Outputs:
   Terminal table, Markdown, or JSON summary; optional output file.
+
+mobench ci merge-split-runs
+Purpose:
+  Merge one-measured-sample CI summaries into the standard CI output contract.
+Usage:
+  mobench ci merge-split-runs --samples-dir <DIR> --output-dir <DIR> --function <PATH> --device <LABEL> --iterations <N> [--warmup <N>]
+Defaults:
+  --warmup 0
+Inputs:
+  sample-*/summary.json files containing one device, one benchmark, and one measured sample each.
+Outputs:
+  <output-dir>/summary.json, <output-dir>/summary.md, and <output-dir>/results.csv.
+Example:
+  cargo mobench ci merge-split-runs --samples-dir target/mobench/ci/split --output-dir target/mobench/ci/merged --function sample_fns::fibonacci --device "Google Pixel 7-13.0" --iterations 5 --warmup 1
 
 mobench ci check-run
 Purpose:
@@ -1764,7 +1807,7 @@ pub fn benchmark_app_path() {
     {
       title: 'Scope',
       bullets: [
-        <>Release line documented by the current spec is <code>0.1.42</code>.</>,
+        <>Release line documented by the current spec is <code>0.1.43</code>.</>,
         <>The spec covers benchmark authoring, setup and teardown, SDK runtime API, native C ABI, generated runners, config files, CLI behavior, reports, BrowserStack, profiling, schemas, and compatibility boundaries.</>,
         <>Historical design proposals are excluded from the current behavior contract.</>,
       ],
@@ -1775,6 +1818,7 @@ pub fn benchmark_app_path() {
         <>Input to the native C ABI is JSON-serialized <code>BenchSpec</code>.</>,
         <>Output from runner boundaries is JSON-serialized <code>RunnerReport</code>.</>,
         <>Report and CI payloads are intentionally schema-backed so downstream tools can parse them safely.</>,
+        <>Split-run merging validates one-sample inputs and emits the same standard CI output paths and schemas as a normal CI run.</>,
       ],
     },
     {
@@ -1830,7 +1874,8 @@ pub fn benchmark_app_path() {
         value: `cargo test --workspace
 cargo mobench check --target android
 cargo mobench check --target ios
-cargo mobench ci run --target android --local-only --output target/mobench/ci`,
+cargo mobench ci run --target android --local-only --output target/mobench/ci
+cargo mobench ci merge-split-runs --help`,
       },
     },
     {
@@ -2514,6 +2559,7 @@ pub fn hash_bench(input: &HashInput) {
     CLI
       run
       ci run
+      ci merge-split-runs
       report
     Contracts
       schemas
