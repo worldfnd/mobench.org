@@ -1,0 +1,119 @@
+---
+title: CI runs
+slug: ci
+description: Run repeatable mobile benchmarks and produce stable CI artifacts.
+sidebar:
+  order: 3
+audience: [ci-engineer, benchmark-author]
+release: 0.1.43
+lastVerified: 2026-07-15
+section: Run benchmarks
+order: 3
+sourceRefs:
+  - label: BrowserStack CI guide
+    url: https://github.com/worldcoin/mobile-bench-rs/blob/d1a3176f9144f35e777e83fd07045116144da257/docs/guides/browserstack-ci.md
+    evidence: CI run, split-sample merge, PR reporting, and regression commands.
+---
+
+`mobench ci run` wraps execution in a stable file contract for artifact upload, job summaries, comparisons, plots, and downstream reporting.
+
+## Run one benchmark
+
+```bash
+mobench ci run \
+  --target android \
+  --function bench_mobile::checksum \
+  --devices "Google Pixel 7-13.0" \
+  --iterations 20 \
+  --warmup 5 \
+  --release \
+  --fetch \
+  --plots auto \
+  --output-dir target/mobench/ci
+```
+
+The output directory contains `summary.json`, `summary.md`, `results.csv`, and optional `plots/*.svg`.
+
+Use `--functions` for several benchmarks in one invocation:
+
+```bash
+mobench ci run \
+  --target android \
+  --functions '["bench_mobile::checksum","bench_mobile::verify"]' \
+  --devices "Google Pixel 7-13.0" \
+  --release \
+  --output-dir target/mobench/ci
+```
+
+## Minimal GitHub Actions shape
+
+```yaml
+name: Mobile benchmarks
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android
+      - name: Run mobench
+        env:
+          BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+          BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+        run: |
+          mobench ci run \
+            --target android \
+            --function bench_mobile::checksum \
+            --device-matrix device-matrix.yaml \
+            --device-tags default \
+            --release \
+            --output-dir target/mobench/ci
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mobench-android
+          path: target/mobench/ci
+```
+
+Install the pinned mobench release in an earlier step or use your repository's pinned local action wrapper.
+
+## Merge split samples
+
+Fragile or long BrowserStack lanes can run each measured sample separately. Place the one-sample `summary.json` files below `sample-*` directories, then merge them:
+
+```bash
+mobench ci merge-split-runs \
+  --samples-dir target/mobench/split \
+  --output-dir target/mobench/ci \
+  --function bench_mobile::checksum \
+  --device "Google Pixel 7-13.0" \
+  --iterations 5 \
+  --warmup 1
+```
+
+The merge validates function, device, and sample counts, then writes the same three standard files as a normal CI run.
+
+## Add a regression gate
+
+```bash
+mobench ci run \
+  --target android \
+  --function bench_mobile::checksum \
+  --devices "Google Pixel 7-13.0" \
+  --baseline artifact:baselines/android-summary.json \
+  --regression-threshold-pct 5 \
+  --junit target/mobench/ci/junit.xml \
+  --release \
+  --output-dir target/mobench/ci
+```
+
+## Next step
+
+Read [outputs](/outputs/) before wiring fields into dashboards or PR comments.

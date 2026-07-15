@@ -1,0 +1,445 @@
+---
+title: CLI reference
+slug: cli
+aliases: [/cli-reference, /cli-man-pages]
+description: Find mobench commands and the flags that connect authoring, execution, CI, and profiling.
+sidebar:
+  order: 1
+tableOfContents:
+  minHeadingLevel: 2
+  maxHeadingLevel: 2
+audience: [benchmark-author, ci-engineer]
+release: 0.1.43
+lastVerified: 2026-07-15
+section: Reference
+order: 1
+sourceRefs:
+  - label: CLI definitions
+    url: https://github.com/worldcoin/mobile-bench-rs/blob/d1a3176f9144f35e777e83fd07045116144da257/crates/mobench/src/cli.rs
+    evidence: Clap command, subcommand, argument, default, and enum definitions.
+---
+
+The canonical executable is `mobench`. Run `mobench <command> --help` against your installed version for the complete generated argument reference.
+
+{/* BEGIN GENERATED CLI REFERENCE */}
+{/* Generated from @mobench/truth. Do not edit this section by hand. */}
+
+## Global flags
+
+| Flag | Value | Default | Purpose |
+| --- | --- | --- | --- |
+| `--dry-run` | boolean | false | Print what would be done without actually doing it |
+| `--non-interactive` | boolean | false | Disable interactive prompts (fail instead) |
+| `-v`, `--verbose` | boolean | false | Print verbose output including all commands |
+| `--yes` | boolean | false | Assume yes to prompts and allow overwriting files |
+
+The generated CLI also provides `--help`, `-h`, `--version`, and `-V` where Clap exposes them.
+
+## Command index
+
+| Command | Purpose |
+| --- | --- |
+| `mobench build` | Build mobile artifacts from the resolved benchmark crate |
+| `mobench check` | Check prerequisites for building mobile artifacts |
+| `mobench ci` | CI helpers (workflow and action scaffolding) |
+| `mobench ci check-run` | Create a GitHub Check Run with benchmark results |
+| `mobench ci init` | Generate GitHub Actions workflow + local action wrapper |
+| `mobench ci merge-split-runs` | Merge one-sample CI summaries into a normal CI output set |
+| `mobench ci run` | Run a full CI benchmark flow with stable output contract |
+| `mobench ci summarize` | Summarize benchmark results with device metrics |
+| `mobench compare` | Compare two run summaries for regressions |
+| `mobench config` | Validate run configuration and associated files |
+| `mobench config validate` | Validate bench-config.toml and referenced matrix/settings |
+| `mobench devices` | List available BrowserStack devices for testing |
+| `mobench devices resolve` | Resolve devices from a matrix deterministically for CI usage |
+| `mobench doctor` | Validate local + CI prerequisites and configuration |
+| `mobench fetch` | Fetch BrowserStack build artifacts (logs, session JSON) for CI |
+| `mobench fixture` | Fixture lifecycle helpers for reproducible CI setup |
+| `mobench fixture build` | Build fixture artifacts using existing build commands |
+| `mobench fixture cache-key` | Compute deterministic fixture cache key from config/toolchain inputs |
+| `mobench fixture init` | Create starter fixture files for CI runs |
+| `mobench fixture verify` | Verify fixture files and optional profile filtering |
+| `mobench fixture verify-plots` | Render and verify checked-in plot fixtures |
+| `mobench init` | Scaffold a base config file for the CLI |
+| `mobench init-sdk` | Initialize a new benchmark project with the SDK templates |
+| `mobench list` | List all discovered benchmark functions |
+| `mobench package-ipa` | Package iOS app as IPA for distribution or testing |
+| `mobench package-xcuitest` | Package XCUITest runner for BrowserStack testing |
+| `mobench plan` | Generate a sample device matrix file |
+| `mobench profile` | Profiling helpers for native profile capture and summary rendering |
+| `mobench profile diff` | Generate a differential flamegraph bundle from two normalized profile manifests |
+| `mobench profile run` | Plan or execute a native profiling session; local android-native and ios-instruments now attempt real native capture |
+| `mobench profile summarize` | Render markdown or JSON from a normalized profile manifest |
+| `mobench report` | Reporting helpers for CI summaries and PR comments |
+| `mobench report github` | Generate/publish sticky GitHub PR comment from summary output |
+| `mobench report summarize` | Generate markdown summary from standardized output JSON |
+| `mobench run` | Build mobile artifacts, write host preflight output, or run on BrowserStack devices |
+| `mobench summary` | Display summary statistics from a benchmark report JSON file |
+| `mobench verify` | Verify benchmark setup: registry, spec, artifacts, and optional smoke test |
+
+## Complete command flag index
+
+Global flags above are omitted from each command row. Positional arguments use angle brackets.
+
+### `mobench build`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `--crate-path` | `CRATE_PATH` | optional | Path to the benchmark crate (default: auto-detect bench-mobile/ or crates/&#123;crate&#125;) |
+| `--ios-deployment-target` | `IOS_DEPLOYMENT_TARGET` | optional | iOS deployment target for generated app and XCUITest targets |
+| `--ios-runner` | `swiftui \| uikit-legacy` | optional | iOS runner template (swiftui or uikit-legacy) |
+| `--output-dir` | `OUTPUT_DIR` | optional | Output directory for mobile artifacts (default: target/mobench) |
+| `--progress` | boolean | default: false | Show simplified step-by-step progress output |
+| `--project-root` | `PROJECT_ROOT` | optional | Project root containing mobench.toml or the Cargo workspace |
+| `--release` | boolean | default: false | Build in release mode |
+| `--target` | `android \| both \| ios` | required | — |
+
+### `mobench check`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `--format` | `json \| text` | default: text | Output format (text or json) |
+| `-t`, `--target` | `android \| both \| ios` | required | Target platform (android or ios) |
+
+### `mobench ci check-run`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `--annotation-path` | `ANNOTATION_PATH` | default: src/lib.rs | File path used in Check Run annotations (relative to repo root) |
+| `--baseline` | `BASELINE` | optional | Optional baseline JSON for regression detection |
+| `--name` | `NAME` | default: Mobench | Check Run name displayed in the PR |
+| `--regression-threshold-pct` | `REGRESSION_THRESHOLD_PCT` | default: 5 | Regression threshold percentage |
+| `--repo` | `REPO` | required | GitHub repository (owner/repo format) |
+| `--results` | `RESULTS` | optional | Path to summary JSON with benchmark results |
+| `--results-dir` | `RESULTS_DIR` | optional | Directory containing summary JSON files (processes all) |
+| `--sha` | `SHA` | required | Git commit SHA to annotate |
+
+### `mobench ci init`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `--action-dir` | `ACTION_DIR` | default: .github/actions/mobench | Directory to write the local GitHub Action |
+| `--workflow` | `WORKFLOW` | default: .github/workflows/mobile-bench.yml | Path to write the workflow file |
+
+### `mobench ci merge-split-runs`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `--device` | `DEVICE` | required | Device label all samples must match |
+| `--function` | `FUNCTION` | required | Fully-qualified benchmark function all samples must contain |
+| `--iterations` | `ITERATIONS` | required | Expected measured sample count |
+| `--output-dir` | `OUTPUT_DIR` | required | Directory to write merged summary.json, summary.md, and results.csv |
+| `--samples-dir` | `SAMPLES_DIR` | required | Directory containing sample-*/summary.json one-sample CI outputs |
+| `--warmup` | `WARMUP` | default: 0 | Warmup count reported in merged CI summaries |
+
+### `mobench ci run`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `--android-benchmark-timeout-secs` | `ANDROID_BENCHMARK_TIMEOUT_SECS` | optional | Android benchmark watchdog timeout in seconds for the generated harness |
+| `--android-heartbeat-interval-secs` | `ANDROID_HEARTBEAT_INTERVAL_SECS` | optional | Android benchmark heartbeat interval in seconds for the generated harness |
+| `--baseline` | `BASELINE` | optional | Baseline summary source (path\|url\|artifact:&lt;path&gt;) |
+| `--config` | `CONFIG` | optional | Optional path to config file |
+| `--crate-path` | `CRATE_PATH` | optional | Path to the benchmark crate directory containing Cargo.toml |
+| `--device-matrix` | `DEVICE_MATRIX` | optional | Device matrix YAML file to load device names from |
+| `--device-tags` | `DEVICE_TAGS` | optional | Device tags to select from the device matrix (comma-separated or repeatable) |
+| `--devices` | `DEVICES` | optional | Device identifiers or labels (BrowserStack devices) |
+| `--fetch` | boolean | default: false | Fetch BrowserStack artifacts after the run completes |
+| `--fetch-output-dir` | `FETCH_OUTPUT_DIR` | default: target/browserstack | — |
+| `--fetch-poll-interval-secs` | `FETCH_POLL_INTERVAL_SECS` | default: 5 | — |
+| `--fetch-timeout-secs` | `FETCH_TIMEOUT_SECS` | default: 300 | — |
+| `--function` | `FUNCTION` | optional | Fully-qualified Rust function to benchmark (single function) |
+| `--functions` | `FUNCTIONS` | optional | Multiple benchmark functions (comma-separated or JSON array). Runs each in sequence. |
+| `--ios-app` | `IOS_APP` | optional | Path to iOS app bundle (.ipa or zipped .app) for BrowserStack XCUITest |
+| `--ios-deployment-target` | `IOS_DEPLOYMENT_TARGET` | optional | iOS deployment target for generated app and XCUITest targets |
+| `--ios-runner` | `swiftui \| uikit-legacy` | optional | iOS runner template (swiftui or uikit-legacy) |
+| `--ios-test-suite` | `IOS_TEST_SUITE` | optional | Path to iOS XCUITest test suite package (.zip or .ipa) |
+| `--iterations` | `ITERATIONS` | default: 100 | — |
+| `--junit` | `JUNIT` | optional | Write JUnit XML report to the given path |
+| `--local-only` | boolean | default: false | Skip mobile builds and write host-side preflight/spec output without mobile execution |
+| `--mobench-ref` | `MOBENCH_REF` | optional | Metadata: git ref/sha for this mobench invocation |
+| `--output-dir` | `OUTPUT_DIR` | default: target/mobench/ci | Output directory for CI contract files |
+| `--plots` | `auto \| off \| require` | default: auto | — |
+| `--pr-number` | `PR_NUMBER` | optional | Metadata: pull request number |
+| `--progress` | boolean | default: false | Show simplified step-by-step progress output |
+| `--regression-threshold-pct` | `REGRESSION_THRESHOLD_PCT` | default: 5 | Regression threshold percentage when comparing to baseline |
+| `--release` | boolean | default: false | Build in release mode (recommended for BrowserStack to reduce APK size and upload time) |
+| `--request-command` | `REQUEST_COMMAND` | optional | Metadata: original command requested by the caller |
+| `--requested-by` | `REQUESTED_BY` | optional | Metadata: user or actor that requested the run |
+| `--target` | `android \| both \| ios` | required | — |
+| `--warmup` | `WARMUP` | default: 10 | — |
+
+### `mobench ci summarize`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `--build-id` | `BUILD_ID` | optional | BrowserStack build ID to enrich results with device metrics (requires --results-dir) |
+| `--output-file` | `OUTPUT_FILE` | optional | Write output to file in addition to stdout |
+| `--output-format` | `json \| markdown \| table` | default: table | Output format: table (terminal), markdown, or json |
+| `--platform` | `android \| ios` | optional | Platform filter (show only one platform) |
+| `--results-dir` | `RESULTS_DIR` | optional | Directory containing summary.json/CSV results (offline mode) |
+
+### `mobench compare`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `--baseline` | `BASELINE` | required | Baseline JSON summary to compare against |
+| `--candidate` | `CANDIDATE` | required | Candidate JSON summary to compare |
+| `--output` | `OUTPUT` | optional | Optional output path for markdown report |
+
+### `mobench config validate`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `--config` | `CONFIG` | default: bench-config.toml | — |
+| `--format` | `json \| text` | default: text | — |
+
+### `mobench devices`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `--json` | boolean | default: false | Output as JSON |
+| `--platform` | `android \| ios` | optional | Filter by platform (android or ios) |
+| `--validate` | `VALIDATE` | optional | Validate device specs against available devices |
+
+### `mobench devices resolve`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `--config` | `CONFIG` | optional | Path to run config file (optional source for matrix/tags) |
+| `--device-matrix` | `DEVICE_MATRIX` | optional | Path to device matrix YAML file |
+| `--format` | `json \| text` | default: text | — |
+| `--platform` | `android \| ios` | required | — |
+| `--profile` | `PROFILE` | optional | Device profile/tag to resolve (defaults to `default`) |
+
+### `mobench doctor`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `--browserstack` | `false \| true` | default: true | Validate BrowserStack credentials |
+| `--config` | `CONFIG` | optional | Optional path to run config file to validate |
+| `--device-matrix` | `DEVICE_MATRIX` | optional | Optional path to device matrix YAML file to validate |
+| `--device-tags` | `DEVICE_TAGS` | optional | Device tags to select from the device matrix (comma-separated or repeatable) |
+| `--format` | `json \| text` | default: text | — |
+| `--target` | `android \| both \| ios` | default: both | — |
+
+### `mobench fetch`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `--build-id` | `BUILD_ID` | required | — |
+| `--output-dir` | `OUTPUT_DIR` | default: target/browserstack | — |
+| `--poll-interval-secs` | `POLL_INTERVAL_SECS` | default: 10 | — |
+| `--target` | `android \| ios` | required | — |
+| `--timeout-secs` | `TIMEOUT_SECS` | default: 1800 | — |
+| `--wait` | boolean | default: true | — |
+
+### `mobench fixture build`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `--crate-path` | `CRATE_PATH` | optional | Path to benchmark crate |
+| `--output-dir` | `OUTPUT_DIR` | optional | Output directory for mobile artifacts |
+| `--progress` | boolean | default: false | Show simplified step-by-step progress output |
+| `--release` | boolean | default: false | Build in release mode |
+| `--target` | `android \| both \| ios` | default: both | — |
+
+### `mobench fixture cache-key`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `--config` | `CONFIG` | default: bench-config.toml | — |
+| `--device-matrix` | `DEVICE_MATRIX` | optional | — |
+| `--format` | `json \| text` | default: text | — |
+| `--profile` | `PROFILE` | optional | Device profile/tag for keying |
+| `--target` | `android \| both \| ios` | default: both | — |
+
+### `mobench fixture init`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `--config` | `CONFIG` | default: bench-config.toml | — |
+| `--device-matrix` | `DEVICE_MATRIX` | default: device-matrix.yaml | — |
+| `--force` | boolean | default: false | Overwrite existing fixture files |
+
+### `mobench fixture verify`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `--config` | `CONFIG` | default: bench-config.toml | — |
+| `--device-matrix` | `DEVICE_MATRIX` | optional | — |
+| `--format` | `json \| text` | default: text | — |
+| `--profile` | `PROFILE` | optional | Device profile/tag to verify |
+| `--target` | `android \| both \| ios` | default: both | — |
+
+### `mobench fixture verify-plots`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `<FIXTURE>` | `basic \| ffi` | required | — |
+| `--output-dir` | `OUTPUT_DIR` | optional | Output directory for rendered fixture artifacts (defaults under target/mobench/plot-fixtures) |
+
+### `mobench init`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `--output` | `OUTPUT` | default: bench-config.toml | — |
+| `--target` | `android \| ios` | default: android | — |
+
+### `mobench init-sdk`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `--examples` | boolean | default: false | Generate example benchmarks |
+| `--output-dir` | `OUTPUT_DIR` | default: . | — |
+| `--project-name` | `PROJECT_NAME` | default: bench-project | — |
+| `--target` | `android \| both \| ios` | required | — |
+
+### `mobench list`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `--crate-path` | `CRATE_PATH` | optional | Path to the benchmark crate directory containing Cargo.toml |
+| `--project-root` | `PROJECT_ROOT` | optional | Project root containing mobench.toml or the Cargo workspace |
+
+### `mobench package-ipa`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `--crate-path` | `CRATE_PATH` | optional | Path to the benchmark crate directory containing Cargo.toml |
+| `--method` | `adhoc \| development` | default: adhoc | Signing method |
+| `--output-dir` | `OUTPUT_DIR` | optional | Output directory for mobile artifacts (default: target/mobench) |
+| `--project-root` | `PROJECT_ROOT` | optional | Project root containing mobench.toml or the Cargo workspace |
+| `--scheme` | `SCHEME` | default: BenchRunner | Xcode scheme to build |
+
+### `mobench package-xcuitest`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `--crate-path` | `CRATE_PATH` | optional | Path to the benchmark crate directory containing Cargo.toml |
+| `--output-dir` | `OUTPUT_DIR` | optional | Output directory for mobile artifacts (default: target/mobench) |
+| `--project-root` | `PROJECT_ROOT` | optional | Project root containing mobench.toml or the Cargo workspace |
+| `--scheme` | `SCHEME` | default: BenchRunner | Xcode scheme to build |
+
+### `mobench plan`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `--output` | `OUTPUT` | default: device-matrix.yaml | — |
+
+### `mobench profile diff`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `--baseline` | `BASELINE` | required | Path to the baseline profile.json manifest |
+| `--candidate` | `CANDIDATE` | required | Path to the candidate profile.json manifest |
+| `--normalize` | boolean | default: false | Normalize baseline sample counts to candidate totals before diffing |
+| `--output-dir` | `OUTPUT_DIR` | default: target/mobench/profile/diff | Output directory for differential profile artifacts |
+
+### `mobench profile run`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `--backend` | `android-native \| auto \| ios-instruments \| rust-tracing` | default: auto | — |
+| `--config` | `CONFIG` | optional | Optional path to config file |
+| `--crate-path` | `CRATE_PATH` | optional | Path to the benchmark crate directory containing Cargo.toml |
+| `--device` | `DEVICE` | optional | Explicit BrowserStack device name to resolve for this profiling request |
+| `--device-matrix` | `DEVICE_MATRIX` | optional | Path to device matrix YAML file used with --profile or config-based device tags |
+| `--format` | `both \| native \| processed` | default: both | — |
+| `--function` | `FUNCTION` | required | Fully-qualified Rust function to profile |
+| `--os-version` | `OS_VERSION` | optional | OS version for --device (for example `16` or `14.0`) |
+| `--output-dir` | `OUTPUT_DIR` | default: target/mobench/profile | — |
+| `--profile` | `PROFILE` | optional | Device profile/tag to resolve (for example `high-spec`) |
+| `--provider` | `browserstack \| local` | default: local | — |
+| `--target` | `android \| ios` | required | — |
+| `--trace-events-output` | `TRACE_EVENTS_OUTPUT` | optional | Write machine-readable trace/event JSON to this path for downstream consumers |
+| `--warmup-mode` | `cold \| warm` | optional | Warm or cold capture mode for local native profiling (defaults to warm for local Android/iOS native backends) |
+
+### `mobench profile summarize`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `--output` | `OUTPUT` | optional | — |
+| `--output-format` | `json \| markdown` | default: markdown | — |
+| `--profile` | `PROFILE` | default: target/mobench/profile/profile.json | — |
+
+### `mobench report github`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `--marker` | `MARKER` | default: &lt;!-- mobench-report --&gt; | — |
+| `--output` | `OUTPUT` | optional | Write generated comment body to file |
+| `--pr` | `PR` | optional | Pull request number (auto-detected from GITHUB_REF if omitted) |
+| `--publish` | boolean | default: false | Publish via GitHub API using GITHUB_TOKEN |
+| `--summary` | `SUMMARY` | default: target/mobench/ci/summary.json | — |
+
+### `mobench report summarize`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `--output` | `OUTPUT` | optional | Write markdown output to file |
+| `--plots` | `auto \| off \| require` | default: auto | — |
+| `--summary` | `SUMMARY` | default: target/mobench/ci/summary.json | — |
+
+### `mobench run`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `--android-benchmark-timeout-secs` | `ANDROID_BENCHMARK_TIMEOUT_SECS` | optional | Android benchmark watchdog timeout in seconds for the generated harness |
+| `--android-heartbeat-interval-secs` | `ANDROID_HEARTBEAT_INTERVAL_SECS` | optional | Android benchmark heartbeat interval in seconds for the generated harness |
+| `--baseline` | `BASELINE` | optional | Baseline summary source (path\|url\|artifact:&lt;path&gt;) |
+| `--ci` | boolean | default: false | Enable CI mode (job summary, optional JUnit, regression exit codes) |
+| `--config` | `CONFIG` | optional | Optional path to config file |
+| `--crate-path` | `CRATE_PATH` | optional | Path to the benchmark crate directory containing Cargo.toml |
+| `--device-matrix` | `DEVICE_MATRIX` | optional | Device matrix YAML file to load device names from |
+| `--device-tags` | `DEVICE_TAGS` | optional | Device tags to select from the device matrix (comma-separated or repeatable) |
+| `--devices` | `DEVICES` | optional | Device identifiers or labels (BrowserStack devices) |
+| `--fetch` | boolean | default: false | Fetch BrowserStack artifacts after the run completes |
+| `--fetch-output-dir` | `FETCH_OUTPUT_DIR` | default: target/browserstack | — |
+| `--fetch-poll-interval-secs` | `FETCH_POLL_INTERVAL_SECS` | default: 5 | — |
+| `--fetch-timeout-secs` | `FETCH_TIMEOUT_SECS` | default: 300 | — |
+| `--function` | `FUNCTION` | optional | Fully-qualified Rust function to benchmark |
+| `--ios-app` | `IOS_APP` | optional | Path to iOS app bundle (.ipa or zipped .app) for BrowserStack XCUITest |
+| `--ios-deployment-target` | `IOS_DEPLOYMENT_TARGET` | optional | iOS deployment target for generated app and XCUITest targets |
+| `--ios-runner` | `swiftui \| uikit-legacy` | optional | iOS runner template (swiftui or uikit-legacy) |
+| `--ios-test-suite` | `IOS_TEST_SUITE` | optional | Path to iOS XCUITest test suite package (.zip or .ipa) |
+| `--iterations` | `ITERATIONS` | optional | — |
+| `--junit` | `JUNIT` | optional | Write JUnit XML report to the given path |
+| `--local-only` | boolean | default: false | Skip mobile builds and write host-side preflight/spec output without mobile execution |
+| `--output` | `OUTPUT` | optional | Optional output path for JSON report |
+| `--progress` | boolean | default: false | Show simplified step-by-step progress output |
+| `--project-root` | `PROJECT_ROOT` | optional | Project root containing mobench.toml or the Cargo workspace |
+| `--regression-threshold-pct` | `REGRESSION_THRESHOLD_PCT` | default: 5 | Regression threshold percentage when comparing to baseline |
+| `--release` | boolean | default: false | Build in release mode (recommended for BrowserStack to reduce APK size and upload time) |
+| `--summary-csv` | boolean | default: false | Write CSV summary alongside JSON |
+| `--target` | `android \| ios` | optional | — |
+| `--warmup` | `WARMUP` | optional | — |
+
+### `mobench summary`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `--format` | `csv \| json \| text` | optional | Output format: text (default), json, or csv |
+| `<REPORT>` | `REPORT` | required | Path to the benchmark report JSON file |
+
+### `mobench verify`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `--check-artifacts` | boolean | default: false | Check that build artifacts exist |
+| `--crate-path` | `CRATE_PATH` | optional | Path to the benchmark crate directory containing Cargo.toml |
+| `--function` | `FUNCTION` | optional | Function name to verify/smoke test |
+| `--output-dir` | `OUTPUT_DIR` | optional | Output directory for mobile artifacts (default: target/mobench) |
+| `--project-root` | `PROJECT_ROOT` | optional | Project root containing mobench.toml or the Cargo workspace |
+| `--smoke-test` | boolean | default: false | Run a local smoke test with minimal iterations |
+| `--spec-path` | `SPEC_PATH` | optional | Path to bench_spec.json to validate |
+| `--target` | `android \| both \| ios` | optional | Target platform to verify artifacts for |
+
+
+{/* END GENERATED CLI REFERENCE */}
+
+`ci run` uses `--output-dir`, which defaults to `target/mobench/ci`. Its core outputs are `summary.json`, `summary.md`, and `results.csv`. `profile run` also uses `--output-dir`, defaulting to `target/mobench/profile`. BrowserStack native profiling is unsupported in 0.1.43.
+
+## Next step
+
+Run `mobench run --help` and save a minimal invocation in your repository's benchmark README.

@@ -1,38 +1,38 @@
 {
-  "name": "mobench-org",
+  "name": "mobench-site",
   "private": true,
-  "version": "0.3.0",
-  "type": "module",
+  "version": "1.0.0",
+  "packageManager": "bun@1.3.13",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "vite --port 3000",
-    "build": "vite build && node scripts/generate-route-html.mjs",
-    "og:generate": "python3 scripts/generate-og-images.py",
-    "serve": "vite preview",
-    "start": "vite"
-  },
-  "dependencies": {
-    "@radix-ui/react-accordion": "^1.2.14",
-    "@radix-ui/react-slot": "^1.3.0",
-    "@tanstack/react-router": "^1.170.16",
-    "@tanstack/react-router-devtools": "^1.167.0",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "lucide-react": "^1.21.0",
-    "mermaid": "11.15.0",
-    "react": "^19.2.7",
-    "react-dom": "^19.2.7",
-    "tailwind-merge": "^3.6.0",
-    "tailwindcss-animate": "^1.0.7"
+    "dev": "bun run dev:marketing",
+    "dev:marketing": "bun run --cwd apps/marketing dev",
+    "dev:docs": "bun run --cwd apps/docs dev",
+    "build": "bun run build:marketing && bun run build:docs",
+    "build:marketing": "bun run --cwd apps/marketing build",
+    "build:docs": "bun run --cwd apps/docs build",
+    "generate": "bun scripts/generate-content.ts && bun scripts/generate-og.ts",
+    "generate:check": "bun scripts/generate-content.ts --check && bun scripts/generate-og.ts --check",
+    "sync:release": "bun scripts/sync-release.ts",
+    "check:sync": "bun scripts/sync-release.ts --help",
+    "validate:content": "bun scripts/validate-content.ts",
+    "check": "bun run check:sync && bun run validate:content && bun run generate:check && bun run check:marketing && bun run check:docs",
+    "check:marketing": "bun run --cwd apps/marketing check",
+    "check:docs": "bun run --cwd apps/docs check",
+    "test": "bun run build && bun test tests/build-contracts.test.ts --timeout 30000",
+    "test:e2e": "playwright test",
+    "test:lighthouse": "lhci autorun --config=lighthouserc.marketing.cjs && lhci autorun --config=lighthouserc.docs.cjs",
+    "preview:marketing": "bun run --cwd apps/marketing preview",
+    "preview:docs": "bun run --cwd apps/docs preview"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.3.1",
-    "@tanstack/router-plugin": "^1.168.18",
-    "@types/node": "^26.0.0",
-    "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.2",
-    "tailwindcss": "^4.3.1",
-    "typescript": "^6.0.3",
-    "vite": "^8.0.16"
+    "@axe-core/playwright": "4.12.1",
+    "@lhci/cli": "0.15.1",
+    "@playwright/test": "1.61.1",
+    "ajv": "8.20.0",
+    "yaml": "2.9.0"
   }
 }

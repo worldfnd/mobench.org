@@ -1,0 +1,92 @@
+---
+title: Host-side preflight
+slug: host-preflight
+aliases: [/local-devices]
+description: Validate configuration, discovery, builds, and reports before using mobile devices.
+sidebar:
+  order: 1
+audience: [benchmark-author, ci-engineer]
+release: 0.1.43
+lastVerified: 2026-07-15
+section: Run benchmarks
+order: 1
+sourceRefs:
+  - label: Testing guide
+    url: https://github.com/worldcoin/mobile-bench-rs/blob/d1a3176f9144f35e777e83fd07045116144da257/docs/guides/testing.md
+    evidence: Prerequisite, discovery, verification, and host-side preflight commands.
+---
+
+Preflight catches inexpensive failures before a mobile build or BrowserStack session. It validates your local tools and config, proves that the benchmark is discoverable, and checks the requested report shape.
+
+## Check prerequisites
+
+Use `doctor` for the combined project, config, and credential view:
+
+```bash
+mobench doctor \
+  --target both \
+  --config bench-config.toml \
+  --device-matrix device-matrix.yaml \
+  --browserstack true
+```
+
+Use `check` for a focused platform toolchain check:
+
+```bash
+mobench check --target android
+mobench check --target ios
+mobench check --target android --format json
+```
+
+Validate a run configuration independently:
+
+```bash
+mobench config validate --config bench-config.toml
+```
+
+## Prove discovery
+
+```bash
+mobench list --crate-path bench-mobile
+```
+
+If the function is missing, fix the registry or crate selection before building a mobile runner.
+
+## Verify generated artifacts
+
+After a build, verify registry and platform files:
+
+```bash
+mobench verify \
+  --target android \
+  --crate-path bench-mobile \
+  --check-artifacts \
+  --output-dir target/mobench
+```
+
+`verify --smoke-test` only works when the benchmark crate is linked into the `mobench` CLI binary. External crates selected through `mobench.toml`, `--project-root`, or `--crate-path` should use `list`, `verify --check-artifacts`, and a normal host preflight.
+
+## Write host-side preflight output
+
+```bash
+mobench run \
+  --target android \
+  --crate-path bench-mobile \
+  --function bench_mobile::checksum \
+  --local-only \
+  --iterations 5 \
+  --warmup 1 \
+  --output target/mobench/preflight.json
+```
+
+This command skips mobile builds and writes preflight/spec output without executing the requested benchmark. It is useful for discovery and report-shape debugging, but it is not an Android, iOS, or host performance measurement.
+
+Inspect the result shape:
+
+```bash
+mobench summary target/mobench/preflight.json
+```
+
+## Next step
+
+Resolve a real device and continue with the [BrowserStack run guide](/browserstack/).
