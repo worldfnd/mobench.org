@@ -31,6 +31,7 @@ describe('static delivery contract', () => {
     expect(html).toContain('<main id="main-content">')
     expect(html).toContain('BrowserStack App Automate')
     expect(html).toContain('Fixture data')
+    expect(html).toContain('Complete means complete')
     expect(html).toContain('https://mobench.org/')
     expect(meta(html, 'og:image:alt')).toBeTruthy()
     expect(html).toContain('application/ld+json')
@@ -133,8 +134,9 @@ describe('static delivery contract', () => {
     const cliMarkdown = await text(join(docsDist, 'cli.md'))
     const configurationHtml = await text(join(docsDist, 'configuration/index.html'))
     const configurationMarkdown = await text(join(docsDist, 'configuration.md'))
+    const ciMarkdown = await text(join(docsDist, 'ci.md'))
 
-    for (const command of ['mobench run', 'mobench ci run', 'mobench ci merge-split-runs', 'mobench profile run']) {
+    for (const command of ['mobench run', 'mobench ci run', 'mobench ci prepare', 'mobench ci run-prebuilt', 'mobench ci merge-split-runs', 'mobench profile run']) {
       expect(cliHtml).toContain(command)
       expect(cliMarkdown).toContain(`\`${command}\``)
     }
@@ -146,6 +148,9 @@ describe('static delivery contract', () => {
     }
     expect(cliMarkdown).toContain('Generated from @mobench/truth')
     expect(configurationMarkdown).toContain('Generated from @mobench/truth')
+    for (const releaseContract of ['prepare_script', 'functions_ios', 'android_devices', 'exactly one result shard']) {
+      expect(ciMarkdown).toContain(releaseContract)
+    }
   })
 
   test('release sync is explicit and watcher updates through a pull-request branch', async () => {

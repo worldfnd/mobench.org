@@ -5,13 +5,13 @@ description: Design mobile benchmarks that produce comparable, defensible result
 sidebar:
   order: 3
 audience: [benchmark-author, ci-engineer]
-release: 0.1.43
-lastVerified: 2026-07-15
+release: 0.1.45
+lastVerified: 2026-07-18
 section: Write benchmarks
 order: 3
 sourceRefs:
   - label: BrowserStack metrics guide
-    url: https://github.com/worldcoin/mobile-bench-rs/blob/d1a3176f9144f35e777e83fd07045116144da257/docs/guides/browserstack-metrics.md
+    url: https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/docs/guides/browserstack-metrics.md
     evidence: Result interpretation, optional resource data, and comparison guidance.
 ---
 
@@ -47,7 +47,7 @@ Prefer medians and percentiles when isolated scheduling noise affects the mean. 
 
 CPU and memory measurements depend on runner and provider availability. A blank or absent value means **unavailable**. Do not coerce it to zero, carry it into arithmetic, or claim that it was measured.
 
-mobench 0.1.43 does not define a power-consumption metric.
+mobench 0.1.45 does not define a power-consumption metric.
 
 ## Use the right execution mode
 

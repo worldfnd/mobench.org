@@ -9,13 +9,13 @@ tableOfContents:
   minHeadingLevel: 2
   maxHeadingLevel: 2
 audience: [benchmark-author, ci-engineer]
-release: 0.1.43
-lastVerified: 2026-07-15
+release: 0.1.45
+lastVerified: 2026-07-18
 section: Reference
 order: 1
 sourceRefs:
   - label: CLI definitions
-    url: https://github.com/worldcoin/mobile-bench-rs/blob/d1a3176f9144f35e777e83fd07045116144da257/crates/mobench/src/cli.rs
+    url: https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/crates/mobench/src/cli.rs
     evidence: Clap command, subcommand, argument, default, and enum definitions.
 ---
 
@@ -45,7 +45,9 @@ The generated CLI also provides `--help`, `-h`, `--version`, and `-V` where Clap
 | `mobench ci check-run` | Create a GitHub Check Run with benchmark results |
 | `mobench ci init` | Generate GitHub Actions workflow + local action wrapper |
 | `mobench ci merge-split-runs` | Merge one-sample CI summaries into a normal CI output set |
+| `mobench ci prepare` | Build and package untrusted mobile code into a verified prebuilt bundle |
 | `mobench ci run` | Run a full CI benchmark flow with stable output contract |
+| `mobench ci run-prebuilt` | Upload and run a prebuilt bundle without invoking caller build tooling |
 | `mobench ci summarize` | Summarize benchmark results with device metrics |
 | `mobench compare` | Compare two run summaries for regressions |
 | `mobench config` | Validate run configuration and associated files |
@@ -132,6 +134,20 @@ Global flags above are omitted from each command row. Positional arguments use a
 | `--samples-dir` | `SAMPLES_DIR` | required | Directory containing sample-*/summary.json one-sample CI outputs |
 | `--warmup` | `WARMUP` | default: 0 | Warmup count reported in merged CI summaries |
 
+### `mobench ci prepare`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `--crate-path` | `CRATE_PATH` | optional | — |
+| `--functions` | `FUNCTIONS` | optional | — |
+| `--iterations` | `ITERATIONS` | default: 100 | — |
+| `--manifest` | `MANIFEST` | default: target/mobench/prebuilt/manifest.json | — |
+| `--output-dir` | `OUTPUT_DIR` | default: target/mobench/prebuilt | — |
+| `--release` | boolean | default: false | — |
+| `--source-sha` | `SOURCE_SHA` | required | — |
+| `--target` | `android \| ios` | required | — |
+| `--warmup` | `WARMUP` | default: 10 | — |
+
 ### `mobench ci run`
 
 | Flag or argument | Value | Requirement | Purpose |
@@ -168,6 +184,24 @@ Global flags above are omitted from each command row. Positional arguments use a
 | `--requested-by` | `REQUESTED_BY` | optional | Metadata: user or actor that requested the run |
 | `--target` | `android \| both \| ios` | required | — |
 | `--warmup` | `WARMUP` | default: 10 | — |
+
+### `mobench ci run-prebuilt`
+
+| Flag or argument | Value | Requirement | Purpose |
+| --- | --- | --- | --- |
+| `--devices` | `DEVICES` | required | — |
+| `--expected-functions` | `EXPECTED_FUNCTIONS` | required | — |
+| `--expected-iterations` | `EXPECTED_ITERATIONS` | required | — |
+| `--expected-platform` | `android \| ios` | required | — |
+| `--expected-source-sha` | `EXPECTED_SOURCE_SHA` | required | — |
+| `--expected-warmup` | `EXPECTED_WARMUP` | required | — |
+| `--fetch` | boolean | default: false | — |
+| `--fetch-output-dir` | `FETCH_OUTPUT_DIR` | default: target/browserstack | — |
+| `--fetch-poll-interval-secs` | `FETCH_POLL_INTERVAL_SECS` | default: 5 | — |
+| `--fetch-timeout-secs` | `FETCH_TIMEOUT_SECS` | default: 300 | — |
+| `--manifest` | `MANIFEST` | required | — |
+| `--max-completion-timeout-secs` | `MAX_COMPLETION_TIMEOUT_SECS` | default: 1800 | Trusted upper bound for a prebuilt entry's completion timeout |
+| `--output-dir` | `OUTPUT_DIR` | default: target/mobench/ci | — |
 
 ### `mobench ci summarize`
 
@@ -438,7 +472,7 @@ Global flags above are omitted from each command row. Positional arguments use a
 
 {/* END GENERATED CLI REFERENCE */}
 
-`ci run` uses `--output-dir`, which defaults to `target/mobench/ci`. Its core outputs are `summary.json`, `summary.md`, and `results.csv`. `profile run` also uses `--output-dir`, defaulting to `target/mobench/profile`. BrowserStack native profiling is unsupported in 0.1.43.
+`ci run` uses `--output-dir`, which defaults to `target/mobench/ci`. Its core outputs are `summary.json`, `summary.md`, and `results.csv`. `profile run` also uses `--output-dir`, defaulting to `target/mobench/profile`. BrowserStack native profiling is unsupported in 0.1.45.
 
 ## Next step
 

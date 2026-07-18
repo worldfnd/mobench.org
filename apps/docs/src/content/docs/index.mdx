@@ -4,19 +4,21 @@ slug: index
 aliases: [/docs, /overview]
 description: Build, run, and analyze Rust benchmarks on Android and iOS.
 audience: [new-user, benchmark-author, ci-engineer]
-release: 0.1.43
-lastVerified: 2026-07-15
+release: 0.1.45
+lastVerified: 2026-07-18
 section: Overview
 order: 0
 sourceRefs:
   - label: Upstream README
-    url: https://github.com/worldcoin/mobile-bench-rs/blob/d1a3176f9144f35e777e83fd07045116144da257/README.md
+    url: https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/README.md
     evidence: Product scope, workflow, release, and supported backends.
 ---
 
 mobench takes a Rust benchmark from a function in your crate to repeatable results on Android and iOS. It builds native libraries, generates mobile runners, executes them on selected BrowserStack devices, and writes artifacts that people and CI can compare.
 
-The current documentation describes mobench **0.1.43** and requires Rust **1.85 or newer**.
+The current documentation describes mobench **0.1.45** and requires Rust **1.85 or newer**.
+
+Release 0.1.45 makes the secure two-stage reusable workflow the generated default, adds secretless caller preparation hooks and platform-specific function/device matrices, and rejects incomplete result sets instead of publishing partial success.
 
 ## Choose a starting point
 
@@ -28,6 +30,7 @@ The current documentation describes mobench **0.1.43** and requires Rust **1.85 
 | Validate a project without using a device farm | [Host-side preflight](/host-preflight/) |
 | Run on Android or iOS devices | [BrowserStack](/browserstack/) |
 | Add a stable CI contract | [CI runs](/ci/) |
+| Secure fork pull-request benchmarks | [Two-stage CI](/ci/#secure-pull-request-benchmarks) |
 | Interpret artifacts and compare revisions | [Outputs](/outputs/) |
 | Capture native stacks locally | [Profiling](/profiling/) |
 
@@ -35,7 +38,7 @@ The current documentation describes mobench **0.1.43** and requires Rust **1.85 
 
 Normal benchmark runs record measured iteration durations. CPU time and memory fields may also be present when the runner or provider can collect them. Missing resource values mean **unavailable**, not zero.
 
-Native stack profiling is a separate, local-first workflow. Android uses `simpleperf`; iOS uses simulator-host `sample`. BrowserStack native profiling is not supported in 0.1.43.
+Native stack profiling is a separate, local-first workflow. Android uses `simpleperf`; iOS uses simulator-host `sample`. BrowserStack native profiling is not supported in 0.1.45.
 
 ## The execution boundary
 

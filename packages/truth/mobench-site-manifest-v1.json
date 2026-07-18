@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "release": {
-    "version": "0.1.43",
-    "tag": "v0.1.43",
-    "sha": "d1a3176f9144f35e777e83fd07045116144da257",
+    "version": "0.1.45",
+    "tag": "v0.1.45",
+    "sha": "434da93dfda39db996be90e9e0bca625f10efb25",
     "repository": "https://github.com/worldcoin/mobile-bench-rs"
   },
   "msrv": "1.85",
@@ -13,14 +13,14 @@
       "invocation": "mobench <command>",
       "canonical_for_release": true,
       "status": "supported",
-      "note": "Canonical executable for the pinned v0.1.43 release."
+      "note": "Canonical executable for the pinned v0.1.45 release."
     },
     {
       "name": "cargo-mobench",
       "invocation": "cargo mobench <command>",
       "canonical_for_release": false,
       "status": "unsupported",
-      "note": "The published v0.1.43 wrapper forwards Cargo's injected `mobench` token. A source fix is integration-tested but requires a later release."
+      "note": "The published v0.1.45 wrapper still forwards Cargo's injected `mobench` token. Use the canonical `mobench` executable."
     }
   ],
   "command_tree": {
@@ -998,9 +998,23 @@
                 "subcommands": []
               },
               {
+                "name": "prepare",
+                "path": "mobench ci help prepare",
+                "about": "Build and package untrusted mobile code into a verified prebuilt bundle",
+                "options": [],
+                "subcommands": []
+              },
+              {
                 "name": "run",
                 "path": "mobench ci help run",
                 "about": "Run a full CI benchmark flow with stable output contract",
+                "options": [],
+                "subcommands": []
+              },
+              {
+                "name": "run-prebuilt",
+                "path": "mobench ci help run-prebuilt",
+                "about": "Upload and run a prebuilt bundle without invoking caller build tooling",
                 "options": [],
                 "subcommands": []
               },
@@ -1351,6 +1365,286 @@
                 ],
                 "environment": null,
                 "help": "Warmup count reported in merged CI summaries"
+              },
+              {
+                "id": "yes",
+                "long": "yes",
+                "short": null,
+                "positional_index": null,
+                "required": false,
+                "global": true,
+                "hidden": false,
+                "action": "SetTrue",
+                "value_names": [
+                  "YES"
+                ],
+                "possible_values": [
+                  "false",
+                  "true"
+                ],
+                "defaults": [
+                  "false"
+                ],
+                "environment": null,
+                "help": "Assume yes to prompts and allow overwriting files"
+              }
+            ],
+            "subcommands": []
+          },
+          {
+            "name": "prepare",
+            "path": "mobench ci prepare",
+            "about": "Build and package untrusted mobile code into a verified prebuilt bundle",
+            "options": [
+              {
+                "id": "crate_path",
+                "long": "crate-path",
+                "short": null,
+                "positional_index": null,
+                "required": false,
+                "global": false,
+                "hidden": false,
+                "action": "Set",
+                "value_names": [
+                  "CRATE_PATH"
+                ],
+                "possible_values": [],
+                "defaults": [],
+                "environment": null,
+                "help": null
+              },
+              {
+                "id": "dry_run",
+                "long": "dry-run",
+                "short": null,
+                "positional_index": null,
+                "required": false,
+                "global": true,
+                "hidden": false,
+                "action": "SetTrue",
+                "value_names": [
+                  "DRY_RUN"
+                ],
+                "possible_values": [
+                  "false",
+                  "true"
+                ],
+                "defaults": [
+                  "false"
+                ],
+                "environment": null,
+                "help": "Print what would be done without actually doing it"
+              },
+              {
+                "id": "functions",
+                "long": "functions",
+                "short": null,
+                "positional_index": null,
+                "required": false,
+                "global": false,
+                "hidden": false,
+                "action": "Append",
+                "value_names": [
+                  "FUNCTIONS"
+                ],
+                "possible_values": [],
+                "defaults": [],
+                "environment": null,
+                "help": null
+              },
+              {
+                "id": "help",
+                "long": "help",
+                "short": "h",
+                "positional_index": null,
+                "required": false,
+                "global": false,
+                "hidden": false,
+                "action": "Help",
+                "value_names": [],
+                "possible_values": [],
+                "defaults": [],
+                "environment": null,
+                "help": "Print help"
+              },
+              {
+                "id": "iterations",
+                "long": "iterations",
+                "short": null,
+                "positional_index": null,
+                "required": false,
+                "global": false,
+                "hidden": false,
+                "action": "Set",
+                "value_names": [
+                  "ITERATIONS"
+                ],
+                "possible_values": [],
+                "defaults": [
+                  "100"
+                ],
+                "environment": null,
+                "help": null
+              },
+              {
+                "id": "manifest",
+                "long": "manifest",
+                "short": null,
+                "positional_index": null,
+                "required": false,
+                "global": false,
+                "hidden": false,
+                "action": "Set",
+                "value_names": [
+                  "MANIFEST"
+                ],
+                "possible_values": [],
+                "defaults": [
+                  "target/mobench/prebuilt/manifest.json"
+                ],
+                "environment": null,
+                "help": null
+              },
+              {
+                "id": "non_interactive",
+                "long": "non-interactive",
+                "short": null,
+                "positional_index": null,
+                "required": false,
+                "global": true,
+                "hidden": false,
+                "action": "SetTrue",
+                "value_names": [
+                  "NON_INTERACTIVE"
+                ],
+                "possible_values": [
+                  "false",
+                  "true"
+                ],
+                "defaults": [
+                  "false"
+                ],
+                "environment": null,
+                "help": "Disable interactive prompts (fail instead)"
+              },
+              {
+                "id": "output_dir",
+                "long": "output-dir",
+                "short": null,
+                "positional_index": null,
+                "required": false,
+                "global": false,
+                "hidden": false,
+                "action": "Set",
+                "value_names": [
+                  "OUTPUT_DIR"
+                ],
+                "possible_values": [],
+                "defaults": [
+                  "target/mobench/prebuilt"
+                ],
+                "environment": null,
+                "help": null
+              },
+              {
+                "id": "release",
+                "long": "release",
+                "short": null,
+                "positional_index": null,
+                "required": false,
+                "global": false,
+                "hidden": false,
+                "action": "SetTrue",
+                "value_names": [
+                  "RELEASE"
+                ],
+                "possible_values": [
+                  "false",
+                  "true"
+                ],
+                "defaults": [
+                  "false"
+                ],
+                "environment": null,
+                "help": null
+              },
+              {
+                "id": "source_sha",
+                "long": "source-sha",
+                "short": null,
+                "positional_index": null,
+                "required": true,
+                "global": false,
+                "hidden": false,
+                "action": "Set",
+                "value_names": [
+                  "SOURCE_SHA"
+                ],
+                "possible_values": [],
+                "defaults": [],
+                "environment": null,
+                "help": null
+              },
+              {
+                "id": "target",
+                "long": "target",
+                "short": null,
+                "positional_index": null,
+                "required": true,
+                "global": false,
+                "hidden": false,
+                "action": "Set",
+                "value_names": [
+                  "TARGET"
+                ],
+                "possible_values": [
+                  "android",
+                  "ios"
+                ],
+                "defaults": [],
+                "environment": null,
+                "help": null
+              },
+              {
+                "id": "verbose",
+                "long": "verbose",
+                "short": "v",
+                "positional_index": null,
+                "required": false,
+                "global": true,
+                "hidden": false,
+                "action": "SetTrue",
+                "value_names": [
+                  "VERBOSE"
+                ],
+                "possible_values": [
+                  "false",
+                  "true"
+                ],
+                "defaults": [
+                  "false"
+                ],
+                "environment": null,
+                "help": "Print verbose output including all commands"
+              },
+              {
+                "id": "warmup",
+                "long": "warmup",
+                "short": null,
+                "positional_index": null,
+                "required": false,
+                "global": false,
+                "hidden": false,
+                "action": "Set",
+                "value_names": [
+                  "WARMUP"
+                ],
+                "possible_values": [],
+                "defaults": [
+                  "10"
+                ],
+                "environment": null,
+                "help": null
               },
               {
                 "id": "yes",
@@ -2070,6 +2364,356 @@
                 ],
                 "environment": null,
                 "help": null
+              },
+              {
+                "id": "yes",
+                "long": "yes",
+                "short": null,
+                "positional_index": null,
+                "required": false,
+                "global": true,
+                "hidden": false,
+                "action": "SetTrue",
+                "value_names": [
+                  "YES"
+                ],
+                "possible_values": [
+                  "false",
+                  "true"
+                ],
+                "defaults": [
+                  "false"
+                ],
+                "environment": null,
+                "help": "Assume yes to prompts and allow overwriting files"
+              }
+            ],
+            "subcommands": []
+          },
+          {
+            "name": "run-prebuilt",
+            "path": "mobench ci run-prebuilt",
+            "about": "Upload and run a prebuilt bundle without invoking caller build tooling",
+            "options": [
+              {
+                "id": "devices",
+                "long": "devices",
+                "short": null,
+                "positional_index": null,
+                "required": true,
+                "global": false,
+                "hidden": false,
+                "action": "Append",
+                "value_names": [
+                  "DEVICES"
+                ],
+                "possible_values": [],
+                "defaults": [],
+                "environment": null,
+                "help": null
+              },
+              {
+                "id": "dry_run",
+                "long": "dry-run",
+                "short": null,
+                "positional_index": null,
+                "required": false,
+                "global": true,
+                "hidden": false,
+                "action": "SetTrue",
+                "value_names": [
+                  "DRY_RUN"
+                ],
+                "possible_values": [
+                  "false",
+                  "true"
+                ],
+                "defaults": [
+                  "false"
+                ],
+                "environment": null,
+                "help": "Print what would be done without actually doing it"
+              },
+              {
+                "id": "expected_functions",
+                "long": "expected-functions",
+                "short": null,
+                "positional_index": null,
+                "required": true,
+                "global": false,
+                "hidden": false,
+                "action": "Append",
+                "value_names": [
+                  "EXPECTED_FUNCTIONS"
+                ],
+                "possible_values": [],
+                "defaults": [],
+                "environment": null,
+                "help": null
+              },
+              {
+                "id": "expected_iterations",
+                "long": "expected-iterations",
+                "short": null,
+                "positional_index": null,
+                "required": true,
+                "global": false,
+                "hidden": false,
+                "action": "Set",
+                "value_names": [
+                  "EXPECTED_ITERATIONS"
+                ],
+                "possible_values": [],
+                "defaults": [],
+                "environment": null,
+                "help": null
+              },
+              {
+                "id": "expected_platform",
+                "long": "expected-platform",
+                "short": null,
+                "positional_index": null,
+                "required": true,
+                "global": false,
+                "hidden": false,
+                "action": "Set",
+                "value_names": [
+                  "EXPECTED_PLATFORM"
+                ],
+                "possible_values": [
+                  "android",
+                  "ios"
+                ],
+                "defaults": [],
+                "environment": null,
+                "help": null
+              },
+              {
+                "id": "expected_source_sha",
+                "long": "expected-source-sha",
+                "short": null,
+                "positional_index": null,
+                "required": true,
+                "global": false,
+                "hidden": false,
+                "action": "Set",
+                "value_names": [
+                  "EXPECTED_SOURCE_SHA"
+                ],
+                "possible_values": [],
+                "defaults": [],
+                "environment": null,
+                "help": null
+              },
+              {
+                "id": "expected_warmup",
+                "long": "expected-warmup",
+                "short": null,
+                "positional_index": null,
+                "required": true,
+                "global": false,
+                "hidden": false,
+                "action": "Set",
+                "value_names": [
+                  "EXPECTED_WARMUP"
+                ],
+                "possible_values": [],
+                "defaults": [],
+                "environment": null,
+                "help": null
+              },
+              {
+                "id": "fetch",
+                "long": "fetch",
+                "short": null,
+                "positional_index": null,
+                "required": false,
+                "global": false,
+                "hidden": false,
+                "action": "SetTrue",
+                "value_names": [
+                  "FETCH"
+                ],
+                "possible_values": [
+                  "false",
+                  "true"
+                ],
+                "defaults": [
+                  "false"
+                ],
+                "environment": null,
+                "help": null
+              },
+              {
+                "id": "fetch_output_dir",
+                "long": "fetch-output-dir",
+                "short": null,
+                "positional_index": null,
+                "required": false,
+                "global": false,
+                "hidden": false,
+                "action": "Set",
+                "value_names": [
+                  "FETCH_OUTPUT_DIR"
+                ],
+                "possible_values": [],
+                "defaults": [
+                  "target/browserstack"
+                ],
+                "environment": null,
+                "help": null
+              },
+              {
+                "id": "fetch_poll_interval_secs",
+                "long": "fetch-poll-interval-secs",
+                "short": null,
+                "positional_index": null,
+                "required": false,
+                "global": false,
+                "hidden": false,
+                "action": "Set",
+                "value_names": [
+                  "FETCH_POLL_INTERVAL_SECS"
+                ],
+                "possible_values": [],
+                "defaults": [
+                  "5"
+                ],
+                "environment": null,
+                "help": null
+              },
+              {
+                "id": "fetch_timeout_secs",
+                "long": "fetch-timeout-secs",
+                "short": null,
+                "positional_index": null,
+                "required": false,
+                "global": false,
+                "hidden": false,
+                "action": "Set",
+                "value_names": [
+                  "FETCH_TIMEOUT_SECS"
+                ],
+                "possible_values": [],
+                "defaults": [
+                  "300"
+                ],
+                "environment": null,
+                "help": null
+              },
+              {
+                "id": "help",
+                "long": "help",
+                "short": "h",
+                "positional_index": null,
+                "required": false,
+                "global": false,
+                "hidden": false,
+                "action": "Help",
+                "value_names": [],
+                "possible_values": [],
+                "defaults": [],
+                "environment": null,
+                "help": "Print help"
+              },
+              {
+                "id": "manifest",
+                "long": "manifest",
+                "short": null,
+                "positional_index": null,
+                "required": true,
+                "global": false,
+                "hidden": false,
+                "action": "Set",
+                "value_names": [
+                  "MANIFEST"
+                ],
+                "possible_values": [],
+                "defaults": [],
+                "environment": null,
+                "help": null
+              },
+              {
+                "id": "max_completion_timeout_secs",
+                "long": "max-completion-timeout-secs",
+                "short": null,
+                "positional_index": null,
+                "required": false,
+                "global": false,
+                "hidden": false,
+                "action": "Set",
+                "value_names": [
+                  "MAX_COMPLETION_TIMEOUT_SECS"
+                ],
+                "possible_values": [],
+                "defaults": [
+                  "1800"
+                ],
+                "environment": null,
+                "help": "Trusted upper bound for a prebuilt entry's completion timeout"
+              },
+              {
+                "id": "non_interactive",
+                "long": "non-interactive",
+                "short": null,
+                "positional_index": null,
+                "required": false,
+                "global": true,
+                "hidden": false,
+                "action": "SetTrue",
+                "value_names": [
+                  "NON_INTERACTIVE"
+                ],
+                "possible_values": [
+                  "false",
+                  "true"
+                ],
+                "defaults": [
+                  "false"
+                ],
+                "environment": null,
+                "help": "Disable interactive prompts (fail instead)"
+              },
+              {
+                "id": "output_dir",
+                "long": "output-dir",
+                "short": null,
+                "positional_index": null,
+                "required": false,
+                "global": false,
+                "hidden": false,
+                "action": "Set",
+                "value_names": [
+                  "OUTPUT_DIR"
+                ],
+                "possible_values": [],
+                "defaults": [
+                  "target/mobench/ci"
+                ],
+                "environment": null,
+                "help": null
+              },
+              {
+                "id": "verbose",
+                "long": "verbose",
+                "short": "v",
+                "positional_index": null,
+                "required": false,
+                "global": true,
+                "hidden": false,
+                "action": "SetTrue",
+                "value_names": [
+                  "VERBOSE"
+                ],
+                "possible_values": [
+                  "false",
+                  "true"
+                ],
+                "defaults": [
+                  "false"
+                ],
+                "environment": null,
+                "help": "Print verbose output including all commands"
               },
               {
                 "id": "yes",
@@ -8888,9 +9532,62 @@
       ]
     },
     {
+      "id": "ci.prebuilt.prepare",
+      "status": "supported",
+      "summary": "Build and enumerate mobile artifacts without BrowserStack credentials or write-capable permissions.",
+      "evidence_ids": [
+        "source-prebuilt-prepare",
+        "test-prebuilt-security"
+      ]
+    },
+    {
+      "id": "ci.prebuilt.run",
+      "status": "supported",
+      "summary": "Verify a prebuilt manifest before credentialed BrowserStack upload, execution, and collection.",
+      "evidence_ids": [
+        "source-prebuilt-run",
+        "test-prebuilt-security"
+      ]
+    },
+    {
+      "id": "ci.reporting.isolated",
+      "status": "supported",
+      "summary": "Keep untrusted report rendering separate from credentialed benchmark execution.",
+      "evidence_ids": [
+        "test-prebuilt-security"
+      ]
+    },
+    {
+      "id": "ci.prepare-script.secretless",
+      "status": "supported",
+      "summary": "Run an optional normalized caller preparation hook only in secretless, read-only prepare jobs.",
+      "evidence_ids": [
+        "source-reusable-workflow-inputs",
+        "test-prebuilt-security"
+      ]
+    },
+    {
+      "id": "ci.platform-specific-matrix",
+      "status": "supported",
+      "summary": "Select platform-specific function lists and structured multi-device inputs in the reusable workflow.",
+      "evidence_ids": [
+        "source-reusable-workflow-inputs",
+        "test-prebuilt-security"
+      ]
+    },
+    {
+      "id": "ci.prebuilt.complete-matrix",
+      "status": "supported",
+      "summary": "Fail closed unless every requested function and device has exactly one result shard.",
+      "evidence_ids": [
+        "source-prebuilt-run",
+        "test-complete-prebuilt-matrix"
+      ]
+    },
+    {
       "id": "benchmark.execute.local-only",
       "status": "unsupported",
-      "summary": "`--local-only` writes preflight/spec outputs but skips the mobile build and does not execute the requested benchmark in v0.1.43.",
+      "summary": "`--local-only` writes preflight/spec outputs but skips the mobile build and does not execute the requested benchmark in v0.1.45.",
       "evidence_ids": [
         "source-local-only"
       ]
@@ -8898,7 +9595,7 @@
     {
       "id": "benchmark.execute.attached-device",
       "status": "unsupported",
-      "summary": "Ordinary `mobench run` does not execute on an attached phone in v0.1.43.",
+      "summary": "Ordinary `mobench run` does not execute on an attached phone in v0.1.45.",
       "evidence_ids": [
         "source-browserstack-run"
       ]
@@ -8906,7 +9603,7 @@
     {
       "id": "benchmark.execute.android-emulator",
       "status": "unsupported",
-      "summary": "Ordinary `mobench run` has no Android emulator execution provider in v0.1.43.",
+      "summary": "Ordinary `mobench run` has no Android emulator execution provider in v0.1.45.",
       "evidence_ids": [
         "source-browserstack-run"
       ]
@@ -8914,7 +9611,7 @@
     {
       "id": "benchmark.execute.ios-simulator",
       "status": "unsupported",
-      "summary": "Ordinary `mobench run` has no iOS simulator execution provider in v0.1.43.",
+      "summary": "Ordinary `mobench run` has no iOS simulator execution provider in v0.1.45.",
       "evidence_ids": [
         "source-browserstack-run"
       ]
@@ -9058,6 +9755,31 @@
       "id": "test-cargo-wrapper",
       "kind": "test",
       "reference": "crates/mobench/tests/invocation_cli.rs#cargo_mobench_invocation_works_through_cargo"
+    },
+    {
+      "id": "source-prebuilt-prepare",
+      "kind": "source",
+      "reference": "crates/mobench/src/lib.rs#cmd_ci_prepare"
+    },
+    {
+      "id": "source-prebuilt-run",
+      "kind": "source",
+      "reference": "crates/mobench/src/lib.rs#cmd_ci_run_prebuilt"
+    },
+    {
+      "id": "test-prebuilt-security",
+      "kind": "test",
+      "reference": "tests/workflow_security_test.py"
+    },
+    {
+      "id": "source-reusable-workflow-inputs",
+      "kind": "source",
+      "reference": ".github/workflows/reusable-bench.yml#on.workflow_call.inputs"
+    },
+    {
+      "id": "test-complete-prebuilt-matrix",
+      "kind": "test",
+      "reference": "crates/mobench/src/lib.rs#prebuilt_results_require_complete_device_matrix"
     }
   ]
 }
