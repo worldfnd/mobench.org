@@ -56,7 +56,7 @@ mobench was built to benchmark intense Rust workloads in mobile environments tha
 - Diagrams: https://docs.mobench.org/diagrams
   Crate architecture, lifecycle, provider flow, BrowserStack CI, profiling artifacts, and SDK versus CLI responsibility.
 - Current behavior: https://docs.mobench.org/current-spec
-  Current behavior and API contract for release 0.1.43.
+  Current behavior and API contract for release 0.1.45.
 - Codebase architecture: https://docs.mobench.org/codebase
   Workspace layout, runtime layers, generated templates, integrations, stack, and ownership boundaries.
 - Testing strategy: https://docs.mobench.org/testing

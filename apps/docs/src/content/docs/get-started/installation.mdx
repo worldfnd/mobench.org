@@ -2,17 +2,17 @@
 title: Installation
 slug: installation
 aliases: [/install]
-description: Install mobench 0.1.43 and prepare a Rust benchmark crate.
+description: Install mobench 0.1.45 and prepare a Rust benchmark crate.
 sidebar:
   order: 1
 audience: [new-user, benchmark-author]
-release: 0.1.43
-lastVerified: 2026-07-15
+release: 0.1.45
+lastVerified: 2026-07-18
 section: Get started
 order: 1
 sourceRefs:
   - label: Upstream README quick start
-    url: https://github.com/worldcoin/mobile-bench-rs/blob/d1a3176f9144f35e777e83fd07045116144da257/README.md
+    url: https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/README.md
     evidence: CLI and SDK installation commands.
 ---
 
@@ -37,13 +37,13 @@ cargo --version
 If you use `cargo-binstall`:
 
 ```bash
-cargo binstall mobench --version 0.1.43
+cargo binstall mobench --version 0.1.45
 ```
 
 Or compile the release from crates.io:
 
 ```bash
-cargo install mobench --version 0.1.43 --locked
+cargo install mobench --version 0.1.45 --locked
 ```
 
 Confirm that the canonical executable is available:
@@ -58,7 +58,7 @@ mobench --help
 From the benchmark crate:
 
 ```bash
-cargo add mobench-sdk@0.1.43 inventory
+cargo add mobench-sdk@0.1.45 inventory
 ```
 
 Mobile runners load your crate as a native library. Include the required crate types in `Cargo.toml`:

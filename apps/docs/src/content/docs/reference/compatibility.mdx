@@ -2,21 +2,21 @@
 title: Compatibility
 slug: compatibility
 aliases: [/build, /build-artifacts, /sdk, /sdk-integration, /public-api]
-description: Match Rust, platform tools, devices, and generated runner backends to mobench 0.1.43.
+description: Match Rust, platform tools, devices, and generated runner backends to mobench 0.1.45.
 sidebar:
   order: 5
 audience: [benchmark-author, ci-engineer]
-release: 0.1.43
-lastVerified: 2026-07-15
+release: 0.1.45
+lastVerified: 2026-07-18
 section: Reference
 order: 5
 sourceRefs:
   - label: Build guide
-    url: https://github.com/worldcoin/mobile-bench-rs/blob/d1a3176f9144f35e777e83fd07045116144da257/docs/guides/build.md
+    url: https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/docs/guides/build.md
     evidence: Rust and platform prerequisites, targets, outputs, and generated backends.
 ---
 
-mobench 0.1.43 has a Rust MSRV of **1.85**. Mobile compatibility also depends on the platform toolchain, target architecture, runner backend, and selected device OS.
+mobench 0.1.45 has a Rust MSRV of **1.85**. Mobile compatibility also depends on the platform toolchain, target architecture, runner backend, and selected device OS.
 
 ## Android
 
@@ -55,7 +55,7 @@ Keep the backend constant across a baseline and candidate; changing it changes t
 - Android native profiling is local and uses `simpleperf`.
 - iOS profiling is local, simulator-host oriented, and uses macOS `sample`.
 - `rust-tracing` is a planned manifest/trace contract only.
-- BrowserStack native profiling is unsupported in 0.1.43.
+- BrowserStack native profiling is unsupported in 0.1.45.
 
 ## Check the current machine
 
