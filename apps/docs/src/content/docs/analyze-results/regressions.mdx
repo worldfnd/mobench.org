@@ -1,0 +1,74 @@
+---
+title: Regression comparison
+slug: regressions
+description: Compare compatible mobench summaries and gate meaningful slowdowns.
+sidebar:
+  order: 2
+audience: [ci-engineer, benchmark-author]
+release: 0.1.45
+lastVerified: 2026-07-18
+section: Analyze results
+order: 2
+sourceRefs:
+  - label: BrowserStack CI guide
+    url: https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/docs/guides/browserstack-ci.md
+    evidence: Baseline sources, thresholds, JUnit output, and compare behavior.
+---
+
+Regression checks compare candidate timing summaries with a stored baseline. They are meaningful only when the benchmark, device, OS, build mode, and run counts are compatible.
+
+## Compare existing files
+
+```bash
+mobench compare \
+  --baseline baselines/android-summary.json \
+  --candidate target/mobench/ci/summary.json \
+  --output target/mobench/ci/comparison.md
+```
+
+Review the Markdown report before turning a threshold into a required check.
+
+## Compare during CI
+
+```bash
+mobench ci run \
+  --target android \
+  --function bench_mobile::checksum \
+  --devices "Google Pixel 7-13.0" \
+  --baseline artifact:baselines/android-summary.json \
+  --regression-threshold-pct 5 \
+  --junit target/mobench/ci/junit.xml \
+  --release \
+  --output-dir target/mobench/ci
+```
+
+Baseline sources accept a local path, URL, or `artifact:<path>` form. If a baseline resolves to the same path as the candidate output, mobench snapshots the previous file before writing the new result.
+
+## Choose a threshold
+
+Start with observed device-to-device and run-to-run variation rather than an arbitrary percentage. A good gate:
+
+- compares the same device and OS
+- uses the same release profile and runner backend
+- keeps iteration and warmup counts stable
+- ignores unavailable resource values
+- is rerun when a candidate sits near the threshold
+
+A single noisy result is a prompt to investigate, not proof of a code regression.
+
+## Publish results
+
+Render or publish a sticky pull-request comment from the standard summary:
+
+```bash
+mobench report github \
+  --pr 123 \
+  --summary target/mobench/ci/summary.json \
+  --publish
+```
+
+The default marker is `<!-- mobench-report -->`, allowing later runs to update the same comment.
+
+## Next step
+
+When timing shows a repeatable slowdown, use [local profiling](/profiling/) to locate the hot path.

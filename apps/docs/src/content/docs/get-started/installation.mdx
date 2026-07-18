@@ -1,0 +1,86 @@
+---
+title: Installation
+slug: installation
+aliases: [/install]
+description: Install mobench 0.1.45 and prepare a Rust benchmark crate.
+sidebar:
+  order: 1
+audience: [new-user, benchmark-author]
+release: 0.1.45
+lastVerified: 2026-07-18
+section: Get started
+order: 1
+sourceRefs:
+  - label: Upstream README quick start
+    url: https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/README.md
+    evidence: CLI and SDK installation commands.
+---
+
+Install the `mobench` executable once, then add `mobench-sdk` to each crate that owns benchmark functions.
+
+## Requirements
+
+- Rust 1.85 or newer
+- Cargo
+- Android or iOS build tools only when you build for that platform
+- BrowserStack App Automate credentials only when you run on remote devices
+
+Check your toolchain:
+
+```bash
+rustc --version
+cargo --version
+```
+
+## Install the CLI
+
+If you use `cargo-binstall`:
+
+```bash
+cargo binstall mobench --version 0.1.45
+```
+
+Or compile the release from crates.io:
+
+```bash
+cargo install mobench --version 0.1.45 --locked
+```
+
+Confirm that the canonical executable is available:
+
+```bash
+mobench --version
+mobench --help
+```
+
+## Add the SDK
+
+From the benchmark crate:
+
+```bash
+cargo add mobench-sdk@0.1.45 inventory
+```
+
+Mobile runners load your crate as a native library. Include the required crate types in `Cargo.toml`:
+
+```toml
+[lib]
+crate-type = ["lib", "cdylib", "staticlib"]
+```
+
+The default `mobench-sdk` features include registration, builders, and code generation. For a deliberately smaller integration, see the [compatibility reference](/compatibility/).
+
+## Install platform prerequisites
+
+Ask mobench for a platform-specific check before installing tools blindly:
+
+```bash
+mobench check --target android
+mobench check --target ios
+```
+
+Android builds use the Android SDK, Android NDK, `cargo-ndk`, and Rust Android targets. iOS builds require macOS, Xcode command-line tools, XcodeGen, and Rust iOS targets.
+
+## Next step
+
+Continue to the [quickstart](/quickstart/) and register your first benchmark function.

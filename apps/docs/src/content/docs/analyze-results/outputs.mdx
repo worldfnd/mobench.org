@@ -1,0 +1,85 @@
+---
+title: Outputs and metrics
+slug: outputs
+aliases: [/reports, /outputs-and-reports]
+description: Understand mobench JSON, Markdown, CSV, plots, and optional resource values.
+sidebar:
+  order: 1
+audience: [benchmark-author, ci-engineer]
+release: 0.1.45
+lastVerified: 2026-07-18
+section: Analyze results
+order: 1
+sourceRefs:
+  - label: BrowserStack metrics guide
+    url: https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/docs/guides/browserstack-metrics.md
+    evidence: Timing fields, resource columns, sources, and missing-value semantics.
+---
+
+Normal runs can write a JSON report with `--output`. CI runs always normalize results into a three-file contract, with plots when available.
+
+## CI contract
+
+| Path | Intended use |
+| --- | --- |
+| `summary.json` | Machine-readable results, metadata, baselines, and integrations |
+| `summary.md` | Human review and CI job summaries |
+| `results.csv` | Tables, notebooks, and external analysis |
+| `plots/*.svg` | Optional visual summaries when plot rendering is available |
+
+Generate the contract with an explicit directory:
+
+```bash
+mobench ci run \
+  --target android \
+  --function bench_mobile::checksum \
+  --local-only \
+  --plots auto \
+  --output-dir target/mobench/ci
+```
+
+The example uses the host harness to demonstrate files; it does not produce mobile measurements.
+
+## Timing fields
+
+Results include a sample count and timing statistics such as:
+
+- `mean_ns`
+- `median_ns`
+- `p95_ns`
+- `min_ns`
+- `max_ns`
+
+Raw sample durations live in JSON where the report contract provides them. Compare nanosecond values as numbers; format units only at the presentation layer.
+
+## Optional resource fields
+
+CSV and summary data can include:
+
+- `cpu_total_ms`
+- `cpu_median_ms`
+- `peak_memory_kb`
+- `peak_memory_growth_kb`
+- `process_peak_memory_kb`
+
+These values depend on the runner, platform, device, and provider data. A blank CSV cell or absent JSON field means **unavailable**, not zero. Keep missing values out of averages and regression gates that assume measured data.
+
+## Inspect and render
+
+```bash
+mobench summary target/mobench/results.json
+mobench summary --format json target/mobench/results.json
+mobench summary --format csv target/mobench/results.json
+```
+
+Render Markdown from a CI summary:
+
+```bash
+mobench report summarize \
+  --summary target/mobench/ci/summary.json \
+  --plots auto
+```
+
+## Next step
+
+Store a representative `summary.json`, then configure [regression comparison](/regressions/).

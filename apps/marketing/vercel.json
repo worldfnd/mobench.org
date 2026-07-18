@@ -1,0 +1,353 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "astro",
+  "installCommand": "cd ../.. && bun install --frozen-lockfile",
+  "buildCommand": "cd ../.. && bun run generate && bun run build:marketing",
+  "outputDirectory": "dist",
+  "redirects": [
+    {
+      "source": "/analyze-results/outputs",
+      "destination": "https://docs.mobench.org/outputs/",
+      "permanent": true
+    },
+    {
+      "source": "/analyze-results/profiling",
+      "destination": "https://docs.mobench.org/profiling/",
+      "permanent": true
+    },
+    {
+      "source": "/analyze-results/regressions",
+      "destination": "https://docs.mobench.org/regressions/",
+      "permanent": true
+    },
+    {
+      "source": "/app-automate",
+      "destination": "https://docs.mobench.org/browserstack/",
+      "permanent": true
+    },
+    {
+      "source": "/authoring",
+      "destination": "https://docs.mobench.org/benchmark-functions/",
+      "permanent": true
+    },
+    {
+      "source": "/basic-example",
+      "destination": "https://docs.mobench.org/basic-example/",
+      "permanent": true
+    },
+    {
+      "source": "/benchmark-functions",
+      "destination": "https://docs.mobench.org/benchmark-functions/",
+      "permanent": true
+    },
+    {
+      "source": "/benchmark-quality",
+      "destination": "https://docs.mobench.org/benchmark-quality/",
+      "permanent": true
+    },
+    {
+      "source": "/browserstack",
+      "destination": "https://docs.mobench.org/browserstack/",
+      "permanent": true
+    },
+    {
+      "source": "/build",
+      "destination": "https://docs.mobench.org/compatibility/",
+      "permanent": true
+    },
+    {
+      "source": "/build-artifacts",
+      "destination": "https://docs.mobench.org/compatibility/",
+      "permanent": true
+    },
+    {
+      "source": "/ci",
+      "destination": "https://docs.mobench.org/ci/",
+      "permanent": true
+    },
+    {
+      "source": "/cli",
+      "destination": "https://docs.mobench.org/cli/",
+      "permanent": true
+    },
+    {
+      "source": "/cli-man-pages",
+      "destination": "https://docs.mobench.org/cli/",
+      "permanent": true
+    },
+    {
+      "source": "/cli-reference",
+      "destination": "https://docs.mobench.org/cli/",
+      "permanent": true
+    },
+    {
+      "source": "/codebase",
+      "destination": "https://docs.mobench.org/troubleshooting/",
+      "permanent": true
+    },
+    {
+      "source": "/compatibility",
+      "destination": "https://docs.mobench.org/compatibility/",
+      "permanent": true
+    },
+    {
+      "source": "/concepts",
+      "destination": "https://docs.mobench.org/configuration/",
+      "permanent": true
+    },
+    {
+      "source": "/configuration",
+      "destination": "https://docs.mobench.org/configuration/",
+      "permanent": true
+    },
+    {
+      "source": "/current-spec",
+      "destination": "https://docs.mobench.org/schemas/",
+      "permanent": true
+    },
+    {
+      "source": "/device-matrices",
+      "destination": "https://docs.mobench.org/device-matrices/",
+      "permanent": true
+    },
+    {
+      "source": "/diagrams",
+      "destination": "https://docs.mobench.org/device-matrices/",
+      "permanent": true
+    },
+    {
+      "source": "/docs",
+      "destination": "https://docs.mobench.org/",
+      "permanent": true
+    },
+    {
+      "source": "/docs/:path*",
+      "destination": "https://docs.mobench.org/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/examples",
+      "destination": "https://docs.mobench.org/basic-example/",
+      "permanent": true
+    },
+    {
+      "source": "/examples/basic",
+      "destination": "https://docs.mobench.org/basic-example/",
+      "permanent": true
+    },
+    {
+      "source": "/examples/ffi",
+      "destination": "https://docs.mobench.org/ffi-example/",
+      "permanent": true
+    },
+    {
+      "source": "/ffi-example",
+      "destination": "https://docs.mobench.org/ffi-example/",
+      "permanent": true
+    },
+    {
+      "source": "/get-started/installation",
+      "destination": "https://docs.mobench.org/installation/",
+      "permanent": true
+    },
+    {
+      "source": "/get-started/quickstart",
+      "destination": "https://docs.mobench.org/quickstart/",
+      "permanent": true
+    },
+    {
+      "source": "/help/troubleshooting",
+      "destination": "https://docs.mobench.org/troubleshooting/",
+      "permanent": true
+    },
+    {
+      "source": "/home",
+      "destination": "https://docs.mobench.org/",
+      "permanent": true
+    },
+    {
+      "source": "/host-preflight",
+      "destination": "https://docs.mobench.org/host-preflight/",
+      "permanent": true
+    },
+    {
+      "source": "/install",
+      "destination": "https://docs.mobench.org/installation/",
+      "permanent": true
+    },
+    {
+      "source": "/installation",
+      "destination": "https://docs.mobench.org/installation/",
+      "permanent": true
+    },
+    {
+      "source": "/local-devices",
+      "destination": "https://docs.mobench.org/host-preflight/",
+      "permanent": true
+    },
+    {
+      "source": "/outputs",
+      "destination": "https://docs.mobench.org/outputs/",
+      "permanent": true
+    },
+    {
+      "source": "/outputs-and-reports",
+      "destination": "https://docs.mobench.org/outputs/",
+      "permanent": true
+    },
+    {
+      "source": "/overview",
+      "destination": "https://docs.mobench.org/",
+      "permanent": true
+    },
+    {
+      "source": "/profiling",
+      "destination": "https://docs.mobench.org/profiling/",
+      "permanent": true
+    },
+    {
+      "source": "/public-api",
+      "destination": "https://docs.mobench.org/compatibility/",
+      "permanent": true
+    },
+    {
+      "source": "/quickstart",
+      "destination": "https://docs.mobench.org/quickstart/",
+      "permanent": true
+    },
+    {
+      "source": "/reference",
+      "destination": "https://docs.mobench.org/schemas/",
+      "permanent": true
+    },
+    {
+      "source": "/reference/cli",
+      "destination": "https://docs.mobench.org/cli/",
+      "permanent": true
+    },
+    {
+      "source": "/reference/compatibility",
+      "destination": "https://docs.mobench.org/compatibility/",
+      "permanent": true
+    },
+    {
+      "source": "/reference/configuration",
+      "destination": "https://docs.mobench.org/configuration/",
+      "permanent": true
+    },
+    {
+      "source": "/reference/device-matrices",
+      "destination": "https://docs.mobench.org/device-matrices/",
+      "permanent": true
+    },
+    {
+      "source": "/reference/schemas",
+      "destination": "https://docs.mobench.org/schemas/",
+      "permanent": true
+    },
+    {
+      "source": "/regressions",
+      "destination": "https://docs.mobench.org/regressions/",
+      "permanent": true
+    },
+    {
+      "source": "/reports",
+      "destination": "https://docs.mobench.org/outputs/",
+      "permanent": true
+    },
+    {
+      "source": "/run-benchmarks/browserstack",
+      "destination": "https://docs.mobench.org/browserstack/",
+      "permanent": true
+    },
+    {
+      "source": "/run-benchmarks/ci",
+      "destination": "https://docs.mobench.org/ci/",
+      "permanent": true
+    },
+    {
+      "source": "/run-benchmarks/preflight",
+      "destination": "https://docs.mobench.org/host-preflight/",
+      "permanent": true
+    },
+    {
+      "source": "/schemas",
+      "destination": "https://docs.mobench.org/schemas/",
+      "permanent": true
+    },
+    {
+      "source": "/sdk",
+      "destination": "https://docs.mobench.org/compatibility/",
+      "permanent": true
+    },
+    {
+      "source": "/sdk-integration",
+      "destination": "https://docs.mobench.org/compatibility/",
+      "permanent": true
+    },
+    {
+      "source": "/setup-and-teardown",
+      "destination": "https://docs.mobench.org/setup-teardown/",
+      "permanent": true
+    },
+    {
+      "source": "/setup-teardown",
+      "destination": "https://docs.mobench.org/setup-teardown/",
+      "permanent": true
+    },
+    {
+      "source": "/testing",
+      "destination": "https://docs.mobench.org/troubleshooting/",
+      "permanent": true
+    },
+    {
+      "source": "/troubleshooting",
+      "destination": "https://docs.mobench.org/troubleshooting/",
+      "permanent": true
+    },
+    {
+      "source": "/write-benchmarks/benchmark-functions",
+      "destination": "https://docs.mobench.org/benchmark-functions/",
+      "permanent": true
+    },
+    {
+      "source": "/write-benchmarks/quality",
+      "destination": "https://docs.mobench.org/benchmark-quality/",
+      "permanent": true
+    },
+    {
+      "source": "/write-benchmarks/setup-teardown",
+      "destination": "https://docs.mobench.org/setup-teardown/",
+      "permanent": true
+    },
+    {
+      "source": "/writing",
+      "destination": "https://docs.mobench.org/benchmark-functions/",
+      "permanent": true
+    },
+    {
+      "source": "/writing-benchmarks",
+      "destination": "https://docs.mobench.org/benchmark-functions/",
+      "permanent": true
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
+        }
+      ]
+    }
+  ]
+}

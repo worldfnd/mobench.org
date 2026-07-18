@@ -1,0 +1,93 @@
+---
+title: Device matrices
+slug: device-matrices
+description: Select BrowserStack Android and iOS devices deterministically with tags.
+sidebar:
+  order: 3
+audience: [ci-engineer, benchmark-author]
+release: 0.1.45
+lastVerified: 2026-07-18
+section: Reference
+order: 3
+sourceRefs:
+  - label: BrowserStack CI guide
+    url: https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/docs/guides/browserstack-ci.md
+    evidence: Device inventory, validation, matrix syntax, profiles, and legacy iOS constraints.
+---
+
+A device matrix keeps exact BrowserStack identifiers and grouping decisions in version control. Tags let CI select a stable lane such as `default`, `pixel`, or `legacy-ios`.
+
+## Create a matrix
+
+Generate a starter file:
+
+```bash
+mobench plan --output device-matrix.yaml
+```
+
+Example:
+
+```yaml
+devices:
+  - name: "Google Pixel 7-13.0"
+    os: "android"
+    os_version: "13.0"
+    tags: ["default", "pixel"]
+  - name: "iPhone 14-16"
+    os: "ios"
+    os_version: "16"
+    tags: ["default", "iphone"]
+```
+
+Use identifiers from the live BrowserStack inventory:
+
+```bash
+mobench devices --platform android
+mobench devices --platform ios
+mobench devices --json
+```
+
+## Validate identifiers
+
+```bash
+mobench devices --validate "Google Pixel 7-13.0"
+```
+
+Invalid labels return nearby suggestions. Update the matrix deliberately when BrowserStack changes its inventory; do not silently fall back to another device.
+
+## Resolve a tagged profile
+
+```bash
+mobench devices resolve \
+  --platform android \
+  --profile default \
+  --device-matrix device-matrix.yaml
+```
+
+Run the selected group:
+
+```bash
+mobench ci run \
+  --target android \
+  --function bench_mobile::checksum \
+  --device-matrix device-matrix.yaml \
+  --device-tags default \
+  --release \
+  --output-dir target/mobench/ci
+```
+
+`--device-tags` accepts comma-separated or repeated values. Explicit `--devices` and a matrix cannot be combined.
+
+## Legacy iOS lane
+
+An older BrowserStack device requires all three parts to agree:
+
+- the matrix's device OS
+- the `mobench.toml` iOS deployment target
+- the Xcode version on the build runner
+
+For a device below iOS 15, select `uikit-legacy`. mobench fails early when the app deployment target is newer than the chosen device OS.
+
+## Next step
+
+Run `mobench doctor --device-matrix device-matrix.yaml --browserstack true` before committing a CI lane.

@@ -1,0 +1,70 @@
+---
+title: Compatibility
+slug: compatibility
+aliases: [/build, /build-artifacts, /sdk, /sdk-integration, /public-api]
+description: Match Rust, platform tools, devices, and generated runner backends to mobench 0.1.45.
+sidebar:
+  order: 5
+audience: [benchmark-author, ci-engineer]
+release: 0.1.45
+lastVerified: 2026-07-18
+section: Reference
+order: 5
+sourceRefs:
+  - label: Build guide
+    url: https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/docs/guides/build.md
+    evidence: Rust and platform prerequisites, targets, outputs, and generated backends.
+---
+
+mobench 0.1.45 has a Rust MSRV of **1.85**. Mobile compatibility also depends on the platform toolchain, target architecture, runner backend, and selected device OS.
+
+## Android
+
+Typical requirements:
+
+- Android SDK and NDK
+- `cargo-ndk`
+- `ANDROID_NDK_HOME` or discoverable SDK installation
+- Rust targets such as `aarch64-linux-android`, `armv7-linux-androideabi`, and `x86_64-linux-android`
+
+The generated project defaults to Android min SDK 24, target SDK 34, and `arm64-v8a` unless configured otherwise. Set `UNIFFI_ANDROID_ABI=x86_64` when exercising the UniFFI path on a default x86_64 emulator.
+
+## iOS
+
+Typical requirements:
+
+- macOS
+- Xcode command-line tools
+- XcodeGen
+- Rust targets `aarch64-apple-ios`, `aarch64-apple-ios-sim`, and `x86_64-apple-ios`
+
+The default deployment target is iOS 15.0 with the SwiftUI runner. Lower targets use `uikit-legacy` and need an Xcode release capable of building for that OS. BrowserStack device OS must be at least the app deployment target.
+
+## Generated runner backends
+
+| Backend | Use when | Integration requirement |
+| --- | --- | --- |
+| `uniffi` | You want the default compatibility path | UniFFI types and generated Kotlin/Swift bindings |
+| `native-c-abi` | Binding overhead must stay out of measured work | Export `mobench_sdk::export_native_c_abi!()` |
+| `boltffi` | The project already uses BoltFFI generation | Export the JSON bridge with `#[boltffi::export]` and provide BoltFFI tooling |
+
+Keep the backend constant across a baseline and candidate; changing it changes the execution path.
+
+## Profiling compatibility
+
+- Android native profiling is local and uses `simpleperf`.
+- iOS profiling is local, simulator-host oriented, and uses macOS `sample`.
+- `rust-tracing` is a planned manifest/trace contract only.
+- BrowserStack native profiling is unsupported in 0.1.45.
+
+## Check the current machine
+
+```bash
+mobench check --target android
+mobench check --target ios
+mobench doctor --target both
+```
+
+## Next step
+
+Run the platform check on the same machine image used by CI, then save its toolchain versions with your first baseline.

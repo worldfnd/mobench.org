@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://world.org/mobench/schemas/summary-v1.schema.json",
+  "title": "Mobench Summary v1",
+  "type": "object",
+  "required": ["summary"],
+  "properties": {
+    "summary": {
+      "type": "object",
+      "required": [
+        "generated_at",
+        "generated_at_unix",
+        "target",
+        "function",
+        "iterations",
+        "warmup",
+        "devices",
+        "device_summaries"
+      ],
+      "properties": {
+        "generated_at": { "type": "string" },
+        "generated_at_unix": { "type": "integer" },
+        "target": { "type": "string", "enum": ["android", "ios"] },
+        "function": { "type": "string" },
+        "iterations": { "type": "integer" },
+        "warmup": { "type": "integer" },
+        "devices": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "device_summaries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["device", "benchmarks"],
+            "properties": {
+              "device": { "type": "string" },
+              "benchmarks": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["function", "samples"],
+                  "properties": {
+                    "function": { "type": "string" },
+                    "samples": { "type": "integer" },
+                    "mean_ns": { "type": ["integer", "null"] },
+                    "median_ns": { "type": ["integer", "null"] },
+                    "p95_ns": { "type": ["integer", "null"] },
+                    "min_ns": { "type": ["integer", "null"] },
+                    "max_ns": { "type": ["integer", "null"] },
+                    "resource_usage": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "cpu_total_ms": { "type": ["integer", "null"] },
+                        "cpu_median_ms": { "type": ["integer", "null"] },
+                        "peak_memory_kb": { "type": ["integer", "null"] },
+                        "peak_memory_growth_kb": { "type": ["integer", "null"] },
+                        "process_peak_memory_kb": { "type": ["integer", "null"] },
+                        "total_pss_kb": { "type": ["integer", "null"] },
+                        "private_dirty_kb": { "type": ["integer", "null"] },
+                        "native_heap_kb": { "type": ["integer", "null"] },
+                        "java_heap_kb": { "type": ["integer", "null"] }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,84 @@
+---
+title: Setup and teardown
+slug: setup-teardown
+aliases: [/setup-and-teardown]
+description: Keep fixture creation, mutation, and cleanup outside measured samples.
+sidebar:
+  order: 2
+audience: [benchmark-author]
+release: 0.1.45
+lastVerified: 2026-07-18
+section: Write benchmarks
+order: 2
+sourceRefs:
+  - label: Current API specification
+    url: https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/docs/specs/mobench-current-spec.md
+    evidence: Implemented setup, per-iteration setup, and teardown semantics.
+---
+
+Use the macro's fixture attributes when input creation or cleanup is not part of the operation you want to measure.
+
+## Reuse one fixture
+
+Setup runs once before warmup and measured iterations. The benchmark receives a shared reference.
+
+```rust
+use mobench_sdk::benchmark;
+
+fn create_input() -> Vec<u8> {
+    vec![42; 1024 * 1024]
+}
+
+#[benchmark(setup = create_input)]
+pub fn checksum(input: &Vec<u8>) {
+    let sum: u64 = input.iter().map(|byte| u64::from(*byte)).sum();
+    std::hint::black_box(sum);
+}
+```
+
+Choose this mode when repeated work does not mutate the fixture in a way that changes later samples.
+
+## Create a fresh fixture per iteration
+
+`per_iteration` runs setup before each warmup or measured iteration and passes the value by ownership. Setup remains outside the sample timer.
+
+```rust
+use mobench_sdk::benchmark;
+
+fn unsorted_values() -> Vec<i32> {
+    (0..10_000).rev().collect()
+}
+
+#[benchmark(setup = unsorted_values, per_iteration)]
+pub fn sort_values(mut values: Vec<i32>) {
+    values.sort_unstable();
+    std::hint::black_box(values);
+}
+```
+
+Use this mode when the operation consumes or irreversibly mutates its input.
+
+## Clean up after the run
+
+Teardown receives the setup value after warmup and measurement. It runs outside measured timing, including when measured execution returns an error.
+
+```rust
+fn open_store() -> Store {
+    Store::temporary()
+}
+
+fn remove_store(store: Store) {
+    store.remove();
+}
+
+#[benchmark(setup = open_store, teardown = remove_store)]
+pub fn query_store(store: &Store) {
+    std::hint::black_box(store.query("key"));
+}
+```
+
+Teardown is not combined with `per_iteration`; make a consumed fixture clean itself up through ownership when each iteration needs independent cleanup.
+
+## Next step
+
+Run the benchmark with multiple warmups and inspect it against the [quality checklist](/benchmark-quality/).

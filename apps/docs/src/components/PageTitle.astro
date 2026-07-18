@@ -1,0 +1,53 @@
+---
+import Default from '@astrojs/starlight/components/PageTitle.astro'
+
+const route = Astro.locals.starlightRoute
+const cleanPath = Astro.url.pathname.replace(/\/$/, '')
+const markdownPath = cleanPath ? `${cleanPath}.md` : '/index.md'
+const sourcePath = route.entry.filePath?.replace(/^.*?src\/content\/docs\//, '') ?? `${route.entry.id}.mdx`
+const sourceUrl = `https://github.com/worldfnd/mobench.org/blob/main/apps/docs/src/content/docs/${sourcePath}`
+---
+
+<div class="mb-page-title">
+  <Default />
+  <div class="mb-page-actions" data-page-actions data-pagefind-ignore>
+    <button type="button" data-copy-markdown={markdownPath}>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>
+      <span>Copy Markdown</span>
+    </button>
+    <a href={sourceUrl}>
+      View source
+      <span aria-hidden="true">↗</span>
+    </a>
+    <p class="mb-copy-status" role="status" aria-live="polite"></p>
+  </div>
+</div>
+
+<style>
+  .mb-page-title { margin-bottom: 1.4rem; }
+  .mb-page-actions { position: relative; display: flex; min-height: 2.25rem; margin-top: 1.1rem; align-items: center; flex-wrap: wrap; gap: .55rem; }
+  .mb-page-actions button, .mb-page-actions a { display: inline-flex; min-height: 2.75rem; padding: .42rem .68rem; align-items: center; gap: .4rem; border: 1px solid var(--sl-color-gray-5); border-radius: .45rem; background: transparent; color: var(--sl-color-gray-2); font-family: var(--sl-font-mono); font-size: .68rem; font-weight: 560; text-decoration: none; cursor: pointer; }
+  .mb-page-actions button:hover, .mb-page-actions a:hover { border-color: var(--sl-color-accent); color: var(--sl-color-white); }
+  .mb-page-actions svg { width: .9rem; fill: none; stroke: currentColor; stroke-width: 1.7; }
+  .mb-copy-status { width: 100%; min-height: 1rem; margin: 0; color: var(--sl-color-gray-3); font-family: var(--sl-font-mono); font-size: .62rem; }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-copy-markdown]').forEach((button) => {
+    button.addEventListener('click', async () => {
+      const container = button.closest<HTMLElement>('[data-page-actions]')
+      const status = container?.querySelector<HTMLElement>('[role="status"]')
+      const path = button.dataset.copyMarkdown
+      if (!path) return
+      try {
+        const response = await fetch(path)
+        if (!response.ok) throw new Error(`HTTP ${response.status}`)
+        await navigator.clipboard.writeText(await response.text())
+        if (status) status.textContent = 'Markdown copied to clipboard.'
+      } catch {
+        if (status) status.textContent = 'Copy failed. Use View source to open the authored page.'
+      }
+      window.setTimeout(() => { if (status) status.textContent = '' }, 3000)
+    })
+  })
+</script>

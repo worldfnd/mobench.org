@@ -1,0 +1,110 @@
+---
+title: BrowserStack device runs
+slug: browserstack
+aliases: [/app-automate]
+description: Build, upload, run, and fetch Rust benchmarks with BrowserStack App Automate.
+sidebar:
+  order: 2
+audience: [benchmark-author, ci-engineer]
+release: 0.1.45
+lastVerified: 2026-07-18
+section: Run benchmarks
+order: 2
+sourceRefs:
+  - label: BrowserStack CI guide
+    url: https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/docs/guides/browserstack-ci.md
+    evidence: Credentials, device resolution, execution, fetching, and iOS compatibility.
+---
+
+When a `run` or `ci run` command selects devices, mobench builds mobile artifacts, uploads them to BrowserStack App Automate, schedules the sessions, and collects available results. This is the normal path for real Android and iOS measurements in 0.1.45.
+
+For pull requests, use the [two-stage CI workflow](/ci/#secure-pull-request-benchmarks). It builds untrusted code without secrets, then verifies a prebuilt artifact manifest before a separate trusted job receives BrowserStack credentials. Version 0.1.45 supports platform-specific function/device matrices and fails closed unless every requested function/device pair has exactly one result shard.
+
+## Configure credentials
+
+Environment variables are the simplest option:
+
+```bash
+export BROWSERSTACK_USERNAME="your_username"
+export BROWSERSTACK_ACCESS_KEY="your_access_key"
+export BROWSERSTACK_PROJECT="mobile-benchmarks"
+```
+
+You can also reference them from `bench-config.toml`:
+
+```toml test=config:bench-config.toml
+[browserstack]
+app_automate_username = "${BROWSERSTACK_USERNAME}"
+app_automate_access_key = "${BROWSERSTACK_ACCESS_KEY}"
+project = "mobile-benchmarks"
+```
+
+Validate the credentials before starting a build:
+
+```bash
+mobench doctor --target both --browserstack true
+```
+
+## Choose a device
+
+List the current BrowserStack inventory and validate an exact identifier:
+
+```bash
+mobench devices --platform android
+mobench devices --platform ios
+mobench devices --validate "Google Pixel 7-13.0"
+```
+
+For repeatable suites, use a [device matrix](/device-matrices/) rather than copying labels across workflows.
+
+## Run Android
+
+```bash
+mobench run \
+  --target android \
+  --function bench_mobile::checksum \
+  --devices "Google Pixel 7-13.0" \
+  --iterations 30 \
+  --warmup 5 \
+  --release \
+  --fetch \
+  --output target/mobench/android-results.json
+```
+
+Use `--release` for optimized code and smaller APK uploads.
+
+## Run iOS
+
+```bash
+mobench run \
+  --target ios \
+  --function bench_mobile::checksum \
+  --devices "iPhone 14-16" \
+  --iterations 20 \
+  --warmup 3 \
+  --release \
+  --fetch \
+  --output target/mobench/ios-results.json
+```
+
+mobench generates and packages the app and XCUITest suite unless `--ios-app` and `--ios-test-suite` point to existing artifacts.
+
+For older devices, the app deployment target must not exceed the device OS. Use the `uikit-legacy` runner and an appropriately old Xcode lane when SwiftUI is unavailable.
+
+## Fetch artifacts later
+
+```bash
+mobench fetch \
+  --target android \
+  --build-id <browserstack-build-id> \
+  --output-dir target/browserstack \
+  --wait \
+  --poll-interval-secs 10 \
+  --timeout-secs 1800
+```
+
+Fetched data can include session JSON, device logs, instrumentation logs, and available video links. BrowserStack does not expose native stack or flamegraph artifacts through this flow.
+
+## Next step
+
+Move a stable command into [CI](/ci/) and save its standard output contract.

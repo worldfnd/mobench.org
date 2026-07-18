@@ -1,0 +1,94 @@
+---
+title: Troubleshooting
+slug: troubleshooting
+aliases: [/testing, /codebase]
+description: Diagnose discovery, toolchain, BrowserStack, result, and profiling failures.
+sidebar:
+  order: 1
+audience: [new-user, benchmark-author, ci-engineer]
+release: 0.1.45
+lastVerified: 2026-07-18
+section: Help
+order: 1
+sourceRefs:
+  - label: Upstream testing guide
+    url: https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/docs/guides/testing.md
+    evidence: Supported validation paths and platform smoke checks.
+---
+
+Start with the narrowest command that can reproduce the failure, add `--verbose`, and keep the generated output directory until you understand the error.
+
+## Benchmark does not appear in `list`
+
+1. Confirm the function has `#[benchmark]` and a supported signature.
+2. Confirm the benchmark crate depends on `mobench-sdk` with the registry feature and on `inventory`.
+3. Pass an explicit `--crate-path` when the workspace contains several libraries.
+4. Run `cargo check` for compile-time macro errors.
+
+```bash
+mobench --verbose list --crate-path crates/bench-mobile
+```
+
+## `--local-only` succeeds but the device run fails
+
+That result is expected when the failure is in mobile compilation, packaging, signing, upload, or the generated runner. `--local-only` skips all of those layers.
+
+Run the platform checks and build separately:
+
+```bash
+mobench check --target android
+mobench build --target android --release --progress
+mobench verify --target android --check-artifacts
+```
+
+For iOS, also verify Xcode, XcodeGen, signing, deployment target, and runner compatibility.
+
+## BrowserStack credentials or device fail
+
+```bash
+mobench doctor --target both --browserstack true
+mobench devices --validate "Google Pixel 7-13.0"
+```
+
+Check that the credentials are App Automate credentials, the device identifier still exists, and the app deployment target does not exceed the selected iOS version.
+
+## Upload times out
+
+Build and run with `--release`. Debug Android artifacts can be much larger. If the build was accepted but result polling expired, fetch it later with the BrowserStack build ID.
+
+## Result has no CPU or memory value
+
+Resource metrics are optional and vary by runner and provider availability. Missing means unavailable, not zero. Keep the timing result and resource availability as separate facts.
+
+## CI output is in the wrong place
+
+`ci run` and `profile run` use `--output-dir`. A normal `run` uses `--output` for its JSON report.
+
+```bash
+mobench ci run --help
+mobench profile run --help
+mobench run --help
+```
+
+## Profiling writes no native capture
+
+Check the provider/backend combination first. BrowserStack native profiling is unsupported, and `rust-tracing` is only a planned manifest/trace contract in 0.1.45.
+
+For Android, confirm `adb`, `simpleperf`, the NDK, and `llvm-addr2line`. For iOS, confirm a simulator runtime, `xcrun`, `simctl`, and macOS `sample`. Read the capture status and warnings in `profile.json`; do not treat a planned or partial capture as complete.
+
+## Still stuck
+
+Capture these facts before opening an upstream issue:
+
+- `mobench --version` and `rustc --version`
+- the smallest failing command with secrets removed
+- platform and device identifier
+- relevant `mobench.toml` and `bench-config.toml` sections
+- verbose output and generated artifact paths
+- whether host preflight, build, upload, execution, or fetch failed
+
+Contributor architecture and release-maintenance documentation belongs in the [upstream repository](https://github.com/worldcoin/mobile-bench-rs), not in the product guide.
+
+## Next step
+
+Re-run the narrow failing command with `--verbose`, then attach the sanitized evidence to an upstream issue.

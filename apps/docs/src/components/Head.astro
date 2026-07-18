@@ -1,0 +1,43 @@
+---
+import Default from '@astrojs/starlight/components/Head.astro'
+
+const route = Astro.locals.starlightRoute
+const data = route.entry.data
+const slug = route.entry.id === 'index' ? 'index' : route.entry.id
+const canonical = Astro.url.href
+const image = new URL(`/og/${slug}.png`, 'https://docs.mobench.org').href
+const imageAlt = `${data.title} — mobench ${data.release ?? 'documentation'}`
+const breadcrumbs = route.entry.id === 'index'
+  ? [{ '@type': 'ListItem', position: 1, name: 'mobench documentation', item: 'https://docs.mobench.org/' }]
+  : [
+      { '@type': 'ListItem', position: 1, name: 'mobench documentation', item: 'https://docs.mobench.org/' },
+      { '@type': 'ListItem', position: 2, name: data.title, item: canonical },
+    ]
+const structuredData = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline: data.title,
+    description: data.description,
+    url: canonical,
+    image,
+    dateModified: data.lastVerified instanceof Date ? data.lastVerified.toISOString().slice(0, 10) : undefined,
+    isPartOf: { '@type': 'WebSite', name: 'mobench docs', url: 'https://docs.mobench.org/' },
+    about: { '@type': 'SoftwareApplication', name: 'mobench', softwareVersion: data.release },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: breadcrumbs,
+  },
+]
+---
+
+<Default />
+<meta property="og:image" content={image} />
+<meta property="og:image:alt" content={imageAlt} />
+<meta name="twitter:image" content={image} />
+<meta name="twitter:image:alt" content={imageAlt} />
+<script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+<script src="../scripts/search-accessibility.ts"></script>
+<script src="../scripts/analytics.ts"></script>

@@ -1,0 +1,51 @@
+# mobench
+
+> Source-backed documentation for mobench 0.1.45: build Android and iOS runners, execute ordinary benchmarks on BrowserStack devices, and analyze stable reports or supported local native profiles.
+
+Canonical documentation: https://docs.mobench.org/
+Source: https://github.com/worldcoin/mobile-bench-rs/tree/v0.1.45
+Pinned release SHA: 434da93dfda39db996be90e9e0bca625f10efb25
+
+## Capability boundary
+
+- Use the `mobench` executable for release 0.1.45. The published `cargo mobench` wrapper is unsupported.
+- Ordinary mobile benchmarks execute through BrowserStack when devices are selected.
+- `--local-only` is host preflight and does not measure Android or iOS execution.
+- Local native profiling has a separate Android simpleperf and iOS simulator-host capability matrix.
+- The release does not define an energy or battery measurement contract.
+
+## Documentation
+
+- [Outputs and metrics](https://docs.mobench.org/outputs/): Understand mobench JSON, Markdown, CSV, plots, and optional resource values.
+- [Regression comparison](https://docs.mobench.org/regressions/): Compare compatible mobench summaries and gate meaningful slowdowns.
+- [Local native profiling](https://docs.mobench.org/profiling/): Capture Android and iOS native stacks and compare profile manifests locally.
+- [Basic benchmark crate](https://docs.mobench.org/basic-example/): Follow the minimal SDK example from registration to host and mobile execution.
+- [FFI benchmark crate](https://docs.mobench.org/ffi-example/): Expose mobench benchmarks through UniFFI, the native C ABI, or BoltFFI.
+- [Installation](https://docs.mobench.org/installation/): Install mobench 0.1.45 and prepare a Rust benchmark crate.
+- [Quickstart](https://docs.mobench.org/quickstart/): Register a Rust benchmark, validate it on the host, and run it on a mobile device.
+- [Troubleshooting](https://docs.mobench.org/troubleshooting/): Diagnose discovery, toolchain, BrowserStack, result, and profiling failures.
+- [mobench documentation](https://docs.mobench.org/): Build, run, and analyze Rust benchmarks on Android and iOS.
+- [CLI reference](https://docs.mobench.org/cli/): Find mobench commands and the flags that connect authoring, execution, CI, and profiling.
+- [Configuration](https://docs.mobench.org/configuration/): Configure project builds separately from benchmark run and provider settings.
+- [Device matrices](https://docs.mobench.org/device-matrices/): Select BrowserStack Android and iOS devices deterministically with tags.
+- [Output schemas](https://docs.mobench.org/schemas/): Use the versioned mobench JSON contracts without depending on private implementation details.
+- [Compatibility](https://docs.mobench.org/compatibility/): Match Rust, platform tools, devices, and generated runner backends to mobench 0.1.45.
+- [Host-side preflight](https://docs.mobench.org/host-preflight/): Validate configuration, discovery, builds, and reports before using mobile devices.
+- [BrowserStack device runs](https://docs.mobench.org/browserstack/): Build, upload, run, and fetch Rust benchmarks with BrowserStack App Automate.
+- [CI runs](https://docs.mobench.org/ci/): Run repeatable mobile benchmarks and produce stable CI artifacts.
+- [Benchmark functions](https://docs.mobench.org/benchmark-functions/): Register discoverable benchmark functions with the mobench SDK.
+- [Setup and teardown](https://docs.mobench.org/setup-teardown/): Keep fixture creation, mutation, and cleanup outside measured samples.
+- [Benchmark quality](https://docs.mobench.org/benchmark-quality/): Design mobile benchmarks that produce comparable, defensible results.
+
+## Stable command entry points
+
+```bash
+cargo install mobench --version 0.1.45
+mobench list --crate-path bench-mobile
+mobench run --target android --function bench_mobile::checksum --local-only --output target/mobench/preflight.json
+mobench run --target android --function bench_mobile::checksum --devices "Google Pixel 7-13.0" --release --fetch --output target/mobench/results.json
+mobench ci run --target android --function bench_mobile::checksum --devices "Google Pixel 7-13.0" --release --fetch --output-dir target/mobench/ci
+mobench profile run --target android --provider local --backend android-native --function bench_mobile::checksum --output-dir target/mobench/profile
+```
+
+Full authored documentation: https://docs.mobench.org/llms-full.txt

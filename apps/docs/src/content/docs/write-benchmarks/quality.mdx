@@ -1,0 +1,70 @@
+---
+title: Benchmark quality
+slug: benchmark-quality
+description: Design mobile benchmarks that produce comparable, defensible results.
+sidebar:
+  order: 3
+audience: [benchmark-author, ci-engineer]
+release: 0.1.45
+lastVerified: 2026-07-18
+section: Write benchmarks
+order: 3
+sourceRefs:
+  - label: BrowserStack metrics guide
+    url: https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/docs/guides/browserstack-metrics.md
+    evidence: Result interpretation, optional resource data, and comparison guidance.
+---
+
+A mobile number is useful only when the work, build, device, and run conditions are clear enough to reproduce.
+
+## Keep the optimizer honest
+
+- Pass variable inputs and final outputs through `std::hint::black_box` or `mobench_sdk::black_box`.
+- Make the workload long enough to rise above timer resolution and harness overhead.
+- Keep setup, cloning, and cleanup outside the measured closure unless they are the subject of the benchmark.
+- Prefer deterministic fixture data over network or wall-clock dependencies.
+
+## Separate warmup from measurement
+
+Warmups execute the benchmark without adding samples. They can stabilize code paths and caches, but they do not guarantee a thermally stable device.
+
+Use the same warmup and iteration counts when comparing revisions. Record changes to either value as a new experiment.
+
+## Compare like with like
+
+Keep these dimensions stable:
+
+- device model and OS version
+- release versus debug build
+- benchmark function and fixture
+- runner backend
+- iteration and warmup counts
+- relevant dependency and toolchain versions
+
+Prefer medians and percentiles when isolated scheduling noise affects the mean. Repeat the full run when a result is close to your regression threshold.
+
+## Treat resource values as optional
+
+CPU and memory measurements depend on runner and provider availability. A blank or absent value means **unavailable**. Do not coerce it to zero, carry it into arithmetic, or claim that it was measured.
+
+mobench 0.1.45 does not define a power-consumption metric.
+
+## Use the right execution mode
+
+`--local-only` validates the host harness and output pipeline. It does not measure Android or iOS execution. For mobile results, choose a BrowserStack device and use `--release`.
+
+Native profiling is a separate local workflow and should answer *where time is spent*, not replace repeated timing samples.
+
+## Pre-baseline checklist
+
+- The function appears in `mobench list`.
+- A host preflight completes without warnings you do not understand.
+- The release mobile build succeeds.
+- The exact device identifier resolves.
+- The output contains the expected number of measured samples.
+- Missing resource values remain missing.
+- The baseline file is stored with its environment metadata.
+
+## Next step
+
+Complete the [host-side preflight](/host-preflight/) before spending BrowserStack time.
