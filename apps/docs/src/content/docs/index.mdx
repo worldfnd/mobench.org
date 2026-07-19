@@ -18,7 +18,7 @@ mobench takes a Rust benchmark from a function in your crate to repeatable resul
 
 The current documentation describes mobench **0.1.46** and requires Rust **1.85 or newer**.
 
-Release 0.1.46 lets reusable-workflow callers pin the exact Rust toolchain used for mobile builds and select `uniffi`, `native-c-abi`, or `boltffi` preparation explicitly. Mobile targets and caller dependencies remain confined to secretless prepare jobs; the trusted control plane stays independently pinned.
+Release 0.1.46 lets workflow callers pin the Rust toolchain and choose `uniffi`, `native-c-abi`, or `boltffi` preparation. Caller builds remain secretless; the trusted control plane stays independently pinned.
 
 ## Choose a starting point
 
