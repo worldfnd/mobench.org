@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://mobench.org/sitemap-index.xml

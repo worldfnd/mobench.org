@@ -1,6 +1,5 @@
 node_modules
 dist
-.astro
 .DS_Store
 *.local
 .vercel
@@ -8,7 +7,3 @@ dist
 .env.*
 !.env.example
 .design-src
-playwright-report
-test-results
-.lighthouseci
-*.tsbuildinfo

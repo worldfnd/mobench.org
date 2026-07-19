@@ -1,6 +1,6 @@
 # mobench
 
-> mobench is a Rust mobile benchmarking toolkit for Android and iOS. It provides a Cargo-native CLI, SDK runtime, `#[benchmark]` macros, generated mobile runners, BrowserStack App Automate integration, stable reports, schemas, and native profiling artifacts.
+> mobench is a Rust mobile benchmarking toolkit for Android and iOS. It provides the `mobench` CLI, SDK runtime, `#[benchmark]` macros, generated mobile runners, BrowserStack App Automate integration, stable reports, schemas, and native profiling artifacts.
 
 Use this file as a map for AI agents, coding assistants, and documentation readers. The canonical website is https://mobench.org and the canonical documentation site is https://docs.mobench.org.
 
@@ -18,6 +18,14 @@ Use this file as a map for AI agents, coding assistants, and documentation reade
 ## What mobench is for
 
 mobench was built to benchmark intense Rust workloads in mobile environments that represent real World App users. Real users run flagship phones, mid-tier devices, low-end devices, and older 32-bit devices. mobench helps teams measure whether critical Rust workloads, including cryptography used by World ID and ProveKit, perform reliably across that device range.
+
+## Release 0.1.44–0.1.46
+
+- 0.1.44 hardened pull-request benchmarks by separating secretless preparation, trusted prebuilt-only BrowserStack execution, and isolated reporting. Untrusted PR code never runs with BrowserStack credentials or write-capable repository permissions.
+- 0.1.45 added a normalized repository-relative `prepare_script`, platform-specific function lists, structured Android/iOS device arrays, and fail-closed completeness checks for every function/device pair.
+- 0.1.46 added `rust_toolchain` (default `stable`) for caller preparation and typed `ffi_backend` selection: `uniffi`, `native-c-abi`, or `boltffi`. Explicit CLI/workflow selection overrides `project.ffi_backend` in `mobench.toml`, then UniFFI is the default.
+- Pin the reusable workflow to `1ac54adaf2bd97c6ca303705e1e0471257716f48`, pass BrowserStack secrets explicitly, and do not use `secrets: inherit`.
+- Install with `cargo install mobench`, then run the `mobench` executable directly. Release 0.1.46 does not install a `cargo-mobench` binary.
 
 ## Documentation Pages
 
@@ -56,7 +64,7 @@ mobench was built to benchmark intense Rust workloads in mobile environments tha
 - Diagrams: https://docs.mobench.org/diagrams
   Crate architecture, lifecycle, provider flow, BrowserStack CI, profiling artifacts, and SDK versus CLI responsibility.
 - Current behavior: https://docs.mobench.org/current-spec
-  Current behavior and API contract for release 0.1.45.
+  Current behavior and API contract for release 0.1.46.
 - Codebase architecture: https://docs.mobench.org/codebase
   Workspace layout, runtime layers, generated templates, integrations, stack, and ownership boundaries.
 - Testing strategy: https://docs.mobench.org/testing
@@ -85,14 +93,14 @@ mobench was built to benchmark intense Rust workloads in mobile environments tha
 
 ```bash
 cargo install mobench
-cargo mobench init
-cargo mobench doctor
-cargo mobench check --target android
-cargo mobench build --target android --release
-cargo mobench run --local --function fibonacci_30 --iterations 100 --warmup 10
-cargo mobench ci run --target android --browserstack --output target/mobench/ci
-cargo mobench ci merge-split-runs --samples-dir target/mobench/ci/split --output-dir target/mobench/ci/merged --function sample_fns::fibonacci --device "Google Pixel 7-13.0" --iterations 5
-cargo mobench profile run --target android --function fibonacci_30 --output target/mobench/profile
+mobench init
+mobench doctor
+mobench check --target android
+mobench build --target android --release
+mobench run --local --function fibonacci_30 --iterations 100 --warmup 10
+mobench ci run --target android --browserstack --output target/mobench/ci
+mobench ci merge-split-runs --samples-dir target/mobench/ci/split --output-dir target/mobench/ci/merged --function sample_fns::fibonacci --device "Google Pixel 7-13.0" --iterations 5
+mobench profile run --target android --function fibonacci_30 --output target/mobench/profile
 ```
 
 ## Output Artifacts

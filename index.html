@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <script>
+      ;(() => {
+        try {
+          const stored = window.localStorage.getItem('mobench-theme')
+          const theme =
+            stored === 'light' || stored === 'dark'
+              ? stored
+              : window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light'
+
+          document.documentElement.dataset.theme = theme
+          document.documentElement.style.colorScheme = theme
+        } catch {
+          document.documentElement.dataset.theme = 'light'
+        }
+      })()
+    </script>
+    <title>mobench - Rust mobile benchmarking CLI and SDK</title>
+    <meta name="description" content="mobench builds, runs, reports, and profiles Rust benchmarks on mobile platforms with a CLI, SDK runtime, and #[benchmark] macro ecosystem." />
+    <link rel="canonical" href="https://mobench.org/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="mobench" />
+    <meta property="og:title" content="mobench - Rust mobile benchmarking CLI and SDK" />
+    <meta property="og:description" content="Benchmark intense Rust workloads on real Android and iOS devices with CLI, SDK, BrowserStack CI, reports, and profiling." />
+    <meta property="og:url" content="https://mobench.org/" />
+    <meta property="og:image" content="https://mobench.org/og/landing.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="mobench - Rust mobile benchmarking CLI and SDK" />
+    <meta name="twitter:description" content="Benchmark intense Rust workloads on real Android and iOS devices with CLI, SDK, BrowserStack CI, reports, and profiling." />
+    <meta name="twitter:image" content="https://mobench.org/og/landing.jpg" />
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
