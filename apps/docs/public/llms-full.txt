@@ -1,13 +1,13 @@
 # mobench documentation — full authored text
 
-Release: 0.1.45
+Release: 0.1.46
 Canonical origin: https://docs.mobench.org/
 
 # Outputs and metrics
 
 Canonical URL: https://docs.mobench.org/outputs/
 Description: Understand mobench JSON, Markdown, CSV, plots, and optional resource values.
-Source: BrowserStack metrics guide — https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/docs/guides/browserstack-metrics.md — Timing fields, resource columns, sources, and missing-value semantics.
+Source: BrowserStack metrics guide — https://github.com/worldcoin/mobile-bench-rs/blob/d5e00b3d10120c947b247c78303492741563ee49/docs/guides/browserstack-metrics.md — Timing fields, resource columns, sources, and missing-value semantics.
 
 Normal runs can write a JSON report with `--output`. CI runs always normalize results into a three-file contract, with plots when available.
 
@@ -81,7 +81,7 @@ Store a representative `summary.json`, then configure [regression comparison](/r
 
 Canonical URL: https://docs.mobench.org/regressions/
 Description: Compare compatible mobench summaries and gate meaningful slowdowns.
-Source: BrowserStack CI guide — https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/docs/guides/browserstack-ci.md — Baseline sources, thresholds, JUnit output, and compare behavior.
+Source: BrowserStack CI guide — https://github.com/worldcoin/mobile-bench-rs/blob/d5e00b3d10120c947b247c78303492741563ee49/docs/guides/browserstack-ci.md — Baseline sources, thresholds, JUnit output, and compare behavior.
 
 Regression checks compare candidate timing summaries with a stored baseline. They are meaningful only when the benchmark, device, OS, build mode, and run counts are compatible.
 
@@ -145,13 +145,13 @@ When timing shows a repeatable slowdown, use [local profiling](/profiling/) to l
 
 Canonical URL: https://docs.mobench.org/profiling/
 Description: Capture Android and iOS native stacks and compare profile manifests locally.
-Source: Profiling guide — https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/docs/guides/profiling.md — Capability matrix, commands, requirements, and artifact layout.
+Source: Profiling guide — https://github.com/worldcoin/mobile-bench-rs/blob/d5e00b3d10120c947b247c78303492741563ee49/docs/guides/profiling.md — Capability matrix, commands, requirements, and artifact layout.
 
 Profiling is separate from repeated benchmark timing. Use it after a slowdown is reproducible and you need native stacks, flamegraphs, or semantic phase detail.
 
 ## Supported combinations
 
-| Provider | Backend | Behavior in 0.1.45 |
+| Provider | Backend | Behavior in 0.1.46 |
 | --- | --- | --- |
 | `local` | `android-native` | Attempts `simpleperf` capture, symbolization, folded stacks, reports, and flamegraphs |
 | `local` | `ios-instruments` | Attempts simulator-host `sample` capture, folded stacks, reports, and flamegraphs |
@@ -229,7 +229,7 @@ Open `flamegraph.html`, confirm the capture status in `profile.json`, and correl
 
 Canonical URL: https://docs.mobench.org/basic-example/
 Description: Follow the minimal SDK example from registration to host and mobile execution.
-Source: Basic benchmark example — https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/examples/basic-benchmark/README.md — Minimal crate setup, registered functions, tests, and run commands.
+Source: Basic benchmark example — https://github.com/worldcoin/mobile-bench-rs/blob/d5e00b3d10120c947b247c78303492741563ee49/examples/basic-benchmark/README.md — Minimal crate setup, registered functions, tests, and run commands.
 
 The upstream `examples/basic-benchmark` crate is the smallest complete integration. It registers two realistic workloads, exposes mobile entrypoints, and keeps deterministic fixture output for tests.
 
@@ -241,14 +241,14 @@ name = "basic_benchmark"
 crate-type = ["lib", "cdylib", "staticlib"]
 
 [dependencies]
-mobench-sdk = { version = "0.1.45", default-features = false, features = ["registry"] }
+mobench-sdk = { version = "0.1.46", default-features = false, features = ["registry"] }
 inventory = "0.3"
 serde = { version = "1", features = ["derive"] }
 thiserror = "1"
 uniffi = { version = "0.28", features = ["cli"] }
 ```
 
-Use dependency versions compatible with your lockfile; the key mobench requirement is matching the `0.1.45` SDK line.
+Use dependency versions compatible with your lockfile; the key mobench requirement is matching the `0.1.46` SDK line.
 
 ## Benchmark functions
 
@@ -304,7 +304,7 @@ Copy the crate structure, replace one benchmark at a time, and confirm each new 
 
 Canonical URL: https://docs.mobench.org/ffi-example/
 Description: Expose mobench benchmarks through UniFFI, the native C ABI, or BoltFFI.
-Source: FFI benchmark example — https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/examples/ffi-benchmark/README.md — UniFFI types, native C ABI export, BoltFFI bridge, tests, and run flow.
+Source: FFI benchmark example — https://github.com/worldcoin/mobile-bench-rs/blob/d5e00b3d10120c947b247c78303492741563ee49/examples/ffi-benchmark/README.md — UniFFI types, native C ABI export, BoltFFI bridge, tests, and run flow.
 
 The upstream `examples/ffi-benchmark` crate shows the full boundary between Rust benchmark registration and generated Kotlin or Swift runners. Start with the basic example unless your project needs custom cross-language types.
 
@@ -360,6 +360,20 @@ pub fn run_benchmark_json(spec_json: &str) -> Result<String, String> {
 
 Set `ffi_backend = "boltffi"` and ensure the BoltFFI generator is available to the build.
 
+## Select the backend for a prebuilt handoff
+
+CI can override project configuration without editing the checkout:
+
+```bash
+mobench ci prepare \
+  --target android \
+  --ffi-backend native-c-abi \
+  --source-sha "$PR_HEAD_SHA" \
+  --manifest target/mobench/prebuilt/android/manifest.json
+```
+
+The CLI value takes precedence over `[project].ffi_backend`; omitting both retains the UniFFI default. Native C ABI and BoltFFI paths do not install or invoke `uniffi-bindgen`.
+
 ## Exercise the example
 
 ```bash
@@ -381,8 +395,8 @@ Select one backend, build both target platforms, and keep that backend fixed acr
 # Installation
 
 Canonical URL: https://docs.mobench.org/installation/
-Description: Install mobench 0.1.45 and prepare a Rust benchmark crate.
-Source: Upstream README quick start — https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/README.md — CLI and SDK installation commands.
+Description: Install mobench 0.1.46 and prepare a Rust benchmark crate.
+Source: Upstream README quick start — https://github.com/worldcoin/mobile-bench-rs/blob/d5e00b3d10120c947b247c78303492741563ee49/README.md — CLI and SDK installation commands.
 
 Install the `mobench` executable once, then add `mobench-sdk` to each crate that owns benchmark functions.
 
@@ -405,13 +419,13 @@ cargo --version
 If you use `cargo-binstall`:
 
 ```bash
-cargo binstall mobench --version 0.1.45
+cargo binstall mobench --version 0.1.46
 ```
 
 Or compile the release from crates.io:
 
 ```bash
-cargo install mobench --version 0.1.45 --locked
+cargo install mobench --version 0.1.46 --locked
 ```
 
 Confirm that the canonical executable is available:
@@ -426,7 +440,7 @@ mobench --help
 From the benchmark crate:
 
 ```bash
-cargo add mobench-sdk@0.1.45 inventory
+cargo add mobench-sdk@0.1.46 inventory
 ```
 
 Mobile runners load your crate as a native library. Include the required crate types in `Cargo.toml`:
@@ -457,7 +471,7 @@ Continue to the [quickstart](/quickstart/) and register your first benchmark fun
 
 Canonical URL: https://docs.mobench.org/quickstart/
 Description: Register a Rust benchmark, validate it on the host, and run it on a mobile device.
-Source: Basic benchmark example — https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/examples/basic-benchmark/README.md — Minimal SDK registration and CLI flow.
+Source: Basic benchmark example — https://github.com/worldcoin/mobile-bench-rs/blob/d5e00b3d10120c947b247c78303492741563ee49/examples/basic-benchmark/README.md — Minimal SDK registration and CLI flow.
 
 This path first proves that mobench can discover and report your function on the host. It then moves the same function to a BrowserStack device for the actual mobile measurement.
 
@@ -543,7 +557,7 @@ Read [benchmark quality](/benchmark-quality/) before using the result as a basel
 
 Canonical URL: https://docs.mobench.org/troubleshooting/
 Description: Diagnose discovery, toolchain, BrowserStack, result, and profiling failures.
-Source: Upstream testing guide — https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/docs/guides/testing.md — Supported validation paths and platform smoke checks.
+Source: Upstream testing guide — https://github.com/worldcoin/mobile-bench-rs/blob/d5e00b3d10120c947b247c78303492741563ee49/docs/guides/testing.md — Supported validation paths and platform smoke checks.
 
 Start with the narrowest command that can reproduce the failure, add `--verbose`, and keep the generated output directory until you understand the error.
 
@@ -601,7 +615,7 @@ mobench run --help
 
 ## Profiling writes no native capture
 
-Check the provider/backend combination first. BrowserStack native profiling is unsupported, and `rust-tracing` is only a planned manifest/trace contract in 0.1.45.
+Check the provider/backend combination first. BrowserStack native profiling is unsupported, and `rust-tracing` is only a planned manifest/trace contract in 0.1.46.
 
 For Android, confirm `adb`, `simpleperf`, the NDK, and `llvm-addr2line`. For iOS, confirm a simulator runtime, `xcrun`, `simctl`, and macOS `sample`. Read the capture status and warnings in `profile.json`; do not treat a planned or partial capture as complete.
 
@@ -626,13 +640,13 @@ Re-run the narrow failing command with `--verbose`, then attach the sanitized ev
 
 Canonical URL: https://docs.mobench.org/
 Description: Build, run, and analyze Rust benchmarks on Android and iOS.
-Source: Upstream README — https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/README.md — Product scope, workflow, release, and supported backends.
+Source: Upstream README — https://github.com/worldcoin/mobile-bench-rs/blob/d5e00b3d10120c947b247c78303492741563ee49/README.md — Product scope, workflow, release, and supported backends.
 
 mobench takes a Rust benchmark from a function in your crate to repeatable results on Android and iOS. It builds native libraries, generates mobile runners, executes them on selected BrowserStack devices, and writes artifacts that people and CI can compare.
 
-The current documentation describes mobench **0.1.45** and requires Rust **1.85 or newer**.
+The current documentation describes mobench **0.1.46** and requires Rust **1.85 or newer**.
 
-Release 0.1.45 makes the secure two-stage reusable workflow the generated default, adds secretless caller preparation hooks and platform-specific function/device matrices, and rejects incomplete result sets instead of publishing partial success.
+Release 0.1.46 lets reusable-workflow callers pin the exact Rust toolchain used for mobile builds and select `uniffi`, `native-c-abi`, or `boltffi` preparation explicitly. Mobile targets and caller dependencies remain confined to secretless prepare jobs; the trusted control plane stays independently pinned.
 
 ## Choose a starting point
 
@@ -652,7 +666,7 @@ Release 0.1.45 makes the secure two-stage reusable workflow the generated defaul
 
 Normal benchmark runs record measured iteration durations. CPU time and memory fields may also be present when the runner or provider can collect them. Missing resource values mean **unavailable**, not zero.
 
-Native stack profiling is a separate, local-first workflow. Android uses `simpleperf`; iOS uses simulator-host `sample`. BrowserStack native profiling is not supported in 0.1.45.
+Native stack profiling is a separate, local-first workflow. Android uses `simpleperf`; iOS uses simulator-host `sample`. BrowserStack native profiling is not supported in 0.1.46.
 
 ## The execution boundary
 
@@ -675,7 +689,7 @@ Selecting devices makes `mobench run` build and schedule a real mobile benchmark
 
 Canonical URL: https://docs.mobench.org/cli/
 Description: Find mobench commands and the flags that connect authoring, execution, CI, and profiling.
-Source: CLI definitions — https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/crates/mobench/src/cli.rs — Clap command, subcommand, argument, default, and enum definitions.
+Source: CLI definitions — https://github.com/worldcoin/mobile-bench-rs/blob/d5e00b3d10120c947b247c78303492741563ee49/crates/mobench/src/cli.rs — Clap command, subcommand, argument, default, and enum definitions.
 
 The canonical executable is `mobench`. Run `mobench <command> --help` against your installed version for the complete generated argument reference.
 
@@ -797,6 +811,7 @@ Global flags above are omitted from each command row. Positional arguments use a
 | Flag or argument | Value | Requirement | Purpose |
 | --- | --- | --- | --- |
 | `--crate-path` | `CRATE_PATH` | optional | — |
+| `--ffi-backend` | `uniffi \| native-c-abi \| boltffi` | optional | Generated runner FFI backend (overrides mobench.toml; defaults to uniffi) |
 | `--functions` | `FUNCTIONS` | optional | — |
 | `--iterations` | `ITERATIONS` | default: 100 | — |
 | `--manifest` | `MANIFEST` | default: target/mobench/prebuilt/manifest.json | — |
@@ -1130,7 +1145,7 @@ Global flags above are omitted from each command row. Positional arguments use a
 
 {/* END GENERATED CLI REFERENCE */}
 
-`ci run` uses `--output-dir`, which defaults to `target/mobench/ci`. Its core outputs are `summary.json`, `summary.md`, and `results.csv`. `profile run` also uses `--output-dir`, defaulting to `target/mobench/profile`. BrowserStack native profiling is unsupported in 0.1.45.
+`ci run` uses `--output-dir`, which defaults to `target/mobench/ci`. Its core outputs are `summary.json`, `summary.md`, and `results.csv`. `profile run` also uses `--output-dir`, defaulting to `target/mobench/profile`. BrowserStack native profiling is unsupported in 0.1.46.
 
 ## Next step
 
@@ -1140,7 +1155,7 @@ Run `mobench run --help` and save a minimal invocation in your repository's benc
 
 Canonical URL: https://docs.mobench.org/configuration/
 Description: Configure project builds separately from benchmark run and provider settings.
-Source: Current configuration specification — https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/docs/specs/mobench-current-spec.md — Project config, run config, resolution order, and examples.
+Source: Current configuration specification — https://github.com/worldcoin/mobile-bench-rs/blob/d5e00b3d10120c947b247c78303492741563ee49/docs/specs/mobench-current-spec.md — Project config, run config, resolution order, and examples.
 
 mobench uses two TOML files for different concerns:
 
@@ -1163,6 +1178,7 @@ These are the complete configuration keys in the pinned release contract. Exampl
 | `project.crate` | `string|null` | no | — | `source-mobench-config` |
 | `project.library_name` | `string|null` | no | — | `source-mobench-config` |
 | `project.output_dir` | `path|null` | no | — | `source-mobench-config` |
+| `project.ffi_backend` | `uniffi|native-c-abi|boltffi` | no | uniffi | `source-ffi-backend-resolution` |
 | `android.package` | `string` | no | dev.world.bench | `source-mobench-config` |
 | `android.min_sdk` | `integer` | no | 24 | `source-mobench-config` |
 | `android.target_sdk` | `integer` | no | 34 | `source-mobench-config` |
@@ -1205,6 +1221,7 @@ Place `mobench.toml` at the project or workspace root:
 crate = "bench-mobile"
 library_name = "bench_mobile"
 output_dir = "target/mobench"
+ffi_backend = "native-c-abi"
 
 [android]
 package = "com.example.bench"
@@ -1223,7 +1240,7 @@ default_iterations = 100
 default_warmup = 10
 ```
 
-The pinned release contract defines only the keys shown above for generated project identity and build defaults. Runner-backend selection is not a published `mobench.toml` key in 0.1.45.
+`project.ffi_backend` accepts `uniffi`, `native-c-abi`, or `boltffi` and defaults to `uniffi`. For `mobench ci prepare`, an explicit `--ffi-backend` value overrides this project setting; the reusable workflow's typed `ffi_backend` input is passed through to that CLI flag without rewriting `mobench.toml`.
 
 ## Run configuration
 
@@ -1276,7 +1293,7 @@ Generate a [device matrix](/device-matrices/) and validate the combined setup wi
 
 Canonical URL: https://docs.mobench.org/device-matrices/
 Description: Select BrowserStack Android and iOS devices deterministically with tags.
-Source: BrowserStack CI guide — https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/docs/guides/browserstack-ci.md — Device inventory, validation, matrix syntax, profiles, and legacy iOS constraints.
+Source: BrowserStack CI guide — https://github.com/worldcoin/mobile-bench-rs/blob/d5e00b3d10120c947b247c78303492741563ee49/docs/guides/browserstack-ci.md — Device inventory, validation, matrix syntax, profiles, and legacy iOS constraints.
 
 A device matrix keeps exact BrowserStack identifiers and grouping decisions in version control. Tags let CI select a stable lane such as `default`, `pixel`, or `legacy-ios`.
 
@@ -1359,7 +1376,7 @@ Run `mobench doctor --device-matrix device-matrix.yaml --browserstack true` befo
 
 Canonical URL: https://docs.mobench.org/schemas/
 Description: Use the versioned mobench JSON contracts without depending on private implementation details.
-Source: Upstream schemas — https://github.com/worldcoin/mobile-bench-rs/tree/434da93dfda39db996be90e9e0bca625f10efb25/docs/schemas — Versioned CI, summary, and trace-event JSON Schema files.
+Source: Upstream schemas — https://github.com/worldcoin/mobile-bench-rs/tree/d5e00b3d10120c947b247c78303492741563ee49/docs/schemas — Versioned CI, summary, and trace-event JSON Schema files.
 
 mobench publishes JSON Schemas for the contracts intended for downstream validation. Pin a schema revision alongside the mobench release used to create the artifact.
 
@@ -1403,15 +1420,15 @@ Optional CPU and memory fields may be absent. Preserve absence through parsing a
 
 ## Next step
 
-Pin the schema files at release commit `434da93dfda39db996be90e9e0bca625f10efb25` next to the workflow that consumes `summary.json`.
+Pin the schema files at release commit `d5e00b3d10120c947b247c78303492741563ee49` next to the workflow that consumes `summary.json`.
 
 # Compatibility
 
 Canonical URL: https://docs.mobench.org/compatibility/
-Description: Match Rust, platform tools, devices, and generated runner backends to mobench 0.1.45.
-Source: Build guide — https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/docs/guides/build.md — Rust and platform prerequisites, targets, outputs, and generated backends.
+Description: Match Rust, platform tools, devices, and generated runner backends to mobench 0.1.46.
+Source: Build guide — https://github.com/worldcoin/mobile-bench-rs/blob/d5e00b3d10120c947b247c78303492741563ee49/docs/guides/build.md — Rust and platform prerequisites, targets, outputs, and generated backends.
 
-mobench 0.1.45 has a Rust MSRV of **1.85**. Mobile compatibility also depends on the platform toolchain, target architecture, runner backend, and selected device OS.
+mobench 0.1.46 has a Rust MSRV of **1.85**. Mobile compatibility also depends on the platform toolchain, target architecture, runner backend, and selected device OS.
 
 ## Android
 
@@ -1445,12 +1462,14 @@ The default deployment target is iOS 15.0 with the SwiftUI runner. Lower targets
 
 Keep the backend constant across a baseline and candidate; changing it changes the execution path.
 
+In the reusable BrowserStack workflow, set `rust_toolchain` to the caller's exact channel when `stable` is insufficient. Android and iOS targets are installed for that caller toolchain only during secretless preparation; the credentialed execution jobs consume verified prebuilt packages and do not install caller toolchains or generators.
+
 ## Profiling compatibility
 
 - Android native profiling is local and uses `simpleperf`.
 - iOS profiling is local, simulator-host oriented, and uses macOS `sample`.
 - `rust-tracing` is a planned manifest/trace contract only.
-- BrowserStack native profiling is unsupported in 0.1.45.
+- BrowserStack native profiling is unsupported in 0.1.46.
 
 ## Check the current machine
 
@@ -1468,7 +1487,7 @@ Run the platform check on the same machine image used by CI, then save its toolc
 
 Canonical URL: https://docs.mobench.org/host-preflight/
 Description: Validate configuration, discovery, builds, and reports before using mobile devices.
-Source: Testing guide — https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/docs/guides/testing.md — Prerequisite, discovery, verification, and host-side preflight commands.
+Source: Testing guide — https://github.com/worldcoin/mobile-bench-rs/blob/d5e00b3d10120c947b247c78303492741563ee49/docs/guides/testing.md — Prerequisite, discovery, verification, and host-side preflight commands.
 
 Preflight catches inexpensive failures before a mobile build or BrowserStack session. It validates your local tools and config, proves that the benchmark is discoverable, and checks the requested report shape.
 
@@ -1549,11 +1568,11 @@ Resolve a real device and continue with the [BrowserStack run guide](/browsersta
 
 Canonical URL: https://docs.mobench.org/browserstack/
 Description: Build, upload, run, and fetch Rust benchmarks with BrowserStack App Automate.
-Source: BrowserStack CI guide — https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/docs/guides/browserstack-ci.md — Credentials, device resolution, execution, fetching, and iOS compatibility.
+Source: BrowserStack CI guide — https://github.com/worldcoin/mobile-bench-rs/blob/d5e00b3d10120c947b247c78303492741563ee49/docs/guides/browserstack-ci.md — Credentials, device resolution, execution, fetching, and iOS compatibility.
 
-When a `run` or `ci run` command selects devices, mobench builds mobile artifacts, uploads them to BrowserStack App Automate, schedules the sessions, and collects available results. This is the normal path for real Android and iOS measurements in 0.1.45.
+When a `run` or `ci run` command selects devices, mobench builds mobile artifacts, uploads them to BrowserStack App Automate, schedules the sessions, and collects available results. This is the normal path for real Android and iOS measurements in 0.1.46.
 
-For pull requests, use the [two-stage CI workflow](/ci/#secure-pull-request-benchmarks). It builds untrusted code without secrets, then verifies a prebuilt artifact manifest before a separate trusted job receives BrowserStack credentials. Version 0.1.45 supports platform-specific function/device matrices and fails closed unless every requested function/device pair has exactly one result shard.
+For pull requests, use the [two-stage CI workflow](/ci/#secure-pull-request-benchmarks). It builds untrusted code without secrets, then verifies a prebuilt artifact manifest before a separate trusted job receives BrowserStack credentials. Version 0.1.46 supports platform-specific function/device matrices and fails closed unless every requested function/device pair has exactly one result shard.
 
 ## Configure credentials
 
@@ -1648,8 +1667,8 @@ Move a stable command into [CI](/ci/) and save its standard output contract.
 
 Canonical URL: https://docs.mobench.org/ci/
 Description: Run repeatable mobile benchmarks and produce stable CI artifacts.
-Source: BrowserStack CI guide — https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/docs/guides/browserstack-ci.md — CI run, split-sample merge, PR reporting, and regression commands.
-Source: Reusable workflow security guide — https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/docs/guides/reusable-workflow-security.md — Secretless preparation, caller hooks, platform-specific matrices, complete-result enforcement, and isolated reporting.
+Source: BrowserStack CI guide — https://github.com/worldcoin/mobile-bench-rs/blob/d5e00b3d10120c947b247c78303492741563ee49/docs/guides/browserstack-ci.md — CI run, split-sample merge, PR reporting, and regression commands.
+Source: Reusable workflow security guide — https://github.com/worldcoin/mobile-bench-rs/blob/d5e00b3d10120c947b247c78303492741563ee49/docs/guides/reusable-workflow-security.md — Secretless preparation, caller-pinned toolchains, typed FFI backends, complete-result enforcement, and isolated reporting.
 
 `mobench ci run` wraps execution in a stable file contract for artifact upload, job summaries, comparisons, plots, and downstream reporting.
 
@@ -1722,7 +1741,7 @@ Install the pinned mobench release in an earlier step or use your repository's p
 
 ## Secure pull-request benchmarks
 
-Version 0.1.45 preserves the hard trust boundary introduced in 0.1.44 and makes the secure reusable workflow the generated default:
+Version 0.1.46 preserves the hard trust boundary introduced in 0.1.44 while making native prebuilt preparation reproducible for projects with pinned Rust toolchains:
 
 1. `ci prepare` checks out the exact pull-request head and builds mobile packages without BrowserStack credentials, protected environments, or write-capable permissions.
 2. A trusted job validates the manifest's normalized paths, platform and ABI metadata, file sizes, and SHA-256 digests before uploading only the enumerated mobile packages.
@@ -1736,6 +1755,7 @@ Prepare one Android artifact set with the canonical executable:
 ```bash
 mobench ci prepare \
   --target android \
+  --ffi-backend native-c-abi \
   --source-sha "$PR_HEAD_SHA" \
   --functions 'benchmarks::critical_path' \
   --iterations 30 \
@@ -1770,7 +1790,7 @@ permissions:
 
 jobs:
   mobench:
-    uses: worldcoin/mobile-bench-rs/.github/workflows/reusable-bench.yml@3dc3d5be6add73a1b2f6c3edefb862fd485356c2
+    uses: worldcoin/mobile-bench-rs/.github/workflows/reusable-bench.yml@1ac54adaf2bd97c6ca303705e1e0471257716f48
     with:
       pr_number: ${{ github.event.pull_request.number }}
       head_sha: ${{ github.event.pull_request.head.sha }}
@@ -1778,6 +1798,8 @@ jobs:
       functions: '["benchmarks::critical_path"]'
       functions_ios: '["benchmarks::ios_critical_path"]'
       prepare_script: .github/scripts/prepare-mobench.sh
+      rust_toolchain: nightly-2026-03-04
+      ffi_backend: native-c-abi
       android_devices: '[{"device":"Google Pixel 7","os_version":"13.0"}]'
       platform: both
     secrets:
@@ -1786,6 +1808,10 @@ jobs:
 ```
 
 Do not replace the workflow SHA with a mutable tag or branch, and do not use `secrets: inherit`. Both `pr_number` and the full 40-character `head_sha` are required for pull requests, including forks. Non-PR self-tests must explicitly set `allow_non_pr: true`.
+
+`rust_toolchain` defaults to `stable`. Set it to the exact channel used by the caller, such as `nightly-2026-03-04`; the workflow installs the requested Android or iOS targets for that toolchain only in the secretless prepare jobs. The trusted Mobench control plane stays on its own pinned stable toolchain and never reads caller toolchain files.
+
+`ffi_backend` accepts `uniffi`, `native-c-abi`, or `boltffi`. An explicit workflow or `ci prepare --ffi-backend` value wins over `[project].ffi_backend` in `mobench.toml`; if neither is set, Mobench uses `uniffi`. Native C ABI and BoltFFI preparation skip UniFFI generator installation, while UniFFI resolves its lockfile from the Cargo workspace containing `crate_path` instead of selecting an unrelated nested lockfile.
 
 `functions_ios` and `functions_android` override the shared function list for one platform. Likewise, structured `ios_devices` and `android_devices` arrays override the legacy single-device/profile inputs. Existing callers remain compatible when these inputs are omitted.
 
@@ -1829,7 +1855,7 @@ Read [outputs](/outputs/) before wiring fields into dashboards or PR comments.
 
 Canonical URL: https://docs.mobench.org/benchmark-functions/
 Description: Register discoverable benchmark functions with the mobench SDK.
-Source: Current API specification — https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/docs/specs/mobench-current-spec.md — Benchmark macro rules, runtime API, and SDK feature flags.
+Source: Current API specification — https://github.com/worldcoin/mobile-bench-rs/blob/d5e00b3d10120c947b247c78303492741563ee49/docs/specs/mobench-current-spec.md — Benchmark macro rules, runtime API, and SDK feature flags.
 
 `#[benchmark]` registers a Rust function at compile time through `inventory`. The SDK runner and CLI use that registry to discover the function by its fully qualified name.
 
@@ -1909,7 +1935,7 @@ Choose a fixture lifecycle in [setup and teardown](/setup-teardown/), then apply
 
 Canonical URL: https://docs.mobench.org/setup-teardown/
 Description: Keep fixture creation, mutation, and cleanup outside measured samples.
-Source: Current API specification — https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/docs/specs/mobench-current-spec.md — Implemented setup, per-iteration setup, and teardown semantics.
+Source: Current API specification — https://github.com/worldcoin/mobile-bench-rs/blob/d5e00b3d10120c947b247c78303492741563ee49/docs/specs/mobench-current-spec.md — Implemented setup, per-iteration setup, and teardown semantics.
 
 Use the macro's fixture attributes when input creation or cleanup is not part of the operation you want to measure.
 
@@ -1982,7 +2008,7 @@ Run the benchmark with multiple warmups and inspect it against the [quality chec
 
 Canonical URL: https://docs.mobench.org/benchmark-quality/
 Description: Design mobile benchmarks that produce comparable, defensible results.
-Source: BrowserStack metrics guide — https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/docs/guides/browserstack-metrics.md — Result interpretation, optional resource data, and comparison guidance.
+Source: BrowserStack metrics guide — https://github.com/worldcoin/mobile-bench-rs/blob/d5e00b3d10120c947b247c78303492741563ee49/docs/guides/browserstack-metrics.md — Result interpretation, optional resource data, and comparison guidance.
 
 A mobile number is useful only when the work, build, device, and run conditions are clear enough to reproduce.
 
@@ -2016,7 +2042,7 @@ Prefer medians and percentiles when isolated scheduling noise affects the mean. 
 
 CPU and memory measurements depend on runner and provider availability. A blank or absent value means **unavailable**. Do not coerce it to zero, carry it into arithmetic, or claim that it was measured.
 
-mobench 0.1.45 does not define a power-consumption metric.
+mobench 0.1.46 does not define a power-consumption metric.
 
 ## Use the right execution mode
 

@@ -4,21 +4,21 @@ slug: index
 aliases: [/docs, /overview]
 description: Build, run, and analyze Rust benchmarks on Android and iOS.
 audience: [new-user, benchmark-author, ci-engineer]
-release: 0.1.45
-lastVerified: 2026-07-18
+release: 0.1.46
+lastVerified: 2026-07-19
 section: Overview
 order: 0
 sourceRefs:
   - label: Upstream README
-    url: https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/README.md
+    url: https://github.com/worldcoin/mobile-bench-rs/blob/d5e00b3d10120c947b247c78303492741563ee49/README.md
     evidence: Product scope, workflow, release, and supported backends.
 ---
 
 mobench takes a Rust benchmark from a function in your crate to repeatable results on Android and iOS. It builds native libraries, generates mobile runners, executes them on selected BrowserStack devices, and writes artifacts that people and CI can compare.
 
-The current documentation describes mobench **0.1.45** and requires Rust **1.85 or newer**.
+The current documentation describes mobench **0.1.46** and requires Rust **1.85 or newer**.
 
-Release 0.1.45 makes the secure two-stage reusable workflow the generated default, adds secretless caller preparation hooks and platform-specific function/device matrices, and rejects incomplete result sets instead of publishing partial success.
+Release 0.1.46 lets reusable-workflow callers pin the exact Rust toolchain used for mobile builds and select `uniffi`, `native-c-abi`, or `boltffi` preparation explicitly. Mobile targets and caller dependencies remain confined to secretless prepare jobs; the trusted control plane stays independently pinned.
 
 ## Choose a starting point
 
@@ -38,7 +38,7 @@ Release 0.1.45 makes the secure two-stage reusable workflow the generated defaul
 
 Normal benchmark runs record measured iteration durations. CPU time and memory fields may also be present when the runner or provider can collect them. Missing resource values mean **unavailable**, not zero.
 
-Native stack profiling is a separate, local-first workflow. Android uses `simpleperf`; iOS uses simulator-host `sample`. BrowserStack native profiling is not supported in 0.1.45.
+Native stack profiling is a separate, local-first workflow. Android uses `simpleperf`; iOS uses simulator-host `sample`. BrowserStack native profiling is not supported in 0.1.46.
 
 ## The execution boundary
 

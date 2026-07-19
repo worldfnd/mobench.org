@@ -2,7 +2,7 @@
 
 The site follows the latest stable mobench release. It does not consume `mobile-bench-rs/main` during builds.
 
-The `v0.1.45` GitHub release did not include the manifest or checksum assets below. The site therefore records that pin as `offline-tag-verified`: its contract was reconstructed from the annotated tag resolving to verified commit `434da93dfda39db996be90e9e0bca625f10efb25`, tagged CLI definitions and help output, unchanged tagged schemas and fixtures, and release validation evidence. This exception does not relax the normal sync command or permit production builds to read `main`.
+The `v0.1.46` GitHub release did not include the manifest or checksum assets below. The site therefore records that pin as `offline-tag-verified`: its contract was reconstructed from the annotated tag resolving to verified commit `d5e00b3d10120c947b247c78303492741563ee49`, tagged CLI definitions and help output, unchanged tagged schemas and fixtures, and release validation evidence. This exception does not relax the normal sync command or permit production builds to read `main`.
 
 ## Inputs
 

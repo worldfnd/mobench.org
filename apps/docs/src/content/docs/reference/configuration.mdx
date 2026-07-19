@@ -6,13 +6,13 @@ description: Configure project builds separately from benchmark run and provider
 sidebar:
   order: 2
 audience: [benchmark-author, ci-engineer]
-release: 0.1.45
-lastVerified: 2026-07-18
+release: 0.1.46
+lastVerified: 2026-07-19
 section: Reference
 order: 2
 sourceRefs:
   - label: Current configuration specification
-    url: https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/docs/specs/mobench-current-spec.md
+    url: https://github.com/worldcoin/mobile-bench-rs/blob/d5e00b3d10120c947b247c78303492741563ee49/docs/specs/mobench-current-spec.md
     evidence: Project config, run config, resolution order, and examples.
 ---
 
@@ -37,6 +37,7 @@ These are the complete configuration keys in the pinned release contract. Exampl
 | `project.crate` | `string|null` | no | — | `source-mobench-config` |
 | `project.library_name` | `string|null` | no | — | `source-mobench-config` |
 | `project.output_dir` | `path|null` | no | — | `source-mobench-config` |
+| `project.ffi_backend` | `uniffi|native-c-abi|boltffi` | no | uniffi | `source-ffi-backend-resolution` |
 | `android.package` | `string` | no | dev.world.bench | `source-mobench-config` |
 | `android.min_sdk` | `integer` | no | 24 | `source-mobench-config` |
 | `android.target_sdk` | `integer` | no | 34 | `source-mobench-config` |
@@ -79,6 +80,7 @@ Place `mobench.toml` at the project or workspace root:
 crate = "bench-mobile"
 library_name = "bench_mobile"
 output_dir = "target/mobench"
+ffi_backend = "native-c-abi"
 
 [android]
 package = "com.example.bench"
@@ -97,7 +99,7 @@ default_iterations = 100
 default_warmup = 10
 ```
 
-The pinned release contract defines only the keys shown above for generated project identity and build defaults. Runner-backend selection is not a published `mobench.toml` key in 0.1.45.
+`project.ffi_backend` accepts `uniffi`, `native-c-abi`, or `boltffi` and defaults to `uniffi`. For `mobench ci prepare`, an explicit `--ffi-backend` value overrides this project setting; the reusable workflow's typed `ffi_backend` input is passed through to that CLI flag without rewriting `mobench.toml`.
 
 ## Run configuration
 

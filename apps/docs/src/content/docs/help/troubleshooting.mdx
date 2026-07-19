@@ -6,13 +6,13 @@ description: Diagnose discovery, toolchain, BrowserStack, result, and profiling 
 sidebar:
   order: 1
 audience: [new-user, benchmark-author, ci-engineer]
-release: 0.1.45
-lastVerified: 2026-07-18
+release: 0.1.46
+lastVerified: 2026-07-19
 section: Help
 order: 1
 sourceRefs:
   - label: Upstream testing guide
-    url: https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/docs/guides/testing.md
+    url: https://github.com/worldcoin/mobile-bench-rs/blob/d5e00b3d10120c947b247c78303492741563ee49/docs/guides/testing.md
     evidence: Supported validation paths and platform smoke checks.
 ---
 
@@ -72,7 +72,7 @@ mobench run --help
 
 ## Profiling writes no native capture
 
-Check the provider/backend combination first. BrowserStack native profiling is unsupported, and `rust-tracing` is only a planned manifest/trace contract in 0.1.45.
+Check the provider/backend combination first. BrowserStack native profiling is unsupported, and `rust-tracing` is only a planned manifest/trace contract in 0.1.46.
 
 For Android, confirm `adb`, `simpleperf`, the NDK, and `llvm-addr2line`. For iOS, confirm a simulator runtime, `xcrun`, `simctl`, and macOS `sample`. Read the capture status and warnings in `profile.json`; do not treat a planned or partial capture as complete.
 

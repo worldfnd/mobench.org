@@ -9,13 +9,13 @@ tableOfContents:
   minHeadingLevel: 2
   maxHeadingLevel: 2
 audience: [benchmark-author, ci-engineer]
-release: 0.1.45
-lastVerified: 2026-07-18
+release: 0.1.46
+lastVerified: 2026-07-19
 section: Reference
 order: 1
 sourceRefs:
   - label: CLI definitions
-    url: https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/crates/mobench/src/cli.rs
+    url: https://github.com/worldcoin/mobile-bench-rs/blob/d5e00b3d10120c947b247c78303492741563ee49/crates/mobench/src/cli.rs
     evidence: Clap command, subcommand, argument, default, and enum definitions.
 ---
 
@@ -139,6 +139,7 @@ Global flags above are omitted from each command row. Positional arguments use a
 | Flag or argument | Value | Requirement | Purpose |
 | --- | --- | --- | --- |
 | `--crate-path` | `CRATE_PATH` | optional | — |
+| `--ffi-backend` | `uniffi \| native-c-abi \| boltffi` | optional | Generated runner FFI backend (overrides mobench.toml; defaults to uniffi) |
 | `--functions` | `FUNCTIONS` | optional | — |
 | `--iterations` | `ITERATIONS` | default: 100 | — |
 | `--manifest` | `MANIFEST` | default: target/mobench/prebuilt/manifest.json | — |
@@ -472,7 +473,7 @@ Global flags above are omitted from each command row. Positional arguments use a
 
 {/* END GENERATED CLI REFERENCE */}
 
-`ci run` uses `--output-dir`, which defaults to `target/mobench/ci`. Its core outputs are `summary.json`, `summary.md`, and `results.csv`. `profile run` also uses `--output-dir`, defaulting to `target/mobench/profile`. BrowserStack native profiling is unsupported in 0.1.45.
+`ci run` uses `--output-dir`, which defaults to `target/mobench/ci`. Its core outputs are `summary.json`, `summary.md`, and `results.csv`. `profile run` also uses `--output-dir`, defaulting to `target/mobench/profile`. BrowserStack native profiling is unsupported in 0.1.46.
 
 ## Next step
 

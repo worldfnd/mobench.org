@@ -6,19 +6,19 @@ description: Build, upload, run, and fetch Rust benchmarks with BrowserStack App
 sidebar:
   order: 2
 audience: [benchmark-author, ci-engineer]
-release: 0.1.45
-lastVerified: 2026-07-18
+release: 0.1.46
+lastVerified: 2026-07-19
 section: Run benchmarks
 order: 2
 sourceRefs:
   - label: BrowserStack CI guide
-    url: https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/docs/guides/browserstack-ci.md
+    url: https://github.com/worldcoin/mobile-bench-rs/blob/d5e00b3d10120c947b247c78303492741563ee49/docs/guides/browserstack-ci.md
     evidence: Credentials, device resolution, execution, fetching, and iOS compatibility.
 ---
 
-When a `run` or `ci run` command selects devices, mobench builds mobile artifacts, uploads them to BrowserStack App Automate, schedules the sessions, and collects available results. This is the normal path for real Android and iOS measurements in 0.1.45.
+When a `run` or `ci run` command selects devices, mobench builds mobile artifacts, uploads them to BrowserStack App Automate, schedules the sessions, and collects available results. This is the normal path for real Android and iOS measurements in 0.1.46.
 
-For pull requests, use the [two-stage CI workflow](/ci/#secure-pull-request-benchmarks). It builds untrusted code without secrets, then verifies a prebuilt artifact manifest before a separate trusted job receives BrowserStack credentials. Version 0.1.45 supports platform-specific function/device matrices and fails closed unless every requested function/device pair has exactly one result shard.
+For pull requests, use the [two-stage CI workflow](/ci/#secure-pull-request-benchmarks). It builds untrusted code without secrets, then verifies a prebuilt artifact manifest before a separate trusted job receives BrowserStack credentials. Version 0.1.46 supports platform-specific function/device matrices and fails closed unless every requested function/device pair has exactly one result shard.
 
 ## Configure credentials
 

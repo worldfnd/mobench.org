@@ -14,11 +14,11 @@ description: Build an Android runner and execute it on one hosted device.
 section: Run benchmarks
 order: 1
 audience: [benchmark-author, ci-engineer]
-release: 0.1.45
-lastVerified: 2026-07-18
+release: 0.1.46
+lastVerified: 2026-07-19
 sourceRefs:
   - label: BrowserStack execution path
-    url: https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/crates/mobench/src/browserstack.rs
+    url: https://github.com/worldcoin/mobile-bench-rs/blob/d5e00b3d10120c947b247c78303492741563ee49/crates/mobench/src/browserstack.rs
     evidence: source-browserstack-run
 aliases:
   - /app-automate
@@ -30,7 +30,7 @@ The required `slug` is the flat canonical route, independent of the authoring fo
 
 ## Commands and claims
 
-- Use `mobench` for stable `0.1.45` commands. Do not publish `cargo mobench` until the wrapper fix appears in the pinned release manifest and passes both invocation smokes.
+- Use `mobench` for stable `0.1.46` commands. Do not publish `cargo mobench` until the wrapper fix appears in the pinned release manifest and passes both invocation smokes.
 - Ordinary mobile benchmark execution is a BrowserStack capability in the current release.
 - `--local-only` is build/preflight behavior; it does not execute a benchmark on an attached phone, emulator, or simulator.
 - Describe local profiling only where the manifest marks the exact platform/backend combination supported.

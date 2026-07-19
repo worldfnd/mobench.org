@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "release": {
-    "version": "0.1.45",
-    "tag": "v0.1.45",
-    "sha": "434da93dfda39db996be90e9e0bca625f10efb25",
+    "version": "0.1.46",
+    "tag": "v0.1.46",
+    "sha": "d5e00b3d10120c947b247c78303492741563ee49",
     "repository": "https://github.com/worldcoin/mobile-bench-rs"
   },
   "msrv": "1.85",
@@ -13,14 +13,14 @@
       "invocation": "mobench <command>",
       "canonical_for_release": true,
       "status": "supported",
-      "note": "Canonical executable for the pinned v0.1.45 release."
+      "note": "Canonical executable for the pinned v0.1.46 release."
     },
     {
       "name": "cargo-mobench",
       "invocation": "cargo mobench <command>",
       "canonical_for_release": false,
       "status": "unsupported",
-      "note": "The published v0.1.45 wrapper still forwards Cargo's injected `mobench` token. Use the canonical `mobench` executable."
+      "note": "The published v0.1.46 wrapper still forwards Cargo's injected `mobench` token. Use the canonical `mobench` executable."
     }
   ],
   "command_tree": {
@@ -1434,6 +1434,27 @@
                 ],
                 "environment": null,
                 "help": "Print what would be done without actually doing it"
+              },
+              {
+                "id": "ffi_backend",
+                "long": "ffi-backend",
+                "short": null,
+                "positional_index": null,
+                "required": false,
+                "global": false,
+                "hidden": false,
+                "action": "Set",
+                "value_names": [
+                  "FFI_BACKEND"
+                ],
+                "possible_values": [
+                  "uniffi",
+                  "native-c-abi",
+                  "boltffi"
+                ],
+                "defaults": [],
+                "environment": null,
+                "help": "Generated runner FFI backend (overrides mobench.toml; defaults to uniffi)"
               },
               {
                 "id": "functions",
@@ -9139,6 +9160,13 @@
           "evidence_id": "source-mobench-config"
         },
         {
+          "path": "project.ffi_backend",
+          "value_type": "uniffi|native-c-abi|boltffi",
+          "required": false,
+          "default": "uniffi",
+          "evidence_id": "source-ffi-backend-resolution"
+        },
+        {
           "path": "android.package",
           "value_type": "string",
           "required": false,
@@ -9576,6 +9604,16 @@
       ]
     },
     {
+      "id": "ci.pinned-toolchain-native-preparation",
+      "status": "supported",
+      "summary": "Install mobile targets for the caller-selected Rust toolchain and propagate a typed FFI backend only in secretless prepare jobs.",
+      "evidence_ids": [
+        "source-reusable-workflow-inputs",
+        "source-ffi-backend-resolution",
+        "test-prebuilt-security"
+      ]
+    },
+    {
       "id": "ci.prebuilt.complete-matrix",
       "status": "supported",
       "summary": "Fail closed unless every requested function and device has exactly one result shard.",
@@ -9587,7 +9625,7 @@
     {
       "id": "benchmark.execute.local-only",
       "status": "unsupported",
-      "summary": "`--local-only` writes preflight/spec outputs but skips the mobile build and does not execute the requested benchmark in v0.1.45.",
+      "summary": "`--local-only` writes preflight/spec outputs but skips the mobile build and does not execute the requested benchmark in v0.1.46.",
       "evidence_ids": [
         "source-local-only"
       ]
@@ -9595,7 +9633,7 @@
     {
       "id": "benchmark.execute.attached-device",
       "status": "unsupported",
-      "summary": "Ordinary `mobench run` does not execute on an attached phone in v0.1.45.",
+      "summary": "Ordinary `mobench run` does not execute on an attached phone in v0.1.46.",
       "evidence_ids": [
         "source-browserstack-run"
       ]
@@ -9603,7 +9641,7 @@
     {
       "id": "benchmark.execute.android-emulator",
       "status": "unsupported",
-      "summary": "Ordinary `mobench run` has no Android emulator execution provider in v0.1.45.",
+      "summary": "Ordinary `mobench run` has no Android emulator execution provider in v0.1.46.",
       "evidence_ids": [
         "source-browserstack-run"
       ]
@@ -9611,7 +9649,7 @@
     {
       "id": "benchmark.execute.ios-simulator",
       "status": "unsupported",
-      "summary": "Ordinary `mobench run` has no iOS simulator execution provider in v0.1.45.",
+      "summary": "Ordinary `mobench run` has no iOS simulator execution provider in v0.1.46.",
       "evidence_ids": [
         "source-browserstack-run"
       ]
@@ -9780,6 +9818,11 @@
       "id": "test-complete-prebuilt-matrix",
       "kind": "test",
       "reference": "crates/mobench/src/lib.rs#prebuilt_results_require_complete_device_matrix"
+    },
+    {
+      "id": "source-ffi-backend-resolution",
+      "kind": "source",
+      "reference": "crates/mobench/src/lib.rs#configured_ffi_backend"
     }
   ]
 }

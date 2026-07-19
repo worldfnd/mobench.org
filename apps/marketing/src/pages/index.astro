@@ -150,10 +150,10 @@ const faq = [
 
     <section class="section shell" id="release-security" aria-labelledby="release-security-title">
       <div class="section-intro split-intro">
-        <div><p class="eyebrow">New in {site.release}</p><h2 id="release-security-title">Prepare once. Require every result.</h2></div>
-        <p>Secretless caller hooks and platform-specific function/device matrices now fit inside the secure reusable workflow—without moving pull-request build tooling across the credential boundary.</p>
+        <div><p class="eyebrow">New in {site.release}</p><h2 id="release-security-title">Pin the toolchain. Choose the native bridge.</h2></div>
+        <p>Reusable-workflow callers can select the exact Rust toolchain and FFI backend used for Android and iOS prebuilt packages—without moving caller build tooling across the credential boundary.</p>
       </div>
-      <p class="table-note"><strong>Complete means complete:</strong> every requested function/device pair must return exactly one shard; missing, unexpected, or duplicate results fail closed. <a href={`${site.docsUrl}/ci/#secure-pull-request-benchmarks`}>Read the 0.1.45 CI guide <span aria-hidden="true">→</span></a></p>
+      <p class="table-note"><strong>Secretless by construction:</strong> mobile targets and native generators run only in prepare jobs; credentialed jobs verify and execute fixed prebuilt artifacts. <a href={`${site.docsUrl}/ci/#secure-pull-request-benchmarks`}>Read the 0.1.46 CI guide <span aria-hidden="true">→</span></a></p>
     </section>
 
     <section class="section shell" id="capabilities" aria-labelledby="capabilities-title">

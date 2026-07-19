@@ -5,7 +5,7 @@ The public website for [mobench](https://github.com/worldcoin/mobile-bench-rs), 
 - `mobench.org` — product education and task entry points.
 - `docs.mobench.org` — Starlight documentation, search, references, and examples.
 
-The current stable documentation targets `mobench 0.1.45`, including secretless caller preparation, platform-specific matrices, and fail-closed complete-result enforcement in its two-stage BrowserStack workflow. Use the `mobench` executable in published commands. The `cargo mobench` wrapper is not a supported documentation entry point until its upstream argument-forwarding fix is released and smoke-tested.
+The current stable documentation targets `mobench 0.1.46`, including caller-pinned Rust toolchains, typed FFI-backend selection, and native prebuilt preparation inside its secure two-stage BrowserStack workflow. Use the `mobench` executable in published commands. The `cargo mobench` wrapper is not a supported documentation entry point until its upstream argument-forwarding fix is released and smoke-tested.
 
 ## Workspace
 

@@ -31,7 +31,7 @@ describe('static delivery contract', () => {
     expect(html).toContain('<main id="main-content">')
     expect(html).toContain('BrowserStack App Automate')
     expect(html).toContain('Fixture data')
-    expect(html).toContain('Complete means complete')
+    expect(html).toContain('Pin the toolchain. Choose the native bridge.')
     expect(html).toContain('https://mobench.org/')
     expect(meta(html, 'og:image:alt')).toBeTruthy()
     expect(html).toContain('application/ld+json')
@@ -148,9 +148,12 @@ describe('static delivery contract', () => {
     }
     expect(cliMarkdown).toContain('Generated from @mobench/truth')
     expect(configurationMarkdown).toContain('Generated from @mobench/truth')
-    for (const releaseContract of ['prepare_script', 'functions_ios', 'android_devices', 'exactly one result shard']) {
+    for (const releaseContract of ['prepare_script', 'functions_ios', 'android_devices', 'rust_toolchain', 'ffi_backend', 'exactly one result shard']) {
       expect(ciMarkdown).toContain(releaseContract)
     }
+    expect(ciMarkdown).toContain('1ac54adaf2bd97c6ca303705e1e0471257716f48')
+    expect(cliMarkdown).toContain('--ffi-backend')
+    expect(configurationMarkdown).toContain('project.ffi_backend')
   })
 
   test('release sync is explicit and watcher updates through a pull-request branch', async () => {

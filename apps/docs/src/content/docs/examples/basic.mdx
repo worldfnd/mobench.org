@@ -6,13 +6,13 @@ description: Follow the minimal SDK example from registration to host and mobile
 sidebar:
   order: 1
 audience: [new-user, benchmark-author]
-release: 0.1.45
-lastVerified: 2026-07-18
+release: 0.1.46
+lastVerified: 2026-07-19
 section: Examples
 order: 1
 sourceRefs:
   - label: Basic benchmark example
-    url: https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/examples/basic-benchmark/README.md
+    url: https://github.com/worldcoin/mobile-bench-rs/blob/d5e00b3d10120c947b247c78303492741563ee49/examples/basic-benchmark/README.md
     evidence: Minimal crate setup, registered functions, tests, and run commands.
 ---
 
@@ -26,14 +26,14 @@ name = "basic_benchmark"
 crate-type = ["lib", "cdylib", "staticlib"]
 
 [dependencies]
-mobench-sdk = { version = "0.1.45", default-features = false, features = ["registry"] }
+mobench-sdk = { version = "0.1.46", default-features = false, features = ["registry"] }
 inventory = "0.3"
 serde = { version = "1", features = ["derive"] }
 thiserror = "1"
 uniffi = { version = "0.28", features = ["cli"] }
 ```
 
-Use dependency versions compatible with your lockfile; the key mobench requirement is matching the `0.1.45` SDK line.
+Use dependency versions compatible with your lockfile; the key mobench requirement is matching the `0.1.46` SDK line.
 
 ## Benchmark functions
 

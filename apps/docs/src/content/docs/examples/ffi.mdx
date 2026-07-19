@@ -5,13 +5,13 @@ description: Expose mobench benchmarks through UniFFI, the native C ABI, or Bolt
 sidebar:
   order: 2
 audience: [benchmark-author, contributor]
-release: 0.1.45
-lastVerified: 2026-07-18
+release: 0.1.46
+lastVerified: 2026-07-19
 section: Examples
 order: 2
 sourceRefs:
   - label: FFI benchmark example
-    url: https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/examples/ffi-benchmark/README.md
+    url: https://github.com/worldcoin/mobile-bench-rs/blob/d5e00b3d10120c947b247c78303492741563ee49/examples/ffi-benchmark/README.md
     evidence: UniFFI types, native C ABI export, BoltFFI bridge, tests, and run flow.
 ---
 
@@ -68,6 +68,20 @@ pub fn run_benchmark_json(spec_json: &str) -> Result<String, String> {
 ```
 
 Set `ffi_backend = "boltffi"` and ensure the BoltFFI generator is available to the build.
+
+## Select the backend for a prebuilt handoff
+
+CI can override project configuration without editing the checkout:
+
+```bash
+mobench ci prepare \
+  --target android \
+  --ffi-backend native-c-abi \
+  --source-sha "$PR_HEAD_SHA" \
+  --manifest target/mobench/prebuilt/android/manifest.json
+```
+
+The CLI value takes precedence over `[project].ffi_backend`; omitting both retains the UniFFI default. Native C ABI and BoltFFI paths do not install or invoke `uniffi-bindgen`.
 
 ## Exercise the example
 

@@ -5,17 +5,17 @@ description: Run repeatable mobile benchmarks and produce stable CI artifacts.
 sidebar:
   order: 3
 audience: [ci-engineer, benchmark-author]
-release: 0.1.45
-lastVerified: 2026-07-18
+release: 0.1.46
+lastVerified: 2026-07-19
 section: Run benchmarks
 order: 3
 sourceRefs:
   - label: BrowserStack CI guide
-    url: https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/docs/guides/browserstack-ci.md
+    url: https://github.com/worldcoin/mobile-bench-rs/blob/d5e00b3d10120c947b247c78303492741563ee49/docs/guides/browserstack-ci.md
     evidence: CI run, split-sample merge, PR reporting, and regression commands.
   - label: Reusable workflow security guide
-    url: https://github.com/worldcoin/mobile-bench-rs/blob/434da93dfda39db996be90e9e0bca625f10efb25/docs/guides/reusable-workflow-security.md
-    evidence: Secretless preparation, caller hooks, platform-specific matrices, complete-result enforcement, and isolated reporting.
+    url: https://github.com/worldcoin/mobile-bench-rs/blob/d5e00b3d10120c947b247c78303492741563ee49/docs/guides/reusable-workflow-security.md
+    evidence: Secretless preparation, caller-pinned toolchains, typed FFI backends, complete-result enforcement, and isolated reporting.
 ---
 
 `mobench ci run` wraps execution in a stable file contract for artifact upload, job summaries, comparisons, plots, and downstream reporting.
@@ -89,7 +89,7 @@ Install the pinned mobench release in an earlier step or use your repository's p
 
 ## Secure pull-request benchmarks
 
-Version 0.1.45 preserves the hard trust boundary introduced in 0.1.44 and makes the secure reusable workflow the generated default:
+Version 0.1.46 preserves the hard trust boundary introduced in 0.1.44 while making native prebuilt preparation reproducible for projects with pinned Rust toolchains:
 
 1. `ci prepare` checks out the exact pull-request head and builds mobile packages without BrowserStack credentials, protected environments, or write-capable permissions.
 2. A trusted job validates the manifest's normalized paths, platform and ABI metadata, file sizes, and SHA-256 digests before uploading only the enumerated mobile packages.
@@ -103,6 +103,7 @@ Prepare one Android artifact set with the canonical executable:
 ```bash
 mobench ci prepare \
   --target android \
+  --ffi-backend native-c-abi \
   --source-sha "$PR_HEAD_SHA" \
   --functions 'benchmarks::critical_path' \
   --iterations 30 \
@@ -137,7 +138,7 @@ permissions:
 
 jobs:
   mobench:
-    uses: worldcoin/mobile-bench-rs/.github/workflows/reusable-bench.yml@3dc3d5be6add73a1b2f6c3edefb862fd485356c2
+    uses: worldcoin/mobile-bench-rs/.github/workflows/reusable-bench.yml@1ac54adaf2bd97c6ca303705e1e0471257716f48
     with:
       pr_number: ${{ github.event.pull_request.number }}
       head_sha: ${{ github.event.pull_request.head.sha }}
@@ -145,6 +146,8 @@ jobs:
       functions: '["benchmarks::critical_path"]'
       functions_ios: '["benchmarks::ios_critical_path"]'
       prepare_script: .github/scripts/prepare-mobench.sh
+      rust_toolchain: nightly-2026-03-04
+      ffi_backend: native-c-abi
       android_devices: '[{"device":"Google Pixel 7","os_version":"13.0"}]'
       platform: both
     secrets:
@@ -153,6 +156,10 @@ jobs:
 ```
 
 Do not replace the workflow SHA with a mutable tag or branch, and do not use `secrets: inherit`. Both `pr_number` and the full 40-character `head_sha` are required for pull requests, including forks. Non-PR self-tests must explicitly set `allow_non_pr: true`.
+
+`rust_toolchain` defaults to `stable`. Set it to the exact channel used by the caller, such as `nightly-2026-03-04`; the workflow installs the requested Android or iOS targets for that toolchain only in the secretless prepare jobs. The trusted Mobench control plane stays on its own pinned stable toolchain and never reads caller toolchain files.
+
+`ffi_backend` accepts `uniffi`, `native-c-abi`, or `boltffi`. An explicit workflow or `ci prepare --ffi-backend` value wins over `[project].ffi_backend` in `mobench.toml`; if neither is set, Mobench uses `uniffi`. Native C ABI and BoltFFI preparation skip UniFFI generator installation, while UniFFI resolves its lockfile from the Cargo workspace containing `crate_path` instead of selecting an unrelated nested lockfile.
 
 `functions_ios` and `functions_android` override the shared function list for one platform. Likewise, structured `ios_devices` and `android_devices` arrays override the legacy single-device/profile inputs. Existing callers remain compatible when these inputs are omitted.
 
