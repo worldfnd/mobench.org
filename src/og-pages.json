@@ -1,7 +1,7 @@
 {
   "site": {
     "name": "mobench",
-    "version": "0.1.46",
+    "version": "0.1.47",
     "landingUrl": "https://mobench.org",
     "docsUrl": "https://docs.mobench.org"
   },
@@ -31,7 +31,7 @@
     { "id": "sdk", "label": "SDK integration", "group": "Guides", "description": "Add mobench-sdk to a crate, configure runner backends, export native C ABI when needed, and use public runtime types." },
     { "id": "build", "label": "Build artifacts", "group": "Guides", "description": "Generate Android and iOS runner projects, understand runner backends, and verify outputs under target/mobench." },
     { "id": "local-devices", "label": "Local devices", "group": "Guides", "description": "Run against connected phones, Android emulators via Android Studio and ADB, and iOS simulators or connected devices via Xcode." },
-    { "id": "browserstack", "label": "BrowserStack CI", "group": "Guides", "description": "Use hosted real devices, matrix resolution, split-sample merging, PR reporting, artifact fetching, and normalized resource metrics." },
+    { "id": "browserstack", "label": "BrowserStack CI", "group": "Guides", "description": "Use hosted real devices, long-session reliability controls, secure reusable workflows, and the ProveKit production integration." },
     { "id": "app-automate", "label": "App Automate setup", "group": "Guides", "description": "Set up BrowserStack App Automate for mobench Android Espresso and iOS XCUITest runs, including API uploads, build execution, devices, trial limits, and pricing expectations." },
     { "id": "profiling", "label": "Profiling", "group": "Guides", "description": "Run local native profiling, produce trace events, semantic phase summaries, flamegraphs, and profile diffs." },
     { "id": "reports", "label": "Outputs & reports", "group": "Reference", "description": "Understand summary JSON, Markdown summaries, CSV rows, split-run outputs, BrowserStack artifacts, PR comments, and profiling bundles." },
@@ -39,7 +39,7 @@
     { "id": "schemas", "label": "Schemas", "group": "Reference", "description": "Machine-readable contracts for CI metadata, benchmark summaries, trace events, and fixture payloads." },
     { "id": "examples", "label": "Examples explained", "group": "Reference", "description": "What the basic benchmark and native C ABI / FFI examples demonstrate, and how their fixture outputs map to reports." },
     { "id": "diagrams", "label": "Diagrams", "group": "Reference", "description": "Architecture, benchmark lifecycle, BrowserStack CI, profiling artifacts, and SDK versus CLI responsibility diagrams." },
-    { "id": "current-spec", "label": "Current behavior", "group": "Specs", "description": "Current behavior and API contract for release 0.1.46: CLI, config, runners, public APIs, schemas, and compatibility boundaries." },
+    { "id": "current-spec", "label": "Current behavior", "group": "Specs", "description": "Current behavior and API contract for release 0.1.47: CLI, config, runners, public APIs, schemas, and compatibility boundaries." },
     { "id": "codebase", "label": "Codebase architecture", "group": "Codebase", "description": "Workspace layout, runtime layers, generated templates, integrations, stack, and ownership boundaries." },
     { "id": "testing", "label": "Testing strategy", "group": "Codebase", "description": "Host tests, CLI smoke checks, split-run merge validation, CI contract checks, BrowserStack smoke tests, and profiling checks." },
     { "id": "public-api", "label": "Public API", "group": "Codebase", "description": "Published crates, feature flags, serialized contracts, error boundaries, semver policy, MSRV, and release readiness." },

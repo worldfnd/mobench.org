@@ -34,4 +34,4 @@ export function Wordmark({ tag }: { tag?: string }) {
 export const GITHUB_URL = 'https://github.com/worldcoin/mobile-bench-rs'
 export const WORLD_URL = 'https://world.org'
 export const BROWSERSTACK_URL = 'https://www.browserstack.com/'
-export const MOBENCH_VERSION = '0.1.46'
+export const MOBENCH_VERSION = '0.1.47'

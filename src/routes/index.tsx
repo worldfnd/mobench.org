@@ -478,8 +478,8 @@ const copyCmd = () => {
               BrowserStack runs use the same CLI flow.
             </h2>
             <p className="m-0 mb-[26px] max-w-[520px] text-[17px] leading-[1.55] text-muted">
-              Select functions and devices per platform, pin the caller Rust toolchain, and keep BrowserStack
-              credentials isolated from pull-request builds with the v0.1.46 prebuilt workflow.
+              Run long Android and iOS benchmarks with bounded completion timeouts, runner heartbeats, and
+              early native-worker failure diagnostics while credentials stay isolated from pull-request builds.
             </p>
             <a
               href={BROWSERSTACK_URL}
