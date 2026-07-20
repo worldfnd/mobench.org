@@ -62,7 +62,7 @@ const FEATURES = [
   {
     n: '01',
     title: 'CLI orchestration',
-    body: 'Initialize a run config, build Android or iOS artifacts, execute locally or on BrowserStack, merge split CI runs, fetch results, and render reports from one Cargo-native command surface.',
+    body: 'Use the installed mobench CLI to build Android or iOS artifacts, execute locally or on BrowserStack, prepare credential-free mobile bundles, and render stable reports.',
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3F7A2E" strokeWidth="1.6">
         <path d="M4 7h16M7 12h7M7 17h10" />
@@ -350,7 +350,7 @@ const copyCmd = () => {
             </h2>
             <p className="m-0 mb-[26px] max-w-[500px] text-[17px] leading-[1.55] text-muted">
               Add the SDK and inventory to your crate, expose mobile FFI outputs, mark benchmark functions,
-              then let cargo mobench build and run the generated mobile apps.
+              then let mobench build and run the generated mobile apps.
             </p>
             <a href={DOCS_URL} className="inline-flex items-center gap-2 text-[15px] font-medium text-green no-underline">
               Read the full guide -&gt;
@@ -359,9 +359,9 @@ const copyCmd = () => {
           <div className="min-w-0 flex-1 basis-[460px]">
             <Terminal title="terminal" action={copied ? 'Copied' : 'Copy'} onAction={copyCmd}>
               <Line cmd="cargo install mobench" />
-              <Line cmd='cargo mobench init --target android --output bench-config.toml' />
-              <Line cmd="cargo mobench build --target android" />
-              <Line cmd='cargo mobench run --target android --function my_crate::hash_benchmark --iterations 100 --warmup 10 --devices "Google Pixel 7-13.0" --release' />
+              <Line cmd='mobench init --target android --output bench-config.toml' />
+              <Line cmd="mobench build --target android" />
+              <Line cmd='mobench run --target android --function my_crate::hash_benchmark --iterations 100 --warmup 10 --devices "Google Pixel 7-13.0" --release' />
               <div className="text-[#6C7850]">summary.json + summary.md + results.csv ready</div>
             </Terminal>
           </div>
@@ -411,7 +411,7 @@ const copyCmd = () => {
           <div className="mb-12 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {CLI_COMMANDS.map(([cmd, desc]) => (
               <div key={cmd} className="rounded-xl border border-[rgba(20,18,12,0.10)] bg-white px-5 py-5">
-                <div className="font-mono text-[13px] text-green">cargo mobench {cmd}</div>
+                <div className="font-mono text-[13px] text-green">mobench {cmd}</div>
                 <div className="mt-2 text-sm leading-[1.5] text-muted">{desc}</div>
               </div>
             ))}
@@ -478,8 +478,8 @@ const copyCmd = () => {
               BrowserStack runs use the same CLI flow.
             </h2>
             <p className="m-0 mb-[26px] max-w-[520px] text-[17px] leading-[1.55] text-muted">
-              Set BrowserStack credentials, select devices by name, and use --release for smaller APK uploads.
-              Long or fragile lanes can run one measured sample per job, then merge them into the standard CI outputs.
+              Run long Android and iOS benchmarks with bounded completion timeouts, runner heartbeats, and
+              early native-worker failure diagnostics while credentials stay isolated from pull-request builds.
             </p>
             <a
               href={BROWSERSTACK_URL}
@@ -494,7 +494,7 @@ const copyCmd = () => {
             <Terminal title="browserstack">
               <Line cmd='export BROWSERSTACK_USERNAME="..."' />
               <Line cmd='export BROWSERSTACK_ACCESS_KEY="..."' />
-              <Line cmd='cargo mobench run --target android --function hash_benchmark --devices "Google Pixel 7-13.0" --release' />
+              <Line cmd='mobench run --target android --function hash_benchmark --devices "Google Pixel 7-13.0" --release' />
               <div className="text-[#6C7850]">uploading APK ... ready</div>
               <div className="text-[#6C7850]">collecting results ... summary extracted</div>
             </Terminal>

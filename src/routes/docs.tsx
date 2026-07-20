@@ -125,7 +125,9 @@ const EXTERNAL_DOCS = {
  ios: 'https://developer.apple.com/ios/',
  worldApp: 'http://world.org/world-app',
  worldId: 'https://docs.world.org/world-id',
- provekit: 'https://provekit.org/',
+  provekit: 'https://provekit.org/',
+  provekitMainMobench: 'https://github.com/worldfnd/provekit/pull/450',
+  provekitV1Mobench: 'https://github.com/worldfnd/provekit/pull/451',
 } as const
 
 type BrandLogoName = 'rust' | 'browserstack' | 'androidStudio' | 'android' | 'xcode' | 'ios'
@@ -299,9 +301,9 @@ const PAGES: PageDef[] = [
     id: 'browserstack',
     label: 'BrowserStack CI',
     group: 'Guides',
-    description: 'Use hosted real devices, matrix resolution, split-sample merging, PR reporting, artifact fetching, and normalized resource metrics.',
+    description: 'Use hosted real devices, long-session reliability controls, secure reusable workflows, and the ProveKit production integration.',
     icon: Cloud,
-    toc: ['Credentials', 'Device resolution', 'CI contract', 'Split-sample merge'],
+    toc: ['Credentials', 'Secure reusable workflow', 'Long-session reliability', 'ProveKit case study', 'CI contract'],
   },
   {
     id: 'app-automate',
@@ -348,9 +350,9 @@ const PAGES: PageDef[] = [
     id: 'examples',
     label: 'Examples explained',
     group: 'Reference',
-    description: 'What the basic benchmark and native C ABI / FFI examples demonstrate, and how their fixture outputs map to reports.',
+    description: 'How the basic, native C ABI / FFI, and ProveKit integrations work, including fixtures and CI reports.',
     icon: Boxes,
-    toc: ['Basic benchmark', 'FFI benchmark', 'Fixture outputs'],
+    toc: ['Basic benchmark', 'FFI benchmark', 'ProveKit integration', 'Fixtures to mobile runners', 'ProveKit CI', 'Fixture outputs'],
   },
   {
     id: 'diagrams',
@@ -364,7 +366,7 @@ const PAGES: PageDef[] = [
     id: 'current-spec',
     label: 'Current behavior',
     group: 'Specs',
-    description: 'Current behavior and API contract for release 0.1.43: CLI, config, runners, public APIs, schemas, and compatibility boundaries.',
+    description: 'Current behavior and API contract for release 0.1.47: CLI, config, runners, public APIs, schemas, and compatibility boundaries.',
     icon: ListChecks,
     toc: ['Scope', 'Contracts', 'Compatibility'],
   },
@@ -449,7 +451,7 @@ const CONTENT: Record<PageId, Section[]> = {
  <><InlineLink href={GITHUB_REPO}>mobench</InlineLink> keeps benchmark definitions in Rust and runs them in places mobile code actually pays its costs: Android iOS runners, host-only smoke runs, connected local devices, emulators simulators, <InlineLink href={EXTERNAL_DOCS.browserstack}>BrowserStack</InlineLink> devices, profiling flows.</>,
       ],
       bullets: [
- <>A <InlineLink href={DOCSRS.mobench}><code>cargo mobench</code> CLI</InlineLink> for build, run, CI, reporting, <InlineLink href={EXTERNAL_DOCS.browserstack}>BrowserStack</InlineLink>, device resolution, profiling commands.</>,
+ <>A <InlineLink href={DOCSRS.mobench}><code>mobench</code> CLI</InlineLink> for build, run, CI, reporting, <InlineLink href={EXTERNAL_DOCS.browserstack}>BrowserStack</InlineLink>, device resolution, profiling commands.</>,
  <>A <InlineLink href={DOCSRS.sdk}><code>mobench-sdk</code></InlineLink> runtime with timing, registry, runner builders, mobile builders, profiling helpers, <InlineLink href={EXTERNAL_DOCS.uniffi}>UniFFI</InlineLink> compatibility, <InlineLink href={EXTERNAL_DOCS.boltffi}>BoltFFI</InlineLink> support, and native C ABI support.</>,
  <>A <InlineLink href={DOCSRS.macros}><code>mobench-macros</code></InlineLink> crate registers <code>#[benchmark]</code> functions through inventory.</>,
         <>Stable output artifacts: JSON summaries, Markdown summaries, CSV rows, optional plots, profiling manifests, trace-event JSON, and flamegraph bundles.</>,
@@ -505,11 +507,11 @@ const CONTENT: Record<PageId, Section[]> = {
       code: {
         language: 'bash',
         value: `cargo install mobench
-cargo mobench init
-cargo mobench doctor
-cargo mobench build --target android --release
-cargo mobench run --local --function fibonacci_30 --iterations 100 --warmup 10
-cargo mobench ci run --target android --browserstack --output target/mobench/ci`,
+mobench init
+mobench doctor
+mobench build --target android --release
+mobench run --local --function fibonacci_30 --iterations 100 --warmup 10
+mobench ci run --target android --browserstack --output target/mobench/ci`,
       },
     },
     {
@@ -553,14 +555,14 @@ pub fn checksum(data: &Vec<u8>) {
     {
       title: 'Rust and CLI',
       bullets: [
- <>Install <BrandLink href={EXTERNAL_DOCS.rust} logo="rust">Rust</BrandLink> with <code>rustup</code>. Use Rust 2024-compatible toolchains; current workspace release line is <code>0.1.43</code> and documented MSRV is Rust 1.85.</>,
+ <>Install <BrandLink href={EXTERNAL_DOCS.rust} logo="rust">Rust</BrandLink> with <code>rustup</code>. Use Rust 2024-compatible toolchains; current workspace release line is <code>0.1.47</code> and documented MSRV is Rust 1.85.</>,
  <>Install CLI <code>cargo install mobench</code> or build from repository when developing mobench itself.</>,
  <>Add <code>mobench-sdk</code>, <code>inventory</code>, and required crate types to benchmark crates.</>,
  ],
  code: {
  language: 'toml',
  value: `[dependencies]
-mobench-sdk = "0.1.43"
+mobench-sdk = "0.1.47"
 inventory = "0.3"
 
 [lib]
@@ -572,7 +574,7 @@ crate-type = ["cdylib", "staticlib", "lib"]`,
  bullets: [
  <><BrandLink href={EXTERNAL_DOCS.androidStudio} logo="androidStudio">Android Studio</BrandLink> is the normal route for installing <BrandLink href={EXTERNAL_DOCS.android} logo="android">Android</BrandLink> SDKs, managing emulators, and exposing devices through ADB.</>,
  <><BrandLink href={EXTERNAL_DOCS.xcode} logo="xcode">Xcode</BrandLink> provides command-line tools, simulators, signing, and connected-device support for <BrandLink href={EXTERNAL_DOCS.ios} logo="ios">iOS</BrandLink> generated runner projects.</>,
- <>Use <code>cargo mobench check --target android</code> and <code>cargo mobench check --target ios</code> before chasing build failures.</>,
+ <>Use <code>mobench check --target android</code> and <code>mobench check --target ios</code> before chasing build failures.</>,
  ],
  },
  {
@@ -705,11 +707,11 @@ pub fn parse_file(input: &TempFile) {
       code: {
         language: 'toml',
         value: `[dependencies]
-mobench-sdk = "0.1.43"
+mobench-sdk = "0.1.47"
 inventory = "0.3"
 
 # Narrow registry-only form:
-mobench-sdk = { version = "0.1.43", default-features = false, features = ["registry"] }`,
+mobench-sdk = { version = "0.1.47", default-features = false, features = ["registry"] }`,
       },
     },
     {
@@ -731,6 +733,8 @@ mobench-sdk = { version = "0.1.43", default-features = false, features = ["regis
  <><strong>BoltFFI</strong>: fast, newer, and designed for smaller overhead than UniFFI, but not as mature yet.</>,
  <><strong>UniFFI</strong>: more mature and battle-tested, but usually carries larger binding overhead.</>,
  <><strong>Native FFI</strong>: recommended for serious benchmark paths because Android/iOS callers can use the narrow ABI the benchmark actually needs.</>,
+ <>In 0.1.46, <code>ci prepare --ffi-backend</code> accepts <code>uniffi</code>, <code>native-c-abi</code>, or <code>boltffi</code>. The CLI value wins over <code>project.ffi_backend</code> in <code>mobench.toml</code>; if neither is set, UniFFI remains the default.</>,
+ <>Native C ABI and BoltFFI preparation skip the UniFFI generator. UniFFI preparation resolves its lockfile from the Cargo workspace containing the benchmark crate.</>,
  ],
  },
  {
@@ -755,18 +759,18 @@ mobench-sdk = { version = "0.1.43", default-features = false, features = ["regis
       bullets: [
         <>Android: install SDK tooling, make ADB available, and create emulator profiles in Android Studio when simulator-style local runs are needed.</>,
         <>iOS: install Xcode command-line tools and use Xcode to manage simulators, signing, and connected devices.</>,
-        <>Run <code>cargo mobench check</code> for target-specific diagnostics before build commands.</>,
+        <>Run <code>mobench check</code> for target-specific diagnostics before build commands.</>,
       ],
     },
     {
       title: 'Build commands',
       code: {
         language: 'bash',
-        value: `cargo mobench check --target android
-cargo mobench check --target ios
-cargo mobench build --target android --progress
-cargo mobench build --target ios --progress
-cargo mobench build --target both --release`,
+        value: `mobench check --target android
+mobench check --target ios
+mobench build --target android --progress
+mobench build --target ios --progress
+mobench build --target both --release`,
       },
     },
     {
@@ -789,8 +793,8 @@ cargo mobench build --target both --release`,
       code: {
         language: 'bash',
         value: `adb devices
-cargo mobench build --target android
-cargo mobench run --target android --local --function my_crate::checksum_bench`,
+mobench build --target android
+mobench run --target android --local --function my_crate::checksum_bench`,
       },
     },
     {
@@ -808,7 +812,7 @@ cargo mobench run --target android --local --function my_crate::checksum_bench`,
       ],
       code: {
         language: 'bash',
-        value: `cargo mobench run \\
+        value: `mobench run \\
   --target android \\
   --function my_bench_crate::checksum_bench \\
   --local-only \\
@@ -831,6 +835,135 @@ export BROWSERSTACK_PROJECT="mobile-benchmarks"`,
     },
   },
   {
+    title: 'Secure reusable workflow (0.1.44–0.1.47)',
+    body: [
+      <>The 0.1.44 workflow split pull-request execution into secretless preparation, trusted prebuilt-only BrowserStack execution, and isolated reporting. Untrusted PR code never runs with BrowserStack credentials or a write-capable repository token.</>,
+    ],
+    bullets: [
+      <>Version 0.1.45 added a repository-relative <code>prepare_script</code>, platform-specific <code>functions_ios</code> and <code>functions_android</code>, and structured device arrays. The prepare hook runs with <code>MOBENCH_CI_PREPARE=1</code> only in the secretless job.</>,
+      <>Version 0.1.46 added <code>rust_toolchain</code> (default <code>stable</code>) and typed <code>ffi_backend</code> selection. Caller targets are installed only for the requested toolchain in secretless preparation; the trusted control plane stays independently pinned.</>,
+      <>Version 0.1.47 adds a bounded <code>max_completion_timeout_secs</code> for long sessions while preserving the same security boundary. The default is 1,800 seconds and the trusted maximum is 21,600 seconds.</>,
+      <>Every requested function/device pair must produce exactly one result. Missing, unexpected, ambiguous, or duplicate shards fail closed after diagnostic artifacts are collected.</>,
+      <>Pin the workflow to its immutable revision, pass BrowserStack secrets explicitly, and never use <code>secrets: inherit</code>.</>,
+    ],
+    code: {
+      language: 'yaml',
+      value: `jobs:
+  mobench:
+    uses: worldcoin/mobile-bench-rs/.github/workflows/reusable-bench.yml@f36ea5420bdb6633a6b8e91b00522ca9d5a2a84f
+    with:
+      pr_number: \${{ github.event.pull_request.number }}
+      head_sha: \${{ github.event.pull_request.head.sha }}
+      crate_path: crates/benchmarks
+      functions: '["benchmarks::critical_path"]'
+      functions_ios: '["benchmarks::ios_critical_path"]'
+      prepare_script: .github/scripts/prepare-mobench.sh
+      rust_toolchain: nightly-2026-03-04
+      ffi_backend: native-c-abi
+      mobench_version: "0.1.47"
+      max_completion_timeout_secs: 7200
+      android_devices: '[{"device":"Google Pixel 7","os_version":"13.0"}]'
+      platform: both
+    secrets:
+      BROWSERSTACK_USERNAME: \${{ secrets.BROWSERSTACK_USERNAME }}
+      BROWSERSTACK_ACCESS_KEY: \${{ secrets.BROWSERSTACK_ACCESS_KEY }}`,
+    },
+  },
+  {
+    title: 'Long-session reliability in 0.1.47',
+    body: [
+      <>Release 0.1.47 makes multi-hour mobile proofs observable and bounded instead of merely extending an outer job timeout. <code>max_completion_timeout_secs</code> defaults to 1,800 seconds and is capped at a trusted six-hour maximum; ProveKit selects 7,200 seconds for its proof workloads.</>,
+    ],
+    bullets: [
+      <>iOS applies the same bounded timeout to launch configuration, the XCUITest completion wait, and BrowserStack polling. The SwiftUI/XCUITest runner emits a heartbeat interaction every five minutes while checking its completion predicate every 30 seconds, and BrowserStack receives a 15-minute XCUITest idle timeout.</>,
+      <>Completed iOS JSON is transported through accessibility channels. The first channel containing valid completed report JSON wins, avoiding false completion from a marker that merely exists.</>,
+      <>Android records the native C ABI worker PID and process name. Its watchdog detects a dead worker early and emits a structured <code>worker_exit</code> diagnostic; reportable JNA or native-link failures become benchmark failures instead of disappearing behind the full timeout.</>,
+      <>Credentialed iOS and Android jobs run serially for constrained BrowserStack accounts. Android uses an always-style dependency condition so it can proceed when iOS fails or is skipped.</>,
+      <>Every exact PR-head lookup retries transient GitHub API failures up to five times with bounded backoff. Exhausted lookups and SHA mismatches still fail closed before build or credential use.</>,
+    ],
+  },
+  {
+    title: 'ProveKit case study: merged PRs 450 and 451',
+    body: [
+      <><InlineLink href={EXTERNAL_DOCS.provekitMainMobench}>ProveKit PR #450</InlineLink> integrates mobench into the <code>main</code> branch, and <InlineLink href={EXTERNAL_DOCS.provekitV1Mobench}>PR #451</InlineLink> carries the same pattern into <code>v1</code>. Both are merged, real-project examples using mobench 0.1.47 for expensive Noir proof generation on real iOS and Android devices.</>,
+      <>The integration adds a non-published <code>bench-mobile</code> crate that builds as a Rust library, <code>cdylib</code>, and <code>staticlib</code>. It exports mobench's native C ABI and registers benchmarks with <code>#[benchmark]</code>, so the same Rust proving implementation is callable from generated Android and iOS runners.</>,
+    ],
+    bullets: [
+      <>The measured set covers complete passport age-check proving, fragmented passport age-check proving, and OPRF proving. Setup functions prepare the prover, verifier, and witness outside the sample; destructive proof benchmarks use <code>per_iteration</code> to recreate state; verification and end-to-end variants remain available for focused investigation.</>,
+      <>Phase wrappers label prepare, prove, and verify work for profiling. Results are passed through <code>black_box</code>, and Android/Linux builds call <code>malloc_trim</code> between large proof stages so released allocator pages do not distort later stages.</>,
+      <>The crate's report conversion preserves duration, CPU time, peak memory, process peak memory, and timeline spans from the mobench SDK.</>,
+    ],
+  },
+  {
+    title: 'ProveKit fixture and mobile configuration',
+    body: [
+      <>Before mobile packaging, <code>bench-mobile/scripts/generate-fixtures.sh</code> requires <code>MOBENCH_CI_PREPARE=1</code>, installs a pinned Noir toolchain, compiles the passport, OPRF, and P-256 programs, and gathers their JSON artifacts. <code>build.rs</code> embeds those generated files and fails the CI preparation when a required artifact is missing; ordinary local builds can use placeholders until fixtures are generated.</>,
+      <>ProveKit's ordinary Cargo CI also runs the fixture script before its all-targets build and tests on <code>nightly-2026-03-04</code>. That catches benchmark-crate and fixture regressions on normal pull requests before anyone spends BrowserStack capacity.</>,
+    ],
+    code: {
+      language: 'toml',
+      value: `[project]
+crate = "bench-mobile"
+library_name = "bench_mobile"
+ffi_backend = "native-c-abi"
+
+[android]
+package = "dev.world.benchmobile"
+min_sdk = 24
+target_sdk = 34
+abis = ["arm64-v8a"]
+
+[ios]
+bundle_id = "dev.world.benchmobile"
+deployment_target = "13.0"
+runner = "uikit-legacy"
+
+[browserstack]
+ios_completion_timeout_secs = 7200
+android_benchmark_timeout_secs = 7200
+android_heartbeat_interval_secs = 10`,
+    },
+  },
+  {
+    title: 'How ProveKit invokes mobench in CI',
+    body: [
+      <>A dispatch workflow resolves named device profiles into explicit arrays, then calls the reusable workflow with the exact pull-request number and full 40-character head SHA. The merged workflows reference the 0.1.47 release commit <code>8a2dfbb…</code>; new integrations should use the final reusable-workflow pin <code>f36ea542…</code> shown below.</>,
+    ],
+    code: {
+      language: 'yaml',
+      value: `browserstack:
+  uses: worldcoin/mobile-bench-rs/.github/workflows/reusable-bench.yml@f36ea5420bdb6633a6b8e91b00522ca9d5a2a84f
+  secrets:
+    BROWSERSTACK_USERNAME: \${{ secrets.BROWSERSTACK_USERNAME }}
+    BROWSERSTACK_ACCESS_KEY: \${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+  with:
+    crate_path: ./bench-mobile
+    functions: '["bench_mobile::bench_passport_complete_age_check_prove","bench_mobile::bench_passport_fragmented_age_check_prove","bench_mobile::bench_oprf_prove"]'
+    prepare_script: bench-mobile/scripts/generate-fixtures.sh
+    platform: both
+    ios_devices: '[{"device":"iPhone SE 2022","os_version":"15"},{"device":"iPhone 14","os_version":"16"},{"device":"iPhone 16 Pro Max","os_version":"18"}]'
+    android_devices: '[{"device":"Samsung Galaxy S24","os_version":"14.0"},{"device":"Google Pixel 7","os_version":"13.0"},{"device":"Samsung Galaxy M32","os_version":"11.0"}]'
+    iterations: 2
+    warmup: 1
+    mobench_version: "0.1.47"
+    max_completion_timeout_secs: 7200
+    rust_toolchain: nightly-2026-03-04
+    ffi_backend: native-c-abi
+    pr_number: \${{ github.event.pull_request.number }}
+    head_sha: \${{ github.event.pull_request.head.sha }}`,
+    },
+  },
+  {
+    title: 'Triggers, trust boundary, and reports',
+    bullets: [
+      <>Maintainers can start a run from <code>workflow_dispatch</code> or comment <code>/mobench platform=both device_profile=triad iterations=2 warmup=1</code> on a pull request. The comment dispatcher accepts only GitHub OWNER, MEMBER, or COLLABORATOR associations; unsupported platforms/profiles and non-numeric counts fall back to safe defaults.</>,
+      <>Concurrency is grouped by pull request with <code>cancel-in-progress: false</code>, so a new request does not terminate a costly active benchmark.</>,
+      <>The reusable workflow checks out caller code and runs fixture generation/build/package only in secretless preparation. Credentialed jobs receive validated prebuilt bundles and explicit BrowserStack secrets; they do not check out caller code, execute caller scripts, or use <code>secrets: inherit</code>.</>,
+      <>Each platform/function/device shard must report exactly once. Completeness checks fail on missing, duplicate, ambiguous, or unexpected results, while diagnostics and provider artifacts are still collected. Isolated reporting produces GitHub checks/PR output plus the standard <code>summary.json</code>, <code>summary.md</code>, and <code>results.csv</code> contract.</>,
+      <>PR #450 invokes the reusable workflow directly after resolving devices. PR #451 adds a BrowserStack environment preflight and skips the credentialed call when the environment has no credentials; the benchmark crate, functions, devices, toolchain, timeout, and security model otherwise match.</>,
+    ],
+  },
+  {
     title: 'Device resolution',
     bullets: [
       <>Use explicit <BrandLink href="https://www.browserstack.com/list-of-browsers-and-platforms/app_automate" logo="browserstack">BrowserStack App Automate devices</BrandLink> for one-off runs.</>,
@@ -839,9 +972,9 @@ export BROWSERSTACK_PROJECT="mobile-benchmarks"`,
     ],
     code: {
       language: 'bash',
-      value: `cargo mobench devices --platform android
-cargo mobench devices resolve --platform android --device-matrix .github/mobench-devices.yml
-cargo mobench ci run --target android --device-matrix .github/mobench-devices.yml --fetch`,
+      value: `mobench devices --platform android
+mobench devices resolve --platform android --device-matrix .github/mobench-devices.yml
+mobench ci run --target android --device-matrix .github/mobench-devices.yml --fetch`,
     },
   },
   {
@@ -865,7 +998,7 @@ cargo mobench ci run --target android --device-matrix .github/mobench-devices.ym
     ],
     code: {
       language: 'bash',
-      value: `cargo mobench ci merge-split-runs \\
+      value: `mobench ci merge-split-runs \\
   --samples-dir target/mobench/ci/android/sample_fns__fibonacci/device/split \\
   --output-dir target/mobench/ci/android/sample_fns__fibonacci/device \\
   --function sample_fns::fibonacci \\
@@ -1016,17 +1149,17 @@ profiling: [
     ],
     code: {
       language: 'bash',
-      value: `cargo mobench profile run \\
+      value: `mobench profile run \\
   --target android \\
   --function sample_fns::fibonacci \\
   --provider local \\
   --backend android-native \\
   --trace-events-output target/mobench/profile/trace-events.json
 
-cargo mobench profile summarize \\
+mobench profile summarize \\
   --profile target/mobench/profile/profile.json
 
-cargo mobench profile diff \\
+mobench profile diff \\
   --baseline target/mobench/profile/baseline/profile.json \\
   --candidate target/mobench/profile/candidate/profile.json \\
   --normalize`,
@@ -1095,7 +1228,7 @@ pub fn prove_and_verify() {
     {
       title: 'Split-run outputs',
       bullets: [
-        <>Release 0.1.43 can merge <code>sample-*/summary.json</code> inputs from one-sample CI jobs into the same <code>summary.json</code>, <code>summary.md</code>, and <code>results.csv</code> contract.</>,
+        <>Mobench can merge <code>sample-*/summary.json</code> inputs from one-sample CI jobs into the same <code>summary.json</code>, <code>summary.md</code>, and <code>results.csv</code> contract.</>,
         <>The merged JSON preserves raw samples, recomputes min, max, mean, median, and p95 timing statistics, and combines available resource measurements.</>,
         <>Existing report, plot, comparison, and PR-comment tooling can consume merged output without a separate format adapter.</>,
       ],
@@ -1104,11 +1237,11 @@ pub fn prove_and_verify() {
       title: 'Report helpers',
       code: {
         language: 'bash',
-        value: `cargo mobench summary target/mobench/results.json
-cargo mobench summary --format json target/mobench/results.json
-cargo mobench summary --format csv target/mobench/results.json
-cargo mobench report summarize --summary target/mobench/ci/summary.json
-cargo mobench report github --pr 123 --summary target/mobench/ci/summary.json`,
+        value: `mobench summary target/mobench/results.json
+mobench summary --format json target/mobench/results.json
+mobench summary --format csv target/mobench/results.json
+mobench report summarize --summary target/mobench/ci/summary.json
+mobench report github --pr 123 --summary target/mobench/ci/summary.json`,
       },
     },
     {
@@ -1122,7 +1255,8 @@ cargo mobench report github --pr 123 --summary target/mobench/ci/summary.json`,
     {
       title: 'Command model',
       body: [
-        <>Use <code>mobench</code> directly, or <code>cargo mobench</code> when installed as a Cargo subcommand. Commands share the same global flags and most commands resolve project layout from explicit flags, config files, Cargo metadata, or workspace defaults.</>,
+        <>Install with <code>cargo install mobench</code>, then invoke the canonical <code>mobench</code> executable directly. Release 0.1.47 does not install a <code>cargo-mobench</code> binary, so <code>cargo mobench</code> is not a supported command form.</>,
+        <>Commands share the same global flags and most commands resolve project layout from explicit flags, config files, Cargo metadata, or workspace defaults.</>,
       ],
       bullets: [
         <><code>--dry-run</code>: print the actions that would run without mutating files, invoking providers, or publishing reports.</>,
@@ -1135,7 +1269,6 @@ cargo mobench report github --pr 123 --summary target/mobench/ci/summary.json`,
       code: {
         language: 'text',
         value: `mobench [GLOBAL OPTIONS] <COMMAND>
-cargo mobench [GLOBAL OPTIONS] <COMMAND>
 
 Global options:
   --dry-run            Print what would be done without doing it.
@@ -1204,8 +1337,8 @@ Outputs:
   Provider logs, status, and normalized benchmark summaries.
 
 Examples:
-  cargo mobench run --target android --function sample_fns::fibonacci --local-only
-  cargo mobench run --target android --function sample_fns::fibonacci --devices "Google Pixel 7-13.0" --release --fetch
+  mobench run --target android --function sample_fns::fibonacci --local-only
+  mobench run --target android --function sample_fns::fibonacci --devices "Google Pixel 7-13.0" --release --fetch
 
 mobench ci run
 Purpose:
@@ -1230,8 +1363,8 @@ Outputs:
   Optional JUnit XML, plots, fetched BrowserStack artifacts.
 
 Examples:
-  cargo mobench ci run --target android --function sample_fns::fibonacci --local-only
-  cargo mobench ci run --target both --functions sample_fns::fibonacci,sample_fns::sort --device-tags smoke --release --fetch`,
+  mobench ci run --target android --function sample_fns::fibonacci --local-only
+  mobench ci run --target both --functions sample_fns::fibonacci,sample_fns::sort --device-tags smoke --release --fetch`,
       },
     },
     {
@@ -1341,7 +1474,7 @@ Outputs:
     {
       title: 'CI commands',
       body: [
-        <>CI helpers scaffold workflows, summarize offline results, and create GitHub Check Runs. Use <code>ci run</code> for the actual benchmark execution contract.</>,
+        <>CI helpers scaffold workflows, prepare untrusted mobile packages, execute verified prebuilt bundles, summarize offline results, and create GitHub Check Runs. Use <code>ci run</code> for a conventional benchmark job; use <code>ci prepare</code> and <code>ci run-prebuilt</code> to preserve the pull-request credential boundary.</>,
       ],
       code: {
         language: 'text',
@@ -1355,6 +1488,26 @@ Defaults:
   --action-dir .github/actions/mobench
 Outputs:
   Workflow YAML and local composite/action files.
+
+mobench ci prepare
+Purpose:
+  Build and package caller-owned code without BrowserStack credentials.
+Usage:
+  mobench ci prepare --target <android|ios> --source-sha <SHA> [--ffi-backend <uniffi|native-c-abi|boltffi>] [--crate-path <DIR>] [--functions <JSON>] [--release] [--output-dir <DIR>] [--manifest <FILE>]
+Defaults:
+  --ffi-backend resolves from mobench.toml, then defaults to uniffi.
+  --output-dir target/mobench/prebuilt
+  --manifest target/mobench/prebuilt/manifest.json
+Outputs:
+  A manifest and enumerated prebuilt mobile packages for trusted validation.
+
+mobench ci run-prebuilt
+Purpose:
+  Upload and run a validated prebuilt bundle without invoking caller build tooling.
+Usage:
+  mobench ci run-prebuilt --manifest <FILE> --expected-source-sha <SHA> --expected-platform <android|ios> --expected-functions <JSON> --devices <DEVICE> --output-dir <DIR>
+Security:
+  Run only after validating manifest paths, sizes, digests, platform, source SHA, functions, iterations, and warmup.
 
 mobench ci summarize
 Purpose:
@@ -1381,7 +1534,7 @@ Inputs:
 Outputs:
   <output-dir>/summary.json, <output-dir>/summary.md, and <output-dir>/results.csv.
 Example:
-  cargo mobench ci merge-split-runs --samples-dir target/mobench/ci/split --output-dir target/mobench/ci/merged --function sample_fns::fibonacci --device "Google Pixel 7-13.0" --iterations 5 --warmup 1
+  mobench ci merge-split-runs --samples-dir target/mobench/ci/split --output-dir target/mobench/ci/merged --function sample_fns::fibonacci --device "Google Pixel 7-13.0" --iterations 5 --warmup 1
 
 mobench ci check-run
 Purpose:
@@ -1718,6 +1871,78 @@ pub fn benchmark_app_path() {
       },
     },
     {
+      title: 'ProveKit integration',
+      body: [
+        <><InlineLink href={EXTERNAL_DOCS.provekitMainMobench}>ProveKit PR #450</InlineLink> on <code>main</code> and <InlineLink href={EXTERNAL_DOCS.provekitV1Mobench}>PR #451</InlineLink> on <code>v1</code> are merged examples of integrating mobench 0.1.47 into a substantial Rust project. They benchmark expensive Noir proof generation through the same native code that ProveKit ships, on real Android and iOS devices.</>,
+        <>Both integrations add a private <code>bench-mobile</code> crate built as a Rust library, <code>cdylib</code>, and <code>staticlib</code>. The crate calls <code>mobench_sdk::export_native_c_abi!()</code> and registers its functions with <code>#[benchmark]</code>, letting generated mobile runners discover and invoke the benchmarks without maintaining a separate handwritten app.</>,
+      ],
+      bullets: [
+        <>The measured functions cover complete passport age-check proving, fragmented passport age-check proving, and OPRF proving.</>,
+        <>Setup functions build the prover, verifier, and witness before timing starts. Destructive proving benchmarks use <code>#[benchmark(setup = ..., per_iteration)]</code> so each measured iteration receives fresh prepared state.</>,
+        <>Proof results pass through <code>black_box</code>; prepare, prove, and verify phase wrappers also make the workload useful for mobench profiling.</>,
+        <>Android/Linux runs call <code>malloc_trim</code> between large proof stages, reducing carry-over from allocator free lists when comparing later stages.</>,
+      ],
+    },
+    {
+      title: 'Fixtures to mobile runners',
+      body: [
+        <>The repository-relative <code>bench-mobile/scripts/generate-fixtures.sh</code> hook requires <code>MOBENCH_CI_PREPARE=1</code>, installs a pinned Noir toolchain, compiles passport, OPRF, and P-256 programs, and gathers their JSON artifacts. The crate's <code>build.rs</code> embeds those files and fails CI preparation if a required artifact is missing.</>,
+        <>The same fixture generator runs in ordinary ProveKit Cargo CI before the all-targets build and tests. That validates benchmark code and generated inputs on normal pull requests before a maintainer spends BrowserStack device time.</>,
+      ],
+      code: {
+        language: 'toml',
+        value: `[project]
+crate = "bench-mobile"
+library_name = "bench_mobile"
+ffi_backend = "native-c-abi"
+
+[android]
+min_sdk = 24
+target_sdk = 34
+abis = ["arm64-v8a"]
+
+[ios]
+deployment_target = "13.0"
+runner = "uikit-legacy"
+
+[browserstack]
+ios_completion_timeout_secs = 7200
+android_benchmark_timeout_secs = 7200
+android_heartbeat_interval_secs = 10`,
+      },
+    },
+    {
+      title: 'ProveKit CI',
+      body: [
+        <>Maintainers can use manual dispatch or a trusted <code>/mobench</code> pull-request comment. The dispatcher accepts OWNER, MEMBER, or COLLABORATOR authors, safely parses platform/profile/iteration inputs, resolves the exact 40-character PR head SHA, and selects explicit three-device iOS and Android matrices.</>,
+      ],
+      bullets: [
+        <>The caller pins Rust <code>nightly-2026-03-04</code>, mobench <code>0.1.47</code>, native C ABI preparation, two measured iterations, one warmup, and a 7,200-second maximum completion timeout.</>,
+        <>Secretless preparation checks out ProveKit, generates fixtures, and builds signed or packaged mobile artifacts. Credentialed jobs receive validated prebuilt bundles and explicit BrowserStack secrets; they do not check out or execute caller code.</>,
+        <>iOS and Android credentialed lanes run serially for account concurrency, while Android can still proceed after an iOS failure or skip. Every function/device pair must produce exactly one result.</>,
+        <>Isolated reporting publishes GitHub checks and PR output alongside <code>summary.json</code>, <code>summary.md</code>, and <code>results.csv</code>. Concurrency is grouped per PR without cancelling an active benchmark.</>,
+        <>PR #451 adds a BrowserStack environment preflight; PR #450 invokes the reusable workflow directly after device resolution. New callers should pin <code>f36ea5420bdb6633a6b8e91b00522ca9d5a2a84f</code>.</>,
+      ],
+      code: {
+        language: 'yaml',
+        value: `uses: worldcoin/mobile-bench-rs/.github/workflows/reusable-bench.yml@f36ea5420bdb6633a6b8e91b00522ca9d5a2a84f
+with:
+  crate_path: ./bench-mobile
+  functions: '["bench_mobile::bench_passport_complete_age_check_prove","bench_mobile::bench_passport_fragmented_age_check_prove","bench_mobile::bench_oprf_prove"]'
+  prepare_script: bench-mobile/scripts/generate-fixtures.sh
+  platform: both
+  mobench_version: "0.1.47"
+  max_completion_timeout_secs: 7200
+  rust_toolchain: nightly-2026-03-04
+  ffi_backend: native-c-abi
+  pr_number: \${{ github.event.pull_request.number }}
+  head_sha: \${{ github.event.pull_request.head.sha }}
+secrets:
+  BROWSERSTACK_USERNAME: \${{ secrets.BROWSERSTACK_USERNAME }}
+  BROWSERSTACK_ACCESS_KEY: \${{ secrets.BROWSERSTACK_ACCESS_KEY }}`,
+      },
+    },
+    {
       title: 'Fixture outputs',
       bullets: [
         <>Basic summary fixture: small normalized report useful for parser tests.</>,
@@ -1805,9 +2030,18 @@ pub fn benchmark_app_path() {
   ],
   'current-spec': [
     {
+      title: 'Release evolution: 0.1.44–0.1.47',
+      bullets: [
+        <>0.1.44 established the hardened reusable-workflow boundary: untrusted pull-request code is built without secrets, trusted jobs consume only validated prebuilt artifacts, and reporting is isolated.</>,
+        <>0.1.45 added safe caller preparation hooks, per-platform function lists, structured Android/iOS device arrays, and complete function/device result enforcement while preserving compatibility fallbacks.</>,
+        <>0.1.46 added caller-pinned Rust toolchains, typed UniFFI/native C ABI/BoltFFI preparation, Cargo-workspace-aware UniFFI lockfile resolution, and unnecessary-generator avoidance for native backends.</>,
+        <>0.1.47 hardened long runs with bounded completion timeouts, XCUITest heartbeats and accessibility result transport, Android native-worker death diagnostics, serialized credentialed platform jobs, and transient exact-head API retries.</>,
+      ],
+    },
+    {
       title: 'Scope',
       bullets: [
-        <>Release line documented by the current spec is <code>0.1.43</code>.</>,
+        <>Release line documented by the current spec is <code>0.1.47</code>.</>,
         <>The spec covers benchmark authoring, setup and teardown, SDK runtime API, native C ABI, generated runners, config files, CLI behavior, reports, BrowserStack, profiling, schemas, and compatibility boundaries.</>,
         <>Historical design proposals are excluded from the current behavior contract.</>,
       ],
@@ -1825,7 +2059,8 @@ pub fn benchmark_app_path() {
       title: 'Compatibility',
       bullets: [
         <>The serialized contracts are public API.</>,
-<>The default generated FFI backend remains UniFFI for maturity; <code>boltffi</code> and <code>native-c-abi</code> are configurable when you want lower overhead or a narrower native boundary.</>,
+        <>The default generated FFI backend remains UniFFI; <code>boltffi</code> and <code>native-c-abi</code> are typed alternatives in 0.1.46.</>,
+        <>Existing workflow callers remain compatible when the 0.1.45 and 0.1.46 inputs are omitted: platform-specific functions fall back to <code>functions</code>, structured devices fall back to legacy device/profile inputs, and <code>rust_toolchain</code> defaults to <code>stable</code>.</>,
         <>Semver changes should protect benchmark authors and CI consumers from silent output drift.</>,
       ],
     },
@@ -1872,10 +2107,10 @@ pub fn benchmark_app_path() {
       code: {
         language: 'bash',
         value: `cargo test --workspace
-cargo mobench check --target android
-cargo mobench check --target ios
-cargo mobench ci run --target android --local-only --output target/mobench/ci
-cargo mobench ci merge-split-runs --help`,
+mobench check --target android
+mobench check --target ios
+mobench ci run --target android --local-only --output target/mobench/ci
+mobench ci merge-split-runs --help`,
       },
     },
     {
@@ -1955,7 +2190,7 @@ const EXTRA_CONTENT: Partial<Record<PageId, Section[]>> = {
   crate["Rust benchmark crate"] --> macro["#[benchmark] macro"]
   macro --> registry["inventory registry"]
   registry --> sdk["mobench-sdk runtime"]
-  sdk --> cli["cargo mobench CLI"]
+  sdk --> cli["mobench CLI"]
   cli --> android["Generated Android runner"]
   cli --> ios["Generated iOS runner"]
   android --> localA["ADB device or emulator"]
@@ -1983,10 +2218,10 @@ const EXTRA_CONTENT: Partial<Record<PageId, Section[]>> = {
       code: {
         language: 'bash',
         value: `# 1. Confirm benchmark discovery.
-cargo mobench list --crate-path crates/my-bench-crate
+mobench list --crate-path crates/my-bench-crate
 
 # 2. Smoke-test the run/report path without mobile packaging.
-cargo mobench run \\
+mobench run \\
   --target android \\
   --function my_bench_crate::checksum_bench \\
   --crate-path crates/my-bench-crate \\
@@ -1996,8 +2231,8 @@ cargo mobench run \\
   --output target/mobench/smoke/results.json
 
 # 3. Move to a real provider once discovery is known-good.
-cargo mobench build --target android --release
-cargo mobench ci run --target android --browserstack --output target/mobench/ci`,
+mobench build --target android --release
+mobench ci run --target android --browserstack --output target/mobench/ci`,
       },
     },
     {
@@ -2005,9 +2240,9 @@ cargo mobench ci run --target android --browserstack --output target/mobench/ci`
       code: {
         language: 'mermaid',
         value: `flowchart TD
-  install["Install CLI"] --> init["cargo mobench init"]
+  install["Install CLI"] --> init["mobench init"]
   init --> write["Write #[benchmark] function"]
-  write --> list["cargo mobench list"]
+  write --> list["mobench list"]
   list --> smoke["Host-only smoke run"]
   smoke --> build["Build generated mobile runner"]
   build --> choose{"Choose provider"}
@@ -2051,11 +2286,11 @@ default_warmup = 10`,
       code: {
         language: 'bash',
         value: `rustc --version
-cargo mobench --version
+mobench --version
 adb devices
 xcrun simctl list devices available
-cargo mobench check --target android
-cargo mobench check --target ios`,
+mobench check --target android
+mobench check --target ios`,
       },
     },
   ],
@@ -2220,7 +2455,7 @@ println!("p95: {} ns", report.percentile_ns(95.0).unwrap_or_default());`,
       code: {
         language: 'mermaid',
         value: `flowchart TD
-  check["cargo mobench check"] --> resolve["resolve crate + config"]
+  check["mobench check"] --> resolve["resolve crate + config"]
   resolve --> generate["generate mobile runner"]
   generate --> compile["Gradle / xcodebuild"]
   compile --> artifacts["APK/AAB + test APK or IPA + XCUITest ZIP"]
@@ -2274,7 +2509,7 @@ xcrun xctrace list devices`,
   participant Mobench
   participant BS as BrowserStack
   participant PR as Pull request
-  CI->>Mobench: cargo mobench ci run
+  CI->>Mobench: mobench ci run
   Mobench->>Mobench: resolve matrix + build artifacts
   Mobench->>BS: upload app + test suite
   Mobench->>BS: create App Automate build
@@ -2440,8 +2675,8 @@ ajv validate \\
         language: 'bash',
         value: `cd examples/basic-benchmark
 cargo test
-cargo mobench list --crate-path .
-cargo mobench run --local-only --function basic_benchmark::fibonacci_30`,
+mobench list --crate-path .
+mobench run --local-only --function basic_benchmark::fibonacci_30`,
       },
     },
     {
@@ -2669,8 +2904,8 @@ fn summary_fixture_matches_schema_expectations() {
   phase --> build["Mobile build"]
   phase --> provider["Provider execution"]
   phase --> report["Report parsing"]
-  discover --> list["cargo mobench list"]
-  build --> check["cargo mobench check"]
+  discover --> list["mobench list"]
+  build --> check["mobench check"]
   provider --> logs["ADB / Xcode / BrowserStack logs"]
   report --> schema["Validate schema + inspect summary.json"]`,
       },

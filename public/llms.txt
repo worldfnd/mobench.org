@@ -1,6 +1,6 @@
 # mobench
 
-> mobench is a Rust mobile benchmarking toolkit for Android and iOS. It provides a Cargo-native CLI, SDK runtime, `#[benchmark]` macros, generated mobile runners, BrowserStack App Automate integration, stable reports, schemas, and native profiling artifacts.
+> mobench is a Rust mobile benchmarking toolkit for Android and iOS. It provides the `mobench` CLI, SDK runtime, `#[benchmark]` macros, generated mobile runners, BrowserStack App Automate integration, stable reports, schemas, and native profiling artifacts.
 
 Use this file as a map for AI agents, coding assistants, and documentation readers. The canonical website is https://mobench.org and the canonical documentation site is https://docs.mobench.org.
 
@@ -18,6 +18,27 @@ Use this file as a map for AI agents, coding assistants, and documentation reade
 ## What mobench is for
 
 mobench was built to benchmark intense Rust workloads in mobile environments that represent real World App users. Real users run flagship phones, mid-tier devices, low-end devices, and older 32-bit devices. mobench helps teams measure whether critical Rust workloads, including cryptography used by World ID and ProveKit, perform reliably across that device range.
+
+## Release 0.1.44–0.1.47
+
+- 0.1.44 hardened pull-request benchmarks by separating secretless preparation, trusted prebuilt-only BrowserStack execution, and isolated reporting. Untrusted PR code never runs with BrowserStack credentials or write-capable repository permissions.
+- 0.1.45 added a normalized repository-relative `prepare_script`, platform-specific function lists, structured Android/iOS device arrays, and fail-closed completeness checks for every function/device pair.
+- 0.1.46 added `rust_toolchain` (default `stable`) for caller preparation and typed `ffi_backend` selection: `uniffi`, `native-c-abi`, or `boltffi`. Explicit CLI/workflow selection overrides `project.ffi_backend` in `mobench.toml`, then UniFFI is the default.
+- 0.1.47 added `max_completion_timeout_secs` (30-minute default, six-hour trusted maximum), one bounded timeout across iOS launch/XCUITest/polling, five-minute XCUITest heartbeats with 30-second polling, accessibility-backed completed-result transport, a 15-minute BrowserStack XCUITest idle timeout, Android native-worker PID/process detection, and structured `worker_exit` failures. Credentialed iOS and Android jobs run serially, Android still runs after an iOS failure or skip, and exact-head API checks retry transient failures five times.
+- Pin the reusable workflow to `f36ea5420bdb6633a6b8e91b00522ca9d5a2a84f`, pass BrowserStack secrets explicitly, and do not use `secrets: inherit`.
+- Install with `cargo install mobench`, then run the `mobench` executable directly. Release 0.1.47 does not install a `cargo-mobench` binary.
+
+## ProveKit integration: merged PRs 450 and 451
+
+- ProveKit main integration: https://github.com/worldfnd/provekit/pull/450
+- ProveKit v1 integration: https://github.com/worldfnd/provekit/pull/451
+- Both merged integrations use a `bench-mobile` crate with `#[benchmark]` functions for complete passport age-check proving, fragmented passport age-check proving, and OPRF proving. Setup functions prepare proof state outside the measured sample; `per_iteration` recreates state for destructive proving; `black_box` retains outputs.
+- `bench-mobile/scripts/generate-fixtures.sh` runs only with `MOBENCH_CI_PREPARE=1`, installs a pinned Noir toolchain, compiles the required Noir programs, and stages JSON artifacts. `build.rs` embeds those artifacts and fails if CI preparation requires one that is missing.
+- `mobench.toml` selects `bench-mobile`, library `bench_mobile`, `ffi_backend = "native-c-abi"`, Android arm64 with SDK 24/34, iOS 13 with the UIKit legacy runner, 7,200-second platform timeouts, and a 10-second Android heartbeat.
+- The workflows use Rust `nightly-2026-03-04`, mobench `0.1.47`, `max_completion_timeout_secs: 7200`, explicit BrowserStack secrets, exact PR number and 40-character head SHA, two measured iterations, one warmup, and three devices per platform.
+- A trusted `/mobench` PR comment dispatcher accepts only OWNER, MEMBER, or COLLABORATOR commands and safely parses platform, device profile, iterations, and warmup. The workflow resolves explicit iOS and Android device arrays and groups concurrency per PR without cancelling a running benchmark.
+- The reusable workflow performs secretless caller checkout, fixture generation, build, and packaging first. Credentialed jobs consume validated prebuilt bundles without checking out or executing caller code, then isolated reporting writes GitHub checks/PR output and standard `summary.json`, `summary.md`, and `results.csv` artifacts.
+- PR 451 adds a BrowserStack environment preflight before invoking the reusable workflow; PR 450 invokes it directly after device resolution. Both merged files reference release commit `8a2dfbb2ba941aa6a6582bf49dae482cc87779df`; new callers should use the final reusable-workflow pin `f36ea5420bdb6633a6b8e91b00522ca9d5a2a84f` above.
 
 ## Documentation Pages
 
@@ -40,7 +61,7 @@ mobench was built to benchmark intense Rust workloads in mobile environments tha
 - Local devices: https://docs.mobench.org/local-devices
   Connected Android devices, Android Studio emulators, ADB, Xcode simulators, and connected iOS devices.
 - BrowserStack CI: https://docs.mobench.org/browserstack
-  Hosted real-device runs, matrix resolution, split-sample merging, PR reporting, artifacts, resource metrics, and CI contracts.
+  Hosted real-device runs, v0.1.47 reliability controls, secure reusable workflows, and the detailed ProveKit PR 450/451 integration.
 - App Automate setup: https://docs.mobench.org/app-automate
   BrowserStack App Automate API uploads, Android Espresso, iOS XCUITest, build execution, devices, pricing, and trial limits.
 - Profiling: https://docs.mobench.org/profiling
@@ -52,11 +73,11 @@ mobench was built to benchmark intense Rust workloads in mobile environments tha
 - Schemas: https://docs.mobench.org/schemas
   CI metadata, summary JSON, trace events, fixture payloads, and machine-readable contracts.
 - Examples explained: https://docs.mobench.org/examples
-  Basic benchmark and native C ABI / FFI examples, plus how fixture outputs map to reports.
+  Basic and native C ABI / FFI examples plus the detailed ProveKit PR #450/#451 integration: benchmark crate, generated fixtures, mobile configuration, trusted triggers, reusable workflow, and CI reports.
 - Diagrams: https://docs.mobench.org/diagrams
   Crate architecture, lifecycle, provider flow, BrowserStack CI, profiling artifacts, and SDK versus CLI responsibility.
 - Current behavior: https://docs.mobench.org/current-spec
-  Current behavior and API contract for release 0.1.43.
+  Current behavior and API contract for release 0.1.47.
 - Codebase architecture: https://docs.mobench.org/codebase
   Workspace layout, runtime layers, generated templates, integrations, stack, and ownership boundaries.
 - Testing strategy: https://docs.mobench.org/testing
@@ -85,14 +106,14 @@ mobench was built to benchmark intense Rust workloads in mobile environments tha
 
 ```bash
 cargo install mobench
-cargo mobench init
-cargo mobench doctor
-cargo mobench check --target android
-cargo mobench build --target android --release
-cargo mobench run --local --function fibonacci_30 --iterations 100 --warmup 10
-cargo mobench ci run --target android --browserstack --output target/mobench/ci
-cargo mobench ci merge-split-runs --samples-dir target/mobench/ci/split --output-dir target/mobench/ci/merged --function sample_fns::fibonacci --device "Google Pixel 7-13.0" --iterations 5
-cargo mobench profile run --target android --function fibonacci_30 --output target/mobench/profile
+mobench init
+mobench doctor
+mobench check --target android
+mobench build --target android --release
+mobench run --local --function fibonacci_30 --iterations 100 --warmup 10
+mobench ci run --target android --browserstack --output target/mobench/ci
+mobench ci merge-split-runs --samples-dir target/mobench/ci/split --output-dir target/mobench/ci/merged --function sample_fns::fibonacci --device "Google Pixel 7-13.0" --iterations 5
+mobench profile run --target android --function fibonacci_30 --output target/mobench/profile
 ```
 
 ## Output Artifacts
