@@ -350,9 +350,9 @@ const PAGES: PageDef[] = [
     id: 'examples',
     label: 'Examples explained',
     group: 'Reference',
-    description: 'What the basic benchmark and native C ABI / FFI examples demonstrate, and how their fixture outputs map to reports.',
+    description: 'How the basic, native C ABI / FFI, and ProveKit integrations work, including fixtures and CI reports.',
     icon: Boxes,
-    toc: ['Basic benchmark', 'FFI benchmark', 'Fixture outputs'],
+    toc: ['Basic benchmark', 'FFI benchmark', 'ProveKit integration', 'Fixtures to mobile runners', 'ProveKit CI', 'Fixture outputs'],
   },
   {
     id: 'diagrams',
@@ -1868,6 +1868,78 @@ mobench_sdk::export_native_c_abi!();
 pub fn benchmark_app_path() {
     // Benchmark path discovered by mobench.
 }`,
+      },
+    },
+    {
+      title: 'ProveKit integration',
+      body: [
+        <><InlineLink href={EXTERNAL_DOCS.provekitMainMobench}>ProveKit PR #450</InlineLink> on <code>main</code> and <InlineLink href={EXTERNAL_DOCS.provekitV1Mobench}>PR #451</InlineLink> on <code>v1</code> are merged examples of integrating mobench 0.1.47 into a substantial Rust project. They benchmark expensive Noir proof generation through the same native code that ProveKit ships, on real Android and iOS devices.</>,
+        <>Both integrations add a private <code>bench-mobile</code> crate built as a Rust library, <code>cdylib</code>, and <code>staticlib</code>. The crate calls <code>mobench_sdk::export_native_c_abi!()</code> and registers its functions with <code>#[benchmark]</code>, letting generated mobile runners discover and invoke the benchmarks without maintaining a separate handwritten app.</>,
+      ],
+      bullets: [
+        <>The measured functions cover complete passport age-check proving, fragmented passport age-check proving, and OPRF proving.</>,
+        <>Setup functions build the prover, verifier, and witness before timing starts. Destructive proving benchmarks use <code>#[benchmark(setup = ..., per_iteration)]</code> so each measured iteration receives fresh prepared state.</>,
+        <>Proof results pass through <code>black_box</code>; prepare, prove, and verify phase wrappers also make the workload useful for mobench profiling.</>,
+        <>Android/Linux runs call <code>malloc_trim</code> between large proof stages, reducing carry-over from allocator free lists when comparing later stages.</>,
+      ],
+    },
+    {
+      title: 'Fixtures to mobile runners',
+      body: [
+        <>The repository-relative <code>bench-mobile/scripts/generate-fixtures.sh</code> hook requires <code>MOBENCH_CI_PREPARE=1</code>, installs a pinned Noir toolchain, compiles passport, OPRF, and P-256 programs, and gathers their JSON artifacts. The crate's <code>build.rs</code> embeds those files and fails CI preparation if a required artifact is missing.</>,
+        <>The same fixture generator runs in ordinary ProveKit Cargo CI before the all-targets build and tests. That validates benchmark code and generated inputs on normal pull requests before a maintainer spends BrowserStack device time.</>,
+      ],
+      code: {
+        language: 'toml',
+        value: `[project]
+crate = "bench-mobile"
+library_name = "bench_mobile"
+ffi_backend = "native-c-abi"
+
+[android]
+min_sdk = 24
+target_sdk = 34
+abis = ["arm64-v8a"]
+
+[ios]
+deployment_target = "13.0"
+runner = "uikit-legacy"
+
+[browserstack]
+ios_completion_timeout_secs = 7200
+android_benchmark_timeout_secs = 7200
+android_heartbeat_interval_secs = 10`,
+      },
+    },
+    {
+      title: 'ProveKit CI',
+      body: [
+        <>Maintainers can use manual dispatch or a trusted <code>/mobench</code> pull-request comment. The dispatcher accepts OWNER, MEMBER, or COLLABORATOR authors, safely parses platform/profile/iteration inputs, resolves the exact 40-character PR head SHA, and selects explicit three-device iOS and Android matrices.</>,
+      ],
+      bullets: [
+        <>The caller pins Rust <code>nightly-2026-03-04</code>, mobench <code>0.1.47</code>, native C ABI preparation, two measured iterations, one warmup, and a 7,200-second maximum completion timeout.</>,
+        <>Secretless preparation checks out ProveKit, generates fixtures, and builds signed or packaged mobile artifacts. Credentialed jobs receive validated prebuilt bundles and explicit BrowserStack secrets; they do not check out or execute caller code.</>,
+        <>iOS and Android credentialed lanes run serially for account concurrency, while Android can still proceed after an iOS failure or skip. Every function/device pair must produce exactly one result.</>,
+        <>Isolated reporting publishes GitHub checks and PR output alongside <code>summary.json</code>, <code>summary.md</code>, and <code>results.csv</code>. Concurrency is grouped per PR without cancelling an active benchmark.</>,
+        <>PR #451 adds a BrowserStack environment preflight; PR #450 invokes the reusable workflow directly after device resolution. New callers should pin <code>f36ea5420bdb6633a6b8e91b00522ca9d5a2a84f</code>.</>,
+      ],
+      code: {
+        language: 'yaml',
+        value: `uses: worldcoin/mobile-bench-rs/.github/workflows/reusable-bench.yml@f36ea5420bdb6633a6b8e91b00522ca9d5a2a84f
+with:
+  crate_path: ./bench-mobile
+  functions: '["bench_mobile::bench_passport_complete_age_check_prove","bench_mobile::bench_passport_fragmented_age_check_prove","bench_mobile::bench_oprf_prove"]'
+  prepare_script: bench-mobile/scripts/generate-fixtures.sh
+  platform: both
+  mobench_version: "0.1.47"
+  max_completion_timeout_secs: 7200
+  rust_toolchain: nightly-2026-03-04
+  ffi_backend: native-c-abi
+  pr_number: \${{ github.event.pull_request.number }}
+  head_sha: \${{ github.event.pull_request.head.sha }}
+secrets:
+  BROWSERSTACK_USERNAME: \${{ secrets.BROWSERSTACK_USERNAME }}
+  BROWSERSTACK_ACCESS_KEY: \${{ secrets.BROWSERSTACK_ACCESS_KEY }}`,
       },
     },
     {

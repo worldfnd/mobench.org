@@ -73,7 +73,7 @@ mobench was built to benchmark intense Rust workloads in mobile environments tha
 - Schemas: https://docs.mobench.org/schemas
   CI metadata, summary JSON, trace events, fixture payloads, and machine-readable contracts.
 - Examples explained: https://docs.mobench.org/examples
-  Basic benchmark and native C ABI / FFI examples, plus how fixture outputs map to reports.
+  Basic and native C ABI / FFI examples plus the detailed ProveKit PR #450/#451 integration: benchmark crate, generated fixtures, mobile configuration, trusted triggers, reusable workflow, and CI reports.
 - Diagrams: https://docs.mobench.org/diagrams
   Crate architecture, lifecycle, provider flow, BrowserStack CI, profiling artifacts, and SDK versus CLI responsibility.
 - Current behavior: https://docs.mobench.org/current-spec

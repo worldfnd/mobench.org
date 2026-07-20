@@ -37,7 +37,7 @@
     { "id": "reports", "label": "Outputs & reports", "group": "Reference", "description": "Understand summary JSON, Markdown summaries, CSV rows, split-run outputs, BrowserStack artifacts, PR comments, and profiling bundles." },
     { "id": "cli-reference", "label": "CLI man pages", "group": "Reference", "description": "Exhaustive command reference for mobench: commands, subcommands, flags, expected inputs, outputs, defaults, and common examples." },
     { "id": "schemas", "label": "Schemas", "group": "Reference", "description": "Machine-readable contracts for CI metadata, benchmark summaries, trace events, and fixture payloads." },
-    { "id": "examples", "label": "Examples explained", "group": "Reference", "description": "What the basic benchmark and native C ABI / FFI examples demonstrate, and how their fixture outputs map to reports." },
+    { "id": "examples", "label": "Examples explained", "group": "Reference", "description": "How the basic, native C ABI / FFI, and ProveKit integrations work, including fixtures and CI reports." },
     { "id": "diagrams", "label": "Diagrams", "group": "Reference", "description": "Architecture, benchmark lifecycle, BrowserStack CI, profiling artifacts, and SDK versus CLI responsibility diagrams." },
     { "id": "current-spec", "label": "Current behavior", "group": "Specs", "description": "Current behavior and API contract for release 0.1.47: CLI, config, runners, public APIs, schemas, and compatibility boundaries." },
     { "id": "codebase", "label": "Codebase architecture", "group": "Codebase", "description": "Workspace layout, runtime layers, generated templates, integrations, stack, and ownership boundaries." },
