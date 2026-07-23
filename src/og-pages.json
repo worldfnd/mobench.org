@@ -28,7 +28,7 @@
     { "id": "concepts", "label": "Concepts", "group": "Start", "description": "Understand benchmark definitions, generated runners, local and hosted providers, reports, schemas, and profiling output." },
     { "id": "authoring", "label": "Writing benchmarks", "group": "Authoring", "description": "Use the benchmark macro, setup inputs, teardown functions, and registry discovery rules to expose Rust functions to mobench." },
     { "id": "setup-teardown", "label": "Setup & teardown", "group": "Authoring", "description": "Keep expensive initialization and cleanup outside measured samples while still giving every iteration the input shape it needs." },
-    { "id": "sdk", "label": "SDK integration", "group": "Guides", "description": "Add mobench-sdk to a crate, configure runner backends, export native C ABI when needed, and use public runtime types." },
+    { "id": "sdk", "label": "SDK integration", "group": "Guides", "description": "Compare UniFFI, BoltFFI, and native FFI, choose the most accurate BrowserStack benchmark path, and integrate mobench-sdk runtime APIs." },
     { "id": "build", "label": "Build artifacts", "group": "Guides", "description": "Generate Android and iOS runner projects, understand runner backends, and verify outputs under target/mobench." },
     { "id": "local-devices", "label": "Local devices", "group": "Guides", "description": "Run against connected phones, Android emulators via Android Studio and ADB, and iOS simulators or connected devices via Xcode." },
     { "id": "browserstack", "label": "BrowserStack CI", "group": "Guides", "description": "Use hosted real devices, long-session reliability controls, secure reusable workflows, and the ProveKit production integration." },
