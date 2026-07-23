@@ -277,9 +277,9 @@ const PAGES: PageDef[] = [
     id: 'sdk',
     label: 'SDK integration',
     group: 'Guides',
-    description: 'Add mobench-sdk to a crate, configure runner backends, export native C ABI when needed, and use public runtime types.',
+    description: 'Compare UniFFI, BoltFFI, and native FFI, choose the most accurate BrowserStack benchmark path, and integrate mobench-sdk runtime APIs.',
     icon: FileCode2,
- toc: ['Dependencies', 'Runtime APIs', 'Choosing an FFI backend', 'Native C ABI'],
+ toc: ['Dependencies', 'Runtime APIs', 'Choosing an FFI backend', 'BrowserStack result fidelity', 'Native C ABI'],
   },
   {
     id: 'build',
@@ -726,21 +726,33 @@ mobench-sdk = { version = "0.1.47", default-features = false, features = ["regis
  {
  title: 'Choosing an FFI backend',
  body: [
- <>If you need generated bindings, choose between <InlineLink href={EXTERNAL_DOCS.boltffi}>BoltFFI</InlineLink> and <InlineLink href={EXTERNAL_DOCS.uniffi}>UniFFI</InlineLink> based on maturity versus overhead.</>,
- <>The practical recommendation for performance-sensitive mobile benchmarks is still to write native FFI bindings for the benchmark boundary. AI agents make those bindings much easier to build, test, review, and maintain, and native bindings keep benchmark overhead explicit instead of hiding it inside a general-purpose binding layer.</>,
+ <>The backend controls how the generated Android and iOS runner crosses into the Rust benchmark library. All three run the same registered Rust benchmark, but they make different tradeoffs between binding convenience, maturity, and harness overhead.</>,
  ],
  bullets: [
- <><strong>BoltFFI</strong>: fast, newer, and designed for smaller overhead than UniFFI, but not as mature yet.</>,
- <><strong>UniFFI</strong>: more mature and battle-tested, but usually carries larger binding overhead.</>,
- <><strong>Native FFI</strong>: recommended for serious benchmark paths because Android/iOS callers can use the narrow ABI the benchmark actually needs.</>,
+ <><InlineLink href={EXTERNAL_DOCS.uniffi}><strong>UniFFI</strong></InlineLink> (<code>uniffi</code>): the compatibility default. It generates mature Kotlin and Swift bindings and handles richer type and error conversion for application integration. That general-purpose conversion, dispatch, and generated scaffolding gives it the largest wrapper surface and usually the most harness overhead.</>,
+ <><InlineLink href={EXTERNAL_DOCS.boltffi}><strong>BoltFFI</strong></InlineLink> (<code>boltffi</code>): a newer generated-binding path that exposes the benchmark through a JSON-string call in generated Kotlin and Swift APIs. It can be a useful compromise when generated APIs matter, but it is less mature and still adds binding dispatch, marshaling, and generated wrapper code around the Rust call. Do not assume it is faster than UniFFI without measuring your integration.</>,
+ <><strong>Native FFI</strong> (<code>native-c-abi</code>): the generated runner calls mobench's narrow C ABI directly, passing a JSON benchmark spec and receiving a JSON report through explicit buffer and error functions. It has the smallest, most visible boundary and avoids the UniFFI or BoltFFI binding layer.</>,
  <>In 0.1.46, <code>ci prepare --ffi-backend</code> accepts <code>uniffi</code>, <code>native-c-abi</code>, or <code>boltffi</code>. The CLI value wins over <code>project.ffi_backend</code> in <code>mobench.toml</code>; if neither is set, UniFFI remains the default.</>,
  <>Native C ABI and BoltFFI preparation skip the UniFFI generator. UniFFI preparation resolves its lockfile from the Cargo workspace containing the benchmark crate.</>,
  ],
  },
  {
+ title: 'BrowserStack result fidelity',
+ body: [
+ <>For mobench runs on <InlineLink href={EXTERNAL_DOCS.browserstack}>BrowserStack</InlineLink>, native FFI is always the best backend when the goal is the most accurate isolation of the underlying Rust workload. UniFFI and BoltFFI add work to the mobile benchmarking harness—generated dispatch, value conversion, marshaling, and allocations—that is not part of the workload you intended to compare.</>,
+ <>Mobench times individual benchmark samples inside Rust, so binding overhead is generally outside each reported <code>duration_ns</code>. It can still affect end-to-end execution, CPU and memory observations, allocation pressure, warmup state, and device state around the samples. The direct native C ABI removes those extra binding layers and therefore produces the cleanest, most representative BrowserStack measurement.</>,
+ ],
+ bullets: [
+ <><strong>Use native FFI for benchmark fidelity.</strong> Select <code>native-c-abi</code> for performance baselines, regressions, and device-to-device comparisons.</>,
+ <><strong>Use UniFFI for compatibility.</strong> Select it when mature generated application bindings matter more than minimizing harness influence.</>,
+ <><strong>Use BoltFFI for a generated-binding compromise.</strong> It retains generated Kotlin and Swift APIs, but it does not remove binding-layer overhead.</>,
+ <>If the binding layer itself is what you want to benchmark, choose UniFFI or BoltFFI deliberately and treat that overhead as part of the subject rather than noise.</>,
+ ],
+ },
+ {
  title: 'Native C ABI',
  body: [
-        <>The native C ABI lets generated runners call the benchmark crate directly without UniFFI bindings in the measured path.</>,
+        <>The native C ABI lets generated runners call the benchmark crate through a small, explicit boundary without UniFFI or BoltFFI bindings around the benchmark run.</>,
       ],
       code: {
         language: 'rust',
@@ -1853,7 +1865,7 @@ Publish behavior:
     {
       title: 'FFI benchmark',
       body: [
-        <>The FFI example keeps UniFFI-compatible records and errors for app integration while also demonstrating native C ABI exports for generated runners that need to avoid binding overhead in the measured path.</>,
+        <>The FFI example keeps UniFFI-compatible records and errors for app integration while also demonstrating native C ABI exports for generated runners that need to avoid general-purpose binding machinery around the benchmark run.</>,
       ],
       code: {
         language: 'rust',
@@ -2682,7 +2694,7 @@ mobench run --local-only --function basic_benchmark::fibonacci_30`,
     {
       title: 'FFI example walkthrough',
       body: [
-        <>Use the FFI example when validating generated runner boundaries. It demonstrates app-facing exported functions, benchmark discovery, and the native C ABI path that keeps binding overhead out of the measured benchmark call.</>,
+        <>Use the FFI example when validating generated runner boundaries. It demonstrates app-facing exported functions, benchmark discovery, and the native C ABI path that keeps the runner boundary narrow without a general-purpose binding layer.</>,
       ],
       code: {
         language: 'rust',

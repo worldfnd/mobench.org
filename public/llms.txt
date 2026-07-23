@@ -28,6 +28,14 @@ mobench was built to benchmark intense Rust workloads in mobile environments tha
 - Pin the reusable workflow to `f36ea5420bdb6633a6b8e91b00522ca9d5a2a84f`, pass BrowserStack secrets explicitly, and do not use `secrets: inherit`.
 - Install with `cargo install mobench`, then run the `mobench` executable directly. Release 0.1.47 does not install a `cargo-mobench` binary.
 
+## FFI backend choice and BrowserStack accuracy
+
+- [`uniffi`](https://github.com/mozilla/uniffi-rs) is the mature compatibility default. It generates Kotlin and Swift bindings with general-purpose type and error conversion, but adds the largest binding surface and usually the most mobile-harness overhead.
+- [`boltffi`](https://github.com/boltffi/boltffi) is a newer generated-binding option that exposes a JSON-string benchmark call through generated Kotlin and Swift APIs. It is less mature and still adds binding dispatch, marshaling, and wrapper code around the Rust call; do not assume it is faster than UniFFI without measuring the integration.
+- `native-c-abi` calls mobench's narrow JSON C ABI directly and avoids the UniFFI or BoltFFI binding layer.
+- Native FFI is always the best option when the goal is the most accurate isolation of the underlying Rust workload in a mobench BrowserStack run. Mobench times individual samples inside Rust, so binding work is generally outside `duration_ns`, but UniFFI and BoltFFI can still influence whole-harness CPU, memory, allocation pressure, warmup state, and device state.
+- Use UniFFI or BoltFFI deliberately when the generated binding layer itself is part of what you want to measure; in that case its overhead is part of the subject rather than benchmark noise.
+
 ## ProveKit integration: merged PRs 450 and 451
 
 - ProveKit main integration: https://github.com/worldfnd/provekit/pull/450
@@ -55,7 +63,7 @@ mobench was built to benchmark intense Rust workloads in mobile environments tha
 - Setup and teardown: https://docs.mobench.org/setup-teardown
   Untimed setup, measured iterations, teardown compatibility, and input lifetimes.
 - SDK integration: https://docs.mobench.org/sdk
-  `mobench-sdk`, runner backends, UniFFI, BoltFFI, native C ABI exports, and public runtime types.
+  UniFFI, BoltFFI, and native FFI tradeoffs; BrowserStack measurement fidelity; `mobench-sdk` runner backends, native C ABI exports, and public runtime types.
 - Build artifacts: https://docs.mobench.org/build
   Generated Android and iOS runner projects, runner backends, output paths, and verification commands.
 - Local devices: https://docs.mobench.org/local-devices
